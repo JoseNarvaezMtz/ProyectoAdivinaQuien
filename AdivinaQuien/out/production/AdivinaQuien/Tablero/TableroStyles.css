@@ -1,0 +1,25 @@
+.chat{
+    -fx-border-color: #000000;
+    -fx-border-width: 7px;
+    -fx-opacity: 70%;
+    -background-color: #dcd2d2;
+}
+
+.chat:hover{
+    -fx-opacity: 100%;
+}
+
+.grid-pane {
+    -fx-hgap: 2;
+    -fx-vgap: 2;
+    -fx-background-color: #c79b70;
+    -fx-border-color: #000000;
+    -fx-border-width: 5;
+}
+
+.button{
+    -fx-background-color: #032d01;
+    -fx-border-color: #000000;
+    -fx-text-fill: #ffffff;
+    -fx-border-width: 3px;
+}

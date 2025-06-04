@@ -1,0 +1,50 @@
+package Menu;
+
+// COMANDO PA CORRER ESTA MAMADA (SANTOS): --module-path "C:\javafx-sdk-24.0.1\lib" --add-modules javafx.controls,javafx.fxml
+// COMANDO PA CORRER ESTA MAMADA (JULIAN): --module-path "C:\Users\julia\Downloads\openjfx-24.0.1_windows-x64_bin-sdk\javafx-sdk-24.0.1\lib" --add-modules javafx.controls,javafx.fxml
+// COMANDO PA CORRER ESTA MAMADA (JOSÉ LUIS): --module-path "C:\JavaExtends\javafx-sdk-24.0.1\lib" --add-modules javafx.controls,javafx.fxml
+// COMANDO PA CORRER ESTA MAMADA (HARIM):
+
+/*
+    TODO
+     (SANTOS) Intentar implementar el controlador principal para evitar varias stages
+     Adaptar tamaño de la mayoría de íconos de botones a la resolución del dispositivo
+     Adaptar el tamaño de las fuentes a la resolución del dispositivo
+
+    TODO
+     Comentar el código y refactorizar pa que no este t0do qlero
+     Maybe agregar texturas a algunas cosas
+*/
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCombination;
+import javafx.stage.Stage;
+
+public class Menu extends Application {
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    public static boolean fullScreen = true;
+    public static String nickName;
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("Menu.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/Menu/MenuStyles.css").toExternalForm());
+            stage.setScene(scene);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
+            stage.setFullScreenExitKeyCombination(KeyCombination.valueOf("f11"));
+            stage.show();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+}
