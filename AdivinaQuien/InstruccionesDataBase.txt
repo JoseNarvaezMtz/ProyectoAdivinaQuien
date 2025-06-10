@@ -1,0 +1,14 @@
+PASOS PARA QUE FUNCIONE LA BASE DE DATOS
+
+Nota: Primero, si descargan tal como deje el proyecto, la base de datos ya esta a nivel del proyecto, por lo que no ocupan moverla. de igual modo, si no la tienen o se les borra o pierde por x motivo, avisenme.
+
+PASO 1: Ubicar el archivo llamado sqlite-jdbc-3.49.1.0.jar, esta en la carpeta del proyecto directamente.
+
+PASO 2: Entrar a la estructura del proyecto (Puede ser dandole a Ctrl+Alt+Mayus+S)
+
+PASO 3: Ir a la parte de modulos y darle a agregar.
+
+PASO 4: Buscar y seleccionar el archivo que les dije anteriormente, les va a salir en modulos, darle al cuadrito para que se active y darle a aplicar (No es necesario creo pero no pierdes nada)
+
+Listo.
+
