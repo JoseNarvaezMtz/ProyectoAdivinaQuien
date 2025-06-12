@@ -1,5 +1,6 @@
 package SalaDeEspera;
 
+import java.util.Random;
 import Menu.Menu;
 import Sockets.Cliente;
 import Tablero.TableroController;
@@ -13,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -41,6 +43,8 @@ public class SalaDeEsperaController implements Initializable {
             stage.setFullScreen(Menu.fullScreen);
         });
 
+
+
         // Adaptar el fondo a la resolución del dispositivo
         fondoImage.fitWidthProperty().bind(rootPane.widthProperty());
         fondoImage.fitHeightProperty().bind(rootPane.heightProperty());
@@ -61,7 +65,12 @@ public class SalaDeEsperaController implements Initializable {
         imageCargando.fitWidthProperty().bind(rootPane.widthProperty().divide(5));
         imageCargando.fitHeightProperty().bind(rootPane.heightProperty().divide(5));
 
-        // Es un método de JavaFX que permite ejecutar código en el hilo principal de la interfaz de usuario
+        Random random = new Random();
+        int rand = random.nextInt(10)+1;
+        Image img = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/esperando" + rand + ".gif"));
+        imageCargando.setImage(img);
+
+        // Es un metodo de JavaFX que permite ejecutar código en el hilo principal de la interfaz de usuario
         Platform.runLater(() -> {
             double height = rootPane.getHeight();
 
