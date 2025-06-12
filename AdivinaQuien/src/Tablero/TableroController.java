@@ -6,12 +6,14 @@
 package Tablero;
 
 import Classes.Personaje;
+import DataBaseClasses.PersonajeDB;
 import Menu.Menu;
 import Sockets.Cliente; // Importamos la clase Cliente
+
+import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -21,10 +23,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
@@ -38,24 +42,19 @@ import Sockets.Cliente.PersonajesListener;
 import Sockets.Cliente.MensajeListener;
 
 public class TableroController implements Initializable, PersonajesListener, MensajeListener {
-    @FXML
-    Pane rootPane;
-    @FXML
-    Label labelJugador;
-    @FXML
-    ImageView fondoImage;
-    @FXML
-    GridPane contentPane;
-    @FXML
-    TextFlow chat;
-    @FXML
-    TextField textFieldMensaje;
-    @FXML
-    Label tiempoPartida;
-    @FXML
-    GridPane gridTable;
-    @FXML
-    Button buttonEnviar;
+    @FXML Pane rootPane;
+    @FXML Label labelJugador;
+    @FXML ImageView fondoImage;
+    @FXML GridPane contentPane;
+    @FXML TextFlow chat;
+    @FXML TextField textFieldMensaje;
+    @FXML Label tiempoPartida;
+    @FXML GridPane gridTable;
+    @FXML Button buttonEnviar;
+    @FXML GridPane sideBarPane;
+    @FXML GridPane seleccionPersonaje;
+    @FXML ImageView dadosImg;
+    @FXML ImageView userImg;
 
     private List<Image> imagenes = new ArrayList();
     private long segundosTranscurridos = 0L;
@@ -70,6 +69,8 @@ public class TableroController implements Initializable, PersonajesListener, Men
     private List<Personaje> personajesJuego; // Lista para almacenar la lista del servidor
     private Personaje miPersonaje; // Personaje que se debe de adivinar
 
+    public int idPersonaje; // Id del personaje del usuario
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Platform.runLater(() -> {
@@ -77,21 +78,86 @@ public class TableroController implements Initializable, PersonajesListener, Men
             stage.setFullScreen(Menu.fullScreen);
         });
 
+        this.sideBarPane.setVisible(false);
+
         this.fondoImage.fitWidthProperty().bind(this.rootPane.widthProperty());
         this.fondoImage.fitHeightProperty().bind(this.rootPane.heightProperty());
         this.contentPane.prefWidthProperty().bind(this.rootPane.widthProperty());
         this.contentPane.prefHeightProperty().bind(this.rootPane.heightProperty());
         this.labelJugador.setText(Menu.nickName);
-        this.reloj();
 
         // Estos son los que se van a eliminar para obtener de la base de datos
-        this.cargarImagenes();
-        this.insertarPersonaje();
+        //this.cargarImagenes();
+        //this.insertarPersonaje();
 
         // El campo de mensaje y el boton para enviar el mensaje se encuentran desabilitados
         // Hasta que se le asigne un turno o se reciba una pregunta
         textFieldMensaje.setDisable(true);
         buttonEnviar.setDisable(true);
+
+        this.userImg.fitWidthProperty().bind(this.rootPane.widthProperty().divide(6.5));
+        this.userImg.fitHeightProperty().bind(this.rootPane.heightProperty().divide(4.5));
+
+        this.dadosImg.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
+        this.dadosImg.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
+
+        elegirPersonaje();
+    }
+
+    private void elegirPersonaje(){
+        this.seleccionPersonaje.setVisible(true);
+
+        this.dadosImg.fitWidthProperty().bind(this.rootPane.widthProperty().divide(6));
+        this.dadosImg.fitHeightProperty().bind(this.rootPane.heightProperty().divide(4));
+    }
+
+    public void eleccionTablero(MouseEvent e){
+        ImageView imgView = (ImageView)e.getSource();
+
+        imgView.setEffect(null);
+
+        Image img = imgView.getImage();
+        this.userImg.setImage(img);
+
+        this.seleccionPersonaje.setVisible(false);
+        this.sideBarPane.setVisible(true);
+
+        reasignarMetodos();
+
+        this.idPersonaje = gridTable.getChildren().indexOf(imgView);
+        
+        this.reloj();
+    }
+
+    public void eleccionRandom(){
+        Random random = new Random();
+
+        this.dadosImg.setEffect(null);
+        this.dadosImg.setOnMouseEntered(null);
+        this.dadosImg.setOnMouseExited(null);
+
+        int rand = random.nextInt(24)+1;
+
+        ImageView imgView = (ImageView)this.gridTable.getChildren().get(rand);
+
+        Image img = imgView.getImage();
+        this.userImg.setImage(img);
+
+        this.seleccionPersonaje.setVisible(false);
+        this.sideBarPane.setVisible(true);
+
+        reasignarMetodos();
+        this.reloj();
+    }
+
+    public void eleccionLista(){}
+
+    private void reasignarMetodos(){
+        for(int i=1; i<25; i++){
+            this.gridTable.getChildren().get(i).setOnMouseClicked(null);
+            this.gridTable.getChildren().get(i).setOnMouseEntered(null);
+            this.gridTable.getChildren().get(i).setOnMouseExited(null);
+        }
     }
 
     public void setCliente(Cliente cliente) {
@@ -113,28 +179,19 @@ public class TableroController implements Initializable, PersonajesListener, Men
             mostrarPersonajesEnTablero(personajes);
 
             // AQUI SE AGREGA LO DEL PERSONAJE SECRETO SEGUN YO POR QUE ES DESPUES DE LA GENERACION DEL TABLERO
-
         });
     }
 
+    // FUCK U JOSE
+
     //Esta la configuaran para que muestre los personajes en el tablero
-    public void mostrarPersonajesEnTablero(List<Personaje> personajes) {
-
-    }
-
-
-    private void cargarImagenes() {
-        this.imagenes.clear();
-
-        for(int i = 0; i < 24; ++i) {
-            String ruta = "/Tablero/Assets/Personaje" + i + ".jpg";
-            Image img = new Image(this.getClass().getResourceAsStream(ruta));
+    public void mostrarPersonajesEnTablero(List<Personaje> personajes){
+        for (int i = 0; i < 24; i++) {
+            byte[] ruta = personajes.get(i).getImagen();
+            Image img = new Image(new ByteArrayInputStream(ruta));
             this.imagenes.add(img);
         }
 
-    }
-
-    private void insertarPersonaje() {
         int indice = 0;
 
         for(int i = 0; i < 4; i++) {
@@ -144,10 +201,28 @@ public class TableroController implements Initializable, PersonajesListener, Men
                 imageView.fitWidthProperty().bind(this.gridTable.widthProperty().divide(6).subtract(4));
                 imageView.fitHeightProperty().bind(this.gridTable.heightProperty().divide(4).subtract(4));
                 imageView.setPreserveRatio(false);
+                imageView.setOnMouseClicked(mouseEvent -> {eleccionTablero(mouseEvent);});
+                imageView.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
+                imageView.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
                 this.gridTable.add(imageView, j, i);
                 indice++;
             }
         }
+    }
+
+    private void imgMouseEntered(MouseEvent e){
+        ImageView imgView = (ImageView)e.getSource();
+        Effect effect = new Glow(0.6);
+        imgView.setEffect(effect);
+    }
+
+    private void imgMouseExited(MouseEvent e){
+        ImageView imgView = (ImageView)e.getSource();
+        imgView.setEffect(null);
+    }
+
+    private void insertarPersonaje() {
+
     }
 
     public void enviarMensaje(ActionEvent e) {

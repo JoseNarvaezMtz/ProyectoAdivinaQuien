@@ -1,0 +1,46 @@
+/*Para la tabla sola se muestra ese color, lo demas si se ve*/
+.table-view {
+    -fx-background-color: #C2B280;
+    -fx-border-color: #000000;
+    -fx-border-width: 6px;
+    -fx-table-cell-border-color: transparent;
+    -fx-font-size: 18px;
+}
+
+/*para los encabezados de la tabla*/
+.table-view .column-header {
+    -fx-background-color: #a46346;
+    -fx-font-weight: bold;
+    -fx-font-size: 25px;
+    -fx-text-fill: black;
+}
+
+/*para las celdas de la tabla*/
+.table-row-cell {
+    -fx-background-color: #e5d4a9;
+}
+
+/*para que el texto se vea centrado*/
+/*los otros dos son para el borde de las celdas*/
+.table-view .cell {
+    -fx-alignment: center;
+    -fx-border-color: #000000;
+    -fx-border-width: 0 1 1 0;
+}
+
+.button {
+    -fx-background-radius: 250em;
+    -fx-min-width: 100px;
+    -fx-min-height: 50px;
+    -fx-background-color: #C2B280;
+    -fx-text-fill: #1d1d1d;
+
+    -fx-border-color: #1f1c0e;
+    -fx-border-width: 10px;
+    -fx-border-radius: 250em;
+}
+
+.button:hover {
+    -fx-background-color: derive(#C2B280, -20%);
+    -fx-border-color: derive(#1f1c0e, -20%);
+}

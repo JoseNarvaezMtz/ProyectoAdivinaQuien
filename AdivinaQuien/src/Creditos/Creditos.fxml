@@ -86,7 +86,7 @@
                             </image>
                         </ImageView>
                         <StackPane opacity="0.9" prefHeight="150.0" prefWidth="200.0" styleClass="darkBackground" stylesheets="@CreditosStyles.css" GridPane.rowIndex="3" />
-                        <StackPane opacity="0.9" prefHeight="93.0" prefWidth="458.0" styleClass="darkBackground" stylesheets="@CreditosStyles.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <StackPane fx:id="panel4" opacity="0.9" prefHeight="93.0" prefWidth="458.0" styleClass="darkBackground" stylesheets="@CreditosStyles.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Label stylesheets="@CreditosStyles.css" text="José Luis Narvaéz Martínez" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                             <font>
                                 <Font size="24.0" />
