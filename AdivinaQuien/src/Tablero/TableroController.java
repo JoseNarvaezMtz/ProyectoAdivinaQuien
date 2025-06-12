@@ -86,10 +86,6 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.contentPane.prefHeightProperty().bind(this.rootPane.heightProperty());
         this.labelJugador.setText(Menu.nickName);
 
-        // Estos son los que se van a eliminar para obtener de la base de datos
-        //this.cargarImagenes();
-        //this.insertarPersonaje();
-
         // El campo de mensaje y el boton para enviar el mensaje se encuentran desabilitados
         // Hasta que se le asigne un turno o se reciba una pregunta
         textFieldMensaje.setDisable(true);
