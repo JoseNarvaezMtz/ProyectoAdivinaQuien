@@ -252,9 +252,31 @@ public class MenuController implements Initializable {
     }
 
     // BOTÓN PARA CAMBIAR FONDO DEL MENU
-    public void bottonCambiarFondo(ActionEvent e){
-        System.out.println("Cambio Fondo");
+
+    /*PRUEBA NO OLVIDAR BORRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR*/
+    //
+    //
+    //
+    //
+    //
+    //
+
+    public void bottonCambiarFondo(ActionEvent e) throws IOException {
+        Parent root = (Parent) FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
+        Scene scene = rootPane.getScene();
+        scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
+        stage = (Stage)((Node) e.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.hide();
+        stage.setScene(scene);
+        stage.show();
     }
+
+    //
+    //
+    //
+    //
+    //
 
     // BOTÓN PARA SILENCIAR/ACTIVAR MÚSICA
     public void bottonMusica(ActionEvent e){
@@ -284,7 +306,6 @@ public class MenuController implements Initializable {
         Parent nuevoRoot = FXMLLoader.load(getClass().getResource("/Instrucciones/Instrucciones.fxml"));
         Scene nuevaScene = new Scene(nuevoRoot);
         nuevaScene.getStylesheets().add(getClass().getResource("/Instrucciones/InstruccionesStyles.css").toExternalForm());
-
         Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
         stage.hide();
         stage.setScene(nuevaScene);
