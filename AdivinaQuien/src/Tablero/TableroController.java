@@ -24,12 +24,14 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
@@ -37,6 +39,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
@@ -65,6 +68,10 @@ public class TableroController implements Initializable, PersonajesListener, Men
     @FXML GridPane seleccionPersonaje;
     @FXML ImageView dadosImg;
     @FXML ImageView userImg;
+    @FXML ImageView listaImg;
+    @FXML GridPane gridPaneListaPer;
+    @FXML GridPane contenedorListaPer;
+    @FXML Pane shadowPane;
 
     private List<Image> imagenes = new ArrayList();
     private long segundosTranscurridos = 0L;
@@ -108,10 +115,10 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.contentPane.prefWidthProperty().bind(this.rootPane.widthProperty());
         this.contentPane.prefHeightProperty().bind(this.rootPane.heightProperty());
         this.labelJugador.setText(Menu.nickName);
-
-        // Estos son los que se van a eliminar para obtener de la base de datos
-        //this.cargarImagenes();
-        //this.insertarPersonaje();
+        this.contenedorListaPer.prefWidthProperty().bind(this.contentPane.widthProperty());
+        this.contenedorListaPer.prefHeightProperty().bind(this.contentPane.heightProperty());
+        this.shadowPane.prefWidthProperty().bind(this.contentPane.widthProperty());
+        this.shadowPane.prefHeightProperty().bind(this.contentPane.heightProperty());
 
         // El campo de mensaje y el boton para enviar el mensaje se encuentran desabilitados
         // Hasta que se le asigne un turno o se reciba una pregunta
@@ -124,7 +131,59 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.dadosImg.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
         this.dadosImg.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
 
+        this.listaImg.fitWidthProperty().bind(this.rootPane.widthProperty().divide(6.5));
+        this.listaImg.fitHeightProperty().bind(this.rootPane.heightProperty().divide(4.5));
+
+        this.listaImg.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
+        this.listaImg.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
+
         elegirPersonaje();
+    }
+
+    private void cargarListaPersonajes() {
+        ObservableList<Personaje> personajes = FXCollections.observableArrayList(personajesJuego);
+        ListView<Personaje> listViewPersonajes = new ListView((ObservableList)personajes);
+        listViewPersonajes.setOrientation(Orientation.VERTICAL);
+
+        listViewPersonajes.setCellFactory(param -> new ListCell<Personaje>(){
+            private final ImageView imageView = new ImageView();
+            private final Label label = new Label();
+            private final VBox layout = new VBox(10, imageView, label);
+
+            @Override
+            protected void updateItem(Personaje personaje, boolean empty){
+                super.updateItem(personaje, empty);
+
+                if(empty || personaje == null){
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    Image img = personaje.getImagenFX();
+                    imageView.setImage(img);
+                    imageView.setFitWidth(100);
+                    imageView.setPreserveRatio(true);
+                    label.setText(personaje.getNombre());
+                    layout.setAlignment(Pos.CENTER);
+                    setGraphic(layout);
+                }
+            }
+        });
+
+        listViewPersonajes.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                Image img = newSelection.getImagenFX();
+                this.userImg.setImage(img);
+                this.idPersonaje = newSelection.getIdTablero() + 1;
+                System.out.println(this.idPersonaje);
+                cerrarListaPersonajes(null);
+                this.seleccionPersonaje.setVisible(false);
+                this.sideBarPane.setVisible(true);
+
+                reasignarMetodos();
+            }
+        });
+
+        gridPaneListaPer.add(listViewPersonajes, 0, 1);
     }
 
     private void elegirPersonaje(){
@@ -148,7 +207,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
         reasignarMetodos();
 
         this.idPersonaje = gridTable.getChildren().indexOf(imgView);
-        
+
         this.reloj();
     }
 
@@ -173,7 +232,15 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.reloj();
     }
 
-    public void eleccionLista(){}
+    public void eleccionLista(){
+        contenedorListaPer.setVisible(true);
+        shadowPane.setVisible(true);
+    }
+
+    public void cerrarListaPersonajes(ActionEvent e){
+        contenedorListaPer.setVisible(false);
+        shadowPane.setVisible(false);
+    }
 
     private void reasignarMetodos(){
         for(int i=1; i<25; i++){
@@ -201,7 +268,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
             // Mostramos los personajes en el tablero
             mostrarPersonajesEnTablero(personajes);
 
-            // AQUI SE AGREGA LO DEL PERSONAJE SECRETO SEGUN YO POR QUE ES DESPUES DE LA GENERACION DEL TABLERO
+            cargarListaPersonajes();
         });
     }
 

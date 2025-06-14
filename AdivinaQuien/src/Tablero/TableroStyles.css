@@ -23,3 +23,8 @@
     -fx-text-fill: #ffffff;
     -fx-border-width: 3px;
 }
+
+.label{
+    -fx-font-family: Arial;
+    -fx-font-size: 30px;
+}

@@ -1,7 +1,6 @@
 package Menu;
 
 import Sockets.Cliente;
-import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +20,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -335,7 +333,7 @@ public class MenuController implements Initializable {
         stage.show();
     }
 
-    // Método de sonido de al seleccionar una opción
+    // Metodo de sonido de al seleccionar una opción
     public void sonidoSeleccion(){
         sonidoMadera.setVolume(0.05);
         sonidoMadera.play();
