@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 
 import java.awt.event.ActionListener;
@@ -41,8 +42,14 @@ public class CreditosController implements Initializable {
     private Scene scene;
     private Parent root;
 
+    //Sonidos
+    private static AudioClip sonidoPasto;
+
     // METODO QUE SE EJECUTA AL CARGAR LA ESCENA
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        //Sonido
+        sonidoPasto = new AudioClip(getClass().getResource("/Creditos/Assets/grass.mp3").toString());
         // ADAPTAR LA ESCENA A LA RESOLUCIÓN DEL DISPOSITIVO
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
@@ -91,5 +98,11 @@ public class CreditosController implements Initializable {
         }catch (IOException e1){
             e1.printStackTrace();
         }
+    }
+
+    //Sonido
+    public void sonidoPasto(){
+        sonidoPasto.setVolume(0.2);
+        sonidoPasto.play();
     }
 }

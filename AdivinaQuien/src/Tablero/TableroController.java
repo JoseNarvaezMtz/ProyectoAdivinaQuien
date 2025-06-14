@@ -5,12 +5,18 @@
 
 package Tablero;
 
+//HEY HOLA CHULAS JIJIJIJIJI
+//TIENEN Q AGREGAR LOS MÓDULOS DE AUDIO AL PROYECTO UWU
+// Son estos :3
+//  --add-modules javafx.controls,javafx.fxml,javafx.media --add-exports javafx.base/com.sun.javafx=ALL-UNNAMED
+
 import Classes.Personaje;
 import DataBaseClasses.PersonajeDB;
 import Menu.Menu;
 import Sockets.Cliente; // Importamos la clase Cliente
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.net.URL;
 import java.util.*;
 
@@ -31,12 +37,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import Menu.MenuController;
+
 
 import Sockets.Cliente.PersonajesListener;
 import Sockets.Cliente.MensajeListener;
@@ -71,8 +81,21 @@ public class TableroController implements Initializable, PersonajesListener, Men
 
     public int idPersonaje; // Id del personaje del usuario
 
+    //Música
+    public static MediaPlayer musica;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        //Musica
+        Media music = new Media(getClass().getResource("/Tablero/Assets/music1.mp3").toString());
+        musica = new MediaPlayer(music);
+
+        if(MenuController.desicionUsuario == true){
+            musica.setCycleCount(MediaPlayer.INDEFINITE);
+            musica.play();
+        }
+
         Platform.runLater(() -> {
             Stage stage = (Stage)this.rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);

@@ -46,7 +46,7 @@
                </font>
             </Label>
 
-            <TextArea fx:id="instrucciones" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" opacity="0.75" prefHeight="255.0" prefWidth="495.0" text="¿Adivina quién? Es un famoso juego de mesa por turnos donde el objetivo es adivinar al personaje que escogió secretamente el otro jugador mediante una serie de preguntas que describan las características de su personaje, ya sean físicas, accesorios, etc, ¡la imaginación es tu límite!&#10;&#10;En esta adaptación online puedes seleccionar un total de TOTALPERSONAJES de 3 maneras distintas: directamente del tablero, desde la lista de la derecha o aleatoriamente.&#10;&#10;Tras la selección se habilita un chat por turnos para hacer preguntas.&#10;Podrás marcar personajes descartados con botones en el tablero. ¡Cuidado! No hay marcha atrás.&#10;&#10;Cuando estés seguro, en tu turno puedes adivinar el personaje del rival. ¡Solo tienes una oportunidad!&#10;&#10;Disfruta del juego con temática de animales del mundo. ¿Responderás con la verdad?" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+            <TextArea fx:id="instrucciones" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#sonidoSplash" onMousePressed="#sonidoSplash" opacity="0.75" prefHeight="255.0" prefWidth="495.0" text="¿Adivina quién? Es un famoso juego de mesa por turnos donde el objetivo es adivinar al personaje que escogió secretamente el otro jugador mediante una serie de preguntas que describan las características de su personaje, ya sean físicas, accesorios, etc, ¡la imaginación es tu límite!&#10;&#10;En esta adaptación online puedes seleccionar un total de TOTALPERSONAJES de 3 maneras distintas: directamente del tablero, desde la lista de la derecha o aleatoriamente.&#10;&#10;Tras la selección se habilita un chat por turnos para hacer preguntas.&#10;Podrás marcar personajes descartados con botones en el tablero. ¡Cuidado! No hay marcha atrás.&#10;&#10;Cuando estés seguro, en tu turno puedes adivinar el personaje del rival. ¡Solo tienes una oportunidad!&#10;&#10;Disfruta del juego con temática de animales del mundo. ¿Responderás con la verdad?" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <effect>
                   <DisplacementMap>
                      <mapData>
@@ -56,7 +56,7 @@
                </effect>
             </TextArea>
 
-            <Button fx:id="buttonLista" onAction="#menuPersonajesInstrucciones" prefHeight="25.0" prefWidth="217.0" text="Ver la lista completa de personajes!" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+            <Button fx:id="buttonLista" onAction="#menuPersonajesInstrucciones" onMouseClicked="#sonidoSplash" onMousePressed="#sonidoSplash" prefHeight="25.0" prefWidth="217.0" text="Ver la lista completa de personajes!" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                <effect>
                   <Reflection>
                      <input>
@@ -65,7 +65,7 @@
                   </Reflection>
                </effect></Button>
 
-            <Button fx:id="buttonSalir" contentDisplay="CENTER" nodeOrientation="RIGHT_TO_LEFT" onAction="#salir" prefHeight="25.0" prefWidth="87.0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP">
+            <Button fx:id="buttonSalir" contentDisplay="CENTER" nodeOrientation="RIGHT_TO_LEFT" onAction="#salir" onMousePressed="#sonidoSplash" prefHeight="25.0" prefWidth="87.0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets left="75.0" />
                </GridPane.margin>
@@ -87,7 +87,7 @@
           <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" onAction="#regresarInstrucciones" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+            <Button mnemonicParsing="false" onAction="#regresarInstrucciones" onMouseClicked="#sonidoSplash" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                <effect>
                   <Reflection>
                      <input>
@@ -105,7 +105,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="buttonIzquierda" mnemonicParsing="false" onAction="#izquierda" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                  <Button fx:id="buttonIzquierda" mnemonicParsing="false" onAction="#izquierda" onMouseClicked="#sonidoGota" onMousePressed="#sonidoGota" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <effect>
                         <Reflection>
                            <input>
@@ -113,7 +113,7 @@
                            </input>
                         </Reflection>
                      </effect></Button>
-                  <Button fx:id="buttonDerecha" mnemonicParsing="false" onAction="#derecha" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                  <Button fx:id="buttonDerecha" mnemonicParsing="false" onAction="#derecha" onMouseClicked="#sonidoGota" onMousePressed="#sonidoGota" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <effect>
                         <Reflection>
                            <input>

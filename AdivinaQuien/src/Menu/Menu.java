@@ -22,6 +22,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Menu extends Application {
@@ -36,7 +37,9 @@ public class Menu extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+
         try {
+            Font.loadFont(getClass().getResourceAsStream("/Fonts/PermanentMarker-Regular.ttf"),25);
             Parent root = FXMLLoader.load(getClass().getResource("Menu.fxml"));
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/Menu/MenuStyles.css").toExternalForm());

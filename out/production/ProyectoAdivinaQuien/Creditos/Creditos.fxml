@@ -22,7 +22,7 @@
                         <Image url="@Assets/Creditos2.jpg" />
                     </image>
                 </ImageView>
-                <GridPane fx:id="contentPane" alignment="CENTER" prefHeight="819.0" prefWidth="900.0">
+                <GridPane fx:id="contentPane" alignment="CENTER" onMousePressed="#sonidoPasto" prefHeight="819.0" prefWidth="900.0">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="451.0" minWidth="10.0" percentWidth="50.0" prefWidth="451.0" />
                         <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="600.0" minWidth="10.0" percentWidth="50.0" prefWidth="449.0" />
@@ -53,7 +53,7 @@
                                 <Image url="@Assets/julian.png" />
                             </image>
                         </ImageView>
-                        <Button fx:id="buttonSalir" mnemonicParsing="false" onAction="#bottonSalir" prefHeight="75.0" prefWidth="202.0" styleClass="buttonRegresar" stylesheets="@CreditosStyles.css" text="Regresar" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                        <Button fx:id="buttonSalir" mnemonicParsing="false" onAction="#bottonSalir" onMousePressed="#sonidoPasto" prefHeight="75.0" prefWidth="202.0" styleClass="buttonRegresar" stylesheets="@CreditosStyles.css" text="Regresar" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                             <font>
                                 <Font name="System Bold" size="18.0" />
                             </font>

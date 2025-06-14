@@ -1,6 +1,7 @@
 package Menu;
 
 import Sockets.Cliente;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,7 +16,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,6 +35,9 @@ public class MenuController implements Initializable {
     @FXML Pane darkness;
     @FXML GridPane GridPaneNickname;
     @FXML GridPane nickNameContainer;
+    @FXML Pane titlePane;
+    @FXML Label labelTitulo1;
+    @FXML Label labelTitulo2;
 
     // BOTONES
     @FXML private Button buttonJugar;
@@ -57,9 +66,38 @@ public class MenuController implements Initializable {
 
     private Cliente cliente;
 
+    //Musica
+    public static MediaPlayer musica;
+    private static AudioClip sonidoMadera;
+    private static AudioClip sonidoGaviota;
+    public static Boolean desicionUsuario = true;
+
     // METODO QUE SE EJECUTA AL INICIALIZAR LA PANTALLA
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        // Inicializando sonido
+        sonidoMadera = new AudioClip(getClass().getResource("/Menu/Assets/woodHit.mp3").toString());
+        sonidoGaviota = new AudioClip(getClass().getResource("/Menu/Assets/seagull.mp3").toString());
+
+        // Inicializando música
+        // Si no se está reproduciendo nada, reproduce la música, es para evitar conflictos cada que se instancie la scene
+        if (musica == null) {
+            Media music = new Media(getClass().getResource("/Menu/Assets/musicMenu.mp3").toString());
+            musica = new MediaPlayer(music);
+            musica.setCycleCount(MediaPlayer.INDEFINITE);
+        }
+
+        //Evitamos que al regresar de otra pantalla que reproduzca audio, vuelva a reproducir la música
+        //Si el usuario ya indicó que no quiere escuchar música
+        if (desicionUsuario == true) {
+            if (musica.getStatus() != MediaPlayer.Status.PLAYING) {
+                musica.play();
+            }
+        } else {
+            musica.pause();
+        }
+
         // ADAPTA
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
@@ -134,6 +172,22 @@ public class MenuController implements Initializable {
         btnNickConfirmar.prefWidthProperty().bind(rootPane.widthProperty().divide(17));
         btnNickConfirmar.prefHeightProperty().bind(rootPane.heightProperty().divide(16));
 
+        // ADAPTAR EL PANE DEL TITULO A LA RESOLUCIÓN DEL DISPOSITIVO
+        titlePane.prefWidthProperty().bind(rootPane.widthProperty().divide(3));
+        titlePane.prefHeightProperty().bind(rootPane.heightProperty().divide(1.1));
+
+        // Adaptamos los labels del titulo a la resolución del dispositivo
+        labelTitulo1.prefWidthProperty().bind(titlePane.widthProperty());
+        labelTitulo1.prefHeightProperty().bind(titlePane.heightProperty());
+
+        Font fontTitulo = new Font(100);
+        labelTitulo1.setFont(fontTitulo);
+        labelTitulo2.setFont(fontTitulo);
+
+        labelTitulo2.prefWidthProperty().bind(titlePane.widthProperty());
+        labelTitulo2.prefHeightProperty().bind(titlePane.heightProperty());
+
+
         // CARGA DE ÍCONOS
 
         // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE SALIR
@@ -206,7 +260,13 @@ public class MenuController implements Initializable {
 
     // BOTÓN PARA SILENCIAR/ACTIVAR MÚSICA
     public void bottonMusica(ActionEvent e){
-        System.out.println("Apago musica");
+        musica.setMute(!musica.isMute());
+        if(desicionUsuario == true){
+            desicionUsuario = false;
+        }
+        else{
+            desicionUsuario = true;
+        }
     }
 
     // BOTÓN PARA IR A LA PANTALLA DE CRÉDITOS
@@ -269,8 +329,21 @@ public class MenuController implements Initializable {
         nuevaScene.getStylesheets().add(getClass().getResource("/SalaDeEspera/SalaDeEsperaStyles.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        musica.setMute(!musica.isMute());
         stage.hide();
         stage.setScene(nuevaScene);
         stage.show();
     }
+
+    // Método de sonido de al seleccionar una opción
+    public void sonidoSeleccion(){
+        sonidoMadera.setVolume(0.05);
+        sonidoMadera.play();
+    }
+
+    public void sonidoGaviota(){
+        sonidoGaviota.setVolume(0.2);
+        sonidoGaviota.play();
+    }
+
 }

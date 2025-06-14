@@ -27,6 +27,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -51,7 +52,15 @@ public class InstruccionesController implements Initializable {
     // Contador que indica el indice actual de la imagen seleccionada
     private int indiceActual = 0;
 
+    //Sonidos
+    private static AudioClip sonidoSplash;
+    private static AudioClip sonidoGota;
+
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        sonidoSplash = new AudioClip(getClass().getResource("/Instrucciones/Assets/splash.mp3").toString());
+        sonidoGota = new AudioClip(getClass().getResource("/Instrucciones/Assets/gota.mp3").toString());
+
         Platform.runLater(() -> {
             Stage stage = (Stage)this.rootPane.getScene().getWindow();
             if (stage != null) {
@@ -202,5 +211,16 @@ public class InstruccionesController implements Initializable {
     public void regresarInstrucciones(ActionEvent e) {
         this.contentPanePersonajes.setVisible(false);
         this.contentPane.setVisible(true);
+    }
+
+    //Sonidos
+    public void sonidoSplash(){
+        sonidoSplash.setVolume(0.4);
+        sonidoSplash.play();
+    }
+
+    public void sonidoGota(){
+        sonidoGota.setVolume(0.2);
+        sonidoGota.play();
     }
 }

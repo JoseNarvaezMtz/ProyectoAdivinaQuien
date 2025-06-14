@@ -18,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -40,24 +41,13 @@ public class PartidasController implements Initializable {
     private Scene scene;
     private Parent root;
 
-    // Función que cambia al menú principal
-    public void salir(ActionEvent e){
-        try {
-            Parent menuRoot = FXMLLoader.load(getClass().getResource("/Menu/Menu.fxml"));
-            Scene scene = new Scene(menuRoot);
-            scene.getStylesheets().add(getClass().getResource("/Menu/MenuStyles.css").toExternalForm());
-
-            Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-            stage.hide();
-            stage.setScene(scene);
-            stage.show();
-        }catch (IOException e1){
-            e1.printStackTrace();
-        }
-    }
+    private static AudioClip sonidoArena;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        sonidoArena = new AudioClip(getClass().getResource("/Partidas/Assets/sand.mp3").toString());
+
         javafx.application.Platform.runLater(() -> {
             if (rootPane.getScene() != null) {
                 Stage stage = (Stage) rootPane.getScene().getWindow();
@@ -106,5 +96,26 @@ public class PartidasController implements Initializable {
         imageView.setFitWidth(45);
         imageView.setFitHeight(45);
         buttonSalir.setGraphic(imageView);
+    }
+
+    // Función que cambia al menú principal
+    public void salir(ActionEvent e){
+        try {
+            Parent menuRoot = FXMLLoader.load(getClass().getResource("/Menu/Menu.fxml"));
+            Scene scene = new Scene(menuRoot);
+            scene.getStylesheets().add(getClass().getResource("/Menu/MenuStyles.css").toExternalForm());
+
+            Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            stage.hide();
+            stage.setScene(scene);
+            stage.show();
+        }catch (IOException e1){
+            e1.printStackTrace();
+        }
+    }
+
+    public void sonidoSeleccion(){
+        sonidoArena.setVolume(0.2);
+        sonidoArena.play();
     }
 }
