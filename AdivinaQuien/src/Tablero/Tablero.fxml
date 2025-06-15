@@ -67,11 +67,15 @@
                 <RowConstraints maxHeight="63.0" minHeight="0.0" percentHeight="55.0" prefHeight="0.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="¿ADIVINA QUIÉN?" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
+                  <StackPane style="-fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                     <children>
+                        <Label styleClass="labelTitulo" text="ADIVINA ¿QUIÉN?">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </StackPane>
                   <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

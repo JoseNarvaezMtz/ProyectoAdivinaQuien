@@ -199,11 +199,19 @@ public class MenuController implements Initializable {
         buttonSalir.setGraphic(imageView);
 
         // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE ACTIVAR/DESACTIVAR MÚSICA
-        Image imagenMusica = new Image(getClass().getResourceAsStream("/Menu/Assets/musica.png"));
-        ImageView imageView2 = new ImageView(imagenMusica);
-        imageView2.setFitWidth(45);
-        imageView2.setFitHeight(45);
-        buttonMusic.setGraphic(imageView2);
+        if(desicionUsuario){
+            Image imagenMusica = new Image(getClass().getResourceAsStream("/Menu/Assets/musica.png"));
+            ImageView imageView2 = new ImageView(imagenMusica);
+            imageView2.setFitWidth(45);
+            imageView2.setFitHeight(45);
+            buttonMusic.setGraphic(imageView2);
+        } else{
+            Image imagenMusica = new Image(getClass().getResourceAsStream("/Menu/Assets/musicaMuteada.png"));
+            ImageView imageView2 = new ImageView(imagenMusica);
+            imageView2.setFitWidth(45);
+            imageView2.setFitHeight(45);
+            buttonMusic.setGraphic(imageView2);
+        }
 
         // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE CAMBIAR EL FONDO
         Image imagenFondo = new Image(getClass().getResourceAsStream("/Menu/Assets/fondo.png"));
