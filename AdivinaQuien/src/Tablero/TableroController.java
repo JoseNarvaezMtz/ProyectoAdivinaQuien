@@ -229,7 +229,8 @@ public class TableroController implements Initializable, PersonajesListener, Men
 
         int rand = random.nextInt(24)+1;
 
-        ImageView imgView = (ImageView)this.gridTable.getChildren().get(rand);
+        StackPane stackPane = (StackPane)this.gridTable.getChildren().get(rand);
+        ImageView imgView = (ImageView)stackPane.getChildren().get(0);
 
         Image img = imgView.getImage();
         this.userImg.setImage(img);
@@ -277,46 +278,55 @@ public class TableroController implements Initializable, PersonajesListener, Men
         BorderPane menuPersonajeContenedor = new BorderPane();
         GridPane menuPersonaje = new GridPane();
 
-        menuPersonaje.setAlignment(Pos.CENTER);
-        menuPersonaje.setHgap(4);
+            menuPersonaje.setAlignment(Pos.CENTER);
+            menuPersonaje.setHgap(4);
 
-        Image iconAdivinar = new Image(getClass().getResourceAsStream("/Tablero/Assets/adivinar.png"));
-        Image iconVoltear = new Image(getClass().getResourceAsStream("/Tablero/Assets/voltear.png"));
+            Image iconAdivinar = new Image(getClass().getResourceAsStream("/Tablero/Assets/adivinar.png"));
+            Image iconVoltear = new Image(getClass().getResourceAsStream("/Tablero/Assets/voltear.png"));
 
-        ImageView iconAdivinarIV = new ImageView(iconAdivinar);
-        ImageView iconVoltearIV = new ImageView(iconVoltear);
+            ImageView iconAdivinarIV = new ImageView(iconAdivinar);
+            ImageView iconVoltearIV = new ImageView(iconVoltear);
 
-        iconAdivinarIV.setFitWidth(24);
-        iconAdivinarIV.setFitHeight(24);
+            iconAdivinarIV.setFitWidth(24);
+            iconAdivinarIV.setFitHeight(24);
 
-        iconVoltearIV.setFitWidth(24);
-        iconVoltearIV.setFitHeight(24);
+            iconVoltearIV.setFitWidth(24);
+            iconVoltearIV.setFitHeight(24);
 
-        Button botonVoltear = new Button();
-        botonVoltear.setMaxWidth(Double.MAX_VALUE);
-        botonVoltear.setGraphic(iconVoltearIV);
+            Button botonVoltear = new Button();
+            botonVoltear.setMaxWidth(Double.MAX_VALUE);
+            botonVoltear.setGraphic(iconVoltearIV);
 
-        Button botonAdivinar = new Button();
+            Button botonAdivinar = new Button();
 
-        botonVoltear.setMaxWidth(Double.MAX_VALUE);
-        botonAdivinar.setGraphic(iconAdivinarIV);
+            botonVoltear.setMaxWidth(Double.MAX_VALUE);
+            botonAdivinar.setGraphic(iconAdivinarIV);
 
-        botonVoltear.prefWidthProperty().bind(rootPane.widthProperty().divide(35));
-        botonVoltear.prefHeightProperty().bind(rootPane.heightProperty().divide(25));
+            botonVoltear.prefWidthProperty().bind(rootPane.widthProperty().divide(35));
+            botonVoltear.prefHeightProperty().bind(rootPane.heightProperty().divide(25));
 
-        botonAdivinar.prefWidthProperty().bind(rootPane.widthProperty().divide(35));
-        botonAdivinar.prefHeightProperty().bind(rootPane.heightProperty().divide(25));
+            botonAdivinar.prefWidthProperty().bind(rootPane.widthProperty().divide(35));
+            botonAdivinar.prefHeightProperty().bind(rootPane.heightProperty().divide(25));
 
-        Effect sombra = new DropShadow();
+            Effect sombra = new DropShadow();
 
-        botonAdivinar.setEffect(sombra);
-        botonVoltear.setEffect(sombra);
+            botonAdivinar.setEffect(sombra);
+            botonVoltear.setEffect(sombra);
 
-        menuPersonaje.add(botonVoltear, 0, 0);
-        menuPersonaje.add(botonAdivinar, 1,   0);
-        menuPersonajeContenedor.setBottom(menuPersonaje);
+            botonAdivinar.setOnMouseClicked(mouseEvent -> {adivinar(mouseEvent, indice);});
+            botonVoltear.setOnMouseClicked(mouseEvent -> {voltear(mouseEvent, indice);});
 
-        this.gridTable.add(menuPersonajeContenedor, col, row);
+            if(personajesJuego.get(indice).isTachado()){
+                botonVoltear.setDisable(true);
+                botonAdivinar.setDisable(true);
+            }
+
+            menuPersonaje.add(botonVoltear, 0, 0);
+            menuPersonaje.add(botonAdivinar, 1, 0);
+            menuPersonajeContenedor.setBottom(menuPersonaje);
+
+            stack.getChildren().add(menuPersonajeContenedor);
+        }
     }
 
     private void mouseSalio(MouseEvent e){
@@ -325,6 +335,28 @@ public class TableroController implements Initializable, PersonajesListener, Men
         int indice = imagenes.indexOf(img);
 
 
+    }
+
+    private void voltear(MouseEvent e, int indice){
+        StackPane stack = (StackPane)gridTable.getChildren().get(indice+1);
+
+        for (Node hijo : stack.getChildren()) {
+            if (hijo instanceof ImageView) {
+                Effect efecto = new SepiaTone();
+                hijo.setEffect(efecto);
+            }
+            if (hijo instanceof BorderPane){
+                GridPane grid = (GridPane)((BorderPane) hijo).getBottom();
+                grid.getChildren().get(0).setDisable(true);
+                grid.getChildren().get(1).setDisable(true);
+            }
+        }
+
+        personajesJuego.get(indice).setTachado(true);
+    }
+
+    private void adivinar(MouseEvent e, int indice){
+        Button button = (Button) e.getSource();
     }
 
     public void setCliente(Cliente cliente) {
