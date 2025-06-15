@@ -2,18 +2,23 @@ package TerminarPartida;
 
 import Menu.Menu;
 import Menu.MenuController;
+import Tablero.TableroController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
-import javax.swing.plaf.RootPaneUI;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -30,78 +35,130 @@ public class TerminarPartidaController extends MenuController implements Initial
 
     @FXML Button buttonRegresarMenu;
     @FXML Button buttonVolverAJugar;
-    // winner = true
-    // loser = false
-    public Boolean estado = false;
+
+    public Boolean estado = true;
+
+    //Musica
+    public MediaPlayer musica;
+    Media musicWin = new Media(getClass().getResource("/TerminarPartida/Assets/sunny.mp3").toString());
+    Media musicLost = new Media(getClass().getResource("/TerminarPartida/Assets/rain.mp3").toString());
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        if (TableroController.musica != null) {
+            TableroController.musica.stop();
+        }
+
+        if (MenuController.musica != null){
+            MenuController.musica.stop();
+        }
+
+        if (estado == true) {
+            musica = new MediaPlayer(musicWin);
+            musica.setCycleCount(MediaPlayer.INDEFINITE);
+            musica.play();
+        }
+        else {
+            musica = new MediaPlayer(musicLost);
+            musica.setCycleCount(MediaPlayer.INDEFINITE);
+            musica.play();
+        }
+
+        // Agregar el estilo del CSS a los botones
+        buttonVolverAJugar.getStyleClass().add("buttonPartidaFin");
+        buttonRegresarMenu.getStyleClass().add("buttonPartidaFin");
 
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
         });
 
-        gridPane2.prefWidthProperty().bind(rootPane.widthProperty());
-        gridPane2.prefHeightProperty().bind(rootPane.heightProperty());
-
-        // Ajustar el fondo a la resolución de pantalla
+        // Ajuste general de tamaños de los contenedores
         fondoImage.fitWidthProperty().bind(rootPane.widthProperty());
         fondoImage.fitHeightProperty().bind(rootPane.heightProperty());
 
-        // Ajustar el tamaño del título
+        gridPane2.prefWidthProperty().bind(rootPane.widthProperty().divide(1.5));
+        gridPane2.prefHeightProperty().bind(rootPane.heightProperty().divide(2));
+
+        // Ajustando el tamaño del titulo
         tituloLabel.prefWidthProperty().bind(rootPane.widthProperty().divide(1.5));
         tituloLabel.prefHeightProperty().bind(rootPane.heightProperty().divide(4));
-
-        // Ajustar el tamaño de fuente
         tituloLabel.setFont(new javafx.scene.text.Font(80));
+        tituloLabel.setWrapText(true);
+        tituloLabel.setMaxWidth(Double.MAX_VALUE);
 
-        // Ajustar los botones
-        buttonVolverAJugar.prefWidthProperty().bind(rootPane.widthProperty().divide(9));
-        buttonVolverAJugar.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
+        // Ajustar el tamaño de los botones con grid pane
+        buttonVolverAJugar.prefWidthProperty().bind(rootPane.widthProperty().divide(3));
+        buttonVolverAJugar.prefHeightProperty().bind(rootPane.heightProperty().divide(7));
 
-        buttonRegresarMenu.prefWidthProperty().bind(rootPane.widthProperty().divide(9));
-        buttonRegresarMenu.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
+        buttonRegresarMenu.prefWidthProperty().bind(rootPane.widthProperty().divide(3));
+        buttonRegresarMenu.prefHeightProperty().bind(rootPane.heightProperty().divide(7));
 
-        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN VOLVER A JUGAR
+
+        // Ajuste de gridPane
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPercentWidth(100);
+        col1.setHgrow(Priority.ALWAYS);
+
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth(100);
+        col2.setHgrow(Priority.ALWAYS);
+
+        gridPane2.getColumnConstraints().addAll(col1, col2);
+
+        GridPane.setHgrow(buttonVolverAJugar, Priority.ALWAYS);
+        GridPane.setVgrow(buttonVolverAJugar, Priority.ALWAYS);
+
+        GridPane.setHgrow(buttonRegresarMenu, Priority.ALWAYS);
+        GridPane.setVgrow(buttonRegresarMenu, Priority.ALWAYS);
+
         Image imagenVolverAJugar = new Image(getClass().getResourceAsStream("/TerminarPartida/Assets/jugar.png"));
         ImageView imageView = new ImageView(imagenVolverAJugar);
-        imageView.setFitWidth(45);
-        imageView.setFitHeight(45);
+        imageView.setFitWidth(60);
+        imageView.setFitHeight(60);
         buttonVolverAJugar.setGraphic(imageView);
+        buttonVolverAJugar.setMaxWidth(Double.MAX_VALUE);
 
-        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN REGRESAR A MENU
         Image imagenRegresarAMenu = new Image(getClass().getResourceAsStream("/TerminarPartida/Assets/tabla.png"));
         ImageView imageView2 = new ImageView(imagenRegresarAMenu);
-        imageView2.setFitWidth(45);
-        imageView2.setFitHeight(45);
+        imageView2.setFitWidth(60);
+        imageView2.setFitHeight(60);
         buttonRegresarMenu.setGraphic(imageView2);
+        buttonRegresarMenu.setMaxWidth(Double.MAX_VALUE);
 
         EstadoPartidaTerminada();
     }
 
+    //Toma al padre para mandar a llamar al método que manda al usuario a partidas registradas
     @Override
     public void partidasRegistradas(ActionEvent e) throws IOException {
+        if(MenuController.desicionUsuario == true ){
+            MenuController.musica.play();
+        }
+        musica.stop();
         super.partidasRegistradas(e);
     }
 
+    //Toma al padre para mandar a llamar al método que manda al usuario a Sala de espera
     @Override
     public void cambiarSalaDeEspera(ActionEvent e) throws IOException {
+        if(MenuController.desicionUsuario == true ){
+            MenuController.musica.play();
+        }
+        musica.stop();
         super.cambiarSalaDeEspera(e);
     }
 
-    public void EstadoPartidaTerminada(){
-        tituloLabel.setWrapText(true);
-        tituloLabel.setMaxWidth(Double.MAX_VALUE);
-
-        if(estado == true){
+    public void EstadoPartidaTerminada() {
+        if (estado == true) {
             fondoImage.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/TerminarPartida/Assets/winner.png")));
             tituloLabel.setText("Felicidades, Ganaste!");
 
-        }
-        else{
+        } else {
             fondoImage.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/TerminarPartida/Assets/loser.png")));
-            tituloLabel.setText("Perdiste,    Lo siento!");
+            tituloLabel.setText("Perdiste, Lo siento!");
         }
     }
 }

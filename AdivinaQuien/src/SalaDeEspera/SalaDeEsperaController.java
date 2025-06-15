@@ -46,15 +46,14 @@ public class SalaDeEsperaController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        //Pausa la música del menú
+        MenuController.musica.pause();
+
         //Sonido de Fondo
         Media fondo = new Media(getClass().getResource("/SalaDeEspera/Assets/ocean.mp3").toString());
         oceano = new MediaPlayer(fondo);
         oceano.setCycleCount(MediaPlayer.INDEFINITE);
         oceano.play();
-
-        if (MenuController.musica != null) {
-            MenuController.musica.pause();
-        }
 
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();

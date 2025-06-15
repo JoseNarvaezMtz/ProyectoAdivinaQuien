@@ -1,13 +1,18 @@
 .buttonPartidaFin{
     -fx-background-radius: 250em;
-    -fx-min-width: 50px;
-    -fx-min-height: 50px;
-    -fx-background-color: #595959;
-    -fx-text-fill: #ffffff;
+    -fx-pref-height: 100px;
+    -fx-pref-width: 100px;
+    -fx-background-color: #D8BFD8;
+    -fx-text-fill: #F5F5F5;
 
-    -fx-border-color: #000000;
+    -fx-border-color: #595959;
     -fx-border-width: 10px;
     -fx-border-radius: 250em;
     -fx-font-family: "Arial Black";
     -fx-font-size: 22;
+}
+
+.buttonPartidaFin:hover {
+    -fx-background-color: derive(#D8BFD8, -20%);
+    -fx-border-color: derive(#595959, -20%);
 }
