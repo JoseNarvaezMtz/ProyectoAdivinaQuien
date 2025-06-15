@@ -18,10 +18,13 @@
 }
 
 .button{
-    -fx-background-color: #032d01;
-    -fx-border-color: #000000;
-    -fx-text-fill: #ffffff;
+    -fx-background-color: #f5f5dc;
+    -fx-border-color: #67675b;
+    -fx-text-fill: #050000;
+    -fx-background-radius: 250px;
     -fx-border-width: 3px;
+    -fx-border-radius: 250px;
+    -fx-border-color: #67675b;
 }
 
 .label{

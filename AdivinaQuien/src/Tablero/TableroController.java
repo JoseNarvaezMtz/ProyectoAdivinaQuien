@@ -32,11 +32,13 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -55,23 +57,30 @@ import Sockets.Cliente.PersonajesListener;
 import Sockets.Cliente.MensajeListener;
 
 public class TableroController implements Initializable, PersonajesListener, MensajeListener {
+
     @FXML Pane rootPane;
-    @FXML Label labelJugador;
-    @FXML ImageView fondoImage;
     @FXML GridPane contentPane;
-    @FXML TextFlow chat;
-    @FXML TextField textFieldMensaje;
-    @FXML Label tiempoPartida;
     @FXML GridPane gridTable;
-    @FXML Button buttonEnviar;
     @FXML GridPane sideBarPane;
     @FXML GridPane seleccionPersonaje;
-    @FXML ImageView dadosImg;
-    @FXML ImageView userImg;
-    @FXML ImageView listaImg;
     @FXML GridPane gridPaneListaPer;
     @FXML GridPane contenedorListaPer;
     @FXML Pane shadowPane;
+
+    @FXML ImageView fondoImage;
+    @FXML ImageView dadosImg;
+    @FXML ImageView userImg;
+    @FXML ImageView listaImg;
+
+    @FXML Label labelJugador;
+    @FXML Label tiempoPartida;
+
+    @FXML TextFlow chat;
+    @FXML TextField textFieldMensaje;
+
+    @FXML Button buttonEnviar;
+
+
 
     private List<Image> imagenes = new ArrayList();
     private long segundosTranscurridos = 0L;
@@ -243,11 +252,79 @@ public class TableroController implements Initializable, PersonajesListener, Men
     }
 
     private void reasignarMetodos(){
-        for(int i=1; i<25; i++){
+        for(int i=1; i<=24; i++){
             this.gridTable.getChildren().get(i).setOnMouseClicked(null);
-            this.gridTable.getChildren().get(i).setOnMouseEntered(null);
-            this.gridTable.getChildren().get(i).setOnMouseExited(null);
+            this.gridTable.getChildren().get(i).setOnMouseEntered(mouseEvent -> {mouseEntro(mouseEvent);});
+            this.gridTable.getChildren().get(i).setOnMouseExited(mouseEvent -> {mouseSalio(mouseEvent);});
         }
+    }
+
+    private void mouseEntro(MouseEvent e){
+        ImageView imgV = (ImageView)e.getSource();
+        Image img = imgV.getImage();
+        int indice = imagenes.indexOf(img);
+
+        int row = 0, col = 0;
+
+        if(indice > 5){
+            row = indice / 6;
+            col = indice % 6;
+        } else{
+            row = 0;
+            col = indice;
+        }
+
+        BorderPane menuPersonajeContenedor = new BorderPane();
+        GridPane menuPersonaje = new GridPane();
+
+        menuPersonaje.setAlignment(Pos.CENTER);
+        menuPersonaje.setHgap(4);
+
+        Image iconAdivinar = new Image(getClass().getResourceAsStream("/Tablero/Assets/adivinar.png"));
+        Image iconVoltear = new Image(getClass().getResourceAsStream("/Tablero/Assets/voltear.png"));
+
+        ImageView iconAdivinarIV = new ImageView(iconAdivinar);
+        ImageView iconVoltearIV = new ImageView(iconVoltear);
+
+        iconAdivinarIV.setFitWidth(24);
+        iconAdivinarIV.setFitHeight(24);
+
+        iconVoltearIV.setFitWidth(24);
+        iconVoltearIV.setFitHeight(24);
+
+        Button botonVoltear = new Button();
+        botonVoltear.setMaxWidth(Double.MAX_VALUE);
+        botonVoltear.setGraphic(iconVoltearIV);
+
+        Button botonAdivinar = new Button();
+
+        botonVoltear.setMaxWidth(Double.MAX_VALUE);
+        botonAdivinar.setGraphic(iconAdivinarIV);
+
+        botonVoltear.prefWidthProperty().bind(rootPane.widthProperty().divide(35));
+        botonVoltear.prefHeightProperty().bind(rootPane.heightProperty().divide(25));
+
+        botonAdivinar.prefWidthProperty().bind(rootPane.widthProperty().divide(35));
+        botonAdivinar.prefHeightProperty().bind(rootPane.heightProperty().divide(25));
+
+        Effect sombra = new DropShadow();
+
+        botonAdivinar.setEffect(sombra);
+        botonVoltear.setEffect(sombra);
+
+        menuPersonaje.add(botonVoltear, 0, 0);
+        menuPersonaje.add(botonAdivinar, 1,   0);
+        menuPersonajeContenedor.setBottom(menuPersonaje);
+
+        this.gridTable.add(menuPersonajeContenedor, col, row);
+    }
+
+    private void mouseSalio(MouseEvent e){
+        ImageView imgV = (ImageView)e.getSource();
+        Image img = imgV.getImage();
+        int indice = imagenes.indexOf(img);
+
+
     }
 
     public void setCliente(Cliente cliente) {
@@ -268,11 +345,17 @@ public class TableroController implements Initializable, PersonajesListener, Men
             // Mostramos los personajes en el tablero
             mostrarPersonajesEnTablero(personajes);
 
+            cargarListaImagenes();
+
             cargarListaPersonajes();
         });
     }
 
-    // FUCK U JOSE
+    private void cargarListaImagenes(){
+        for(int i=0; i<(gridTable.getRowCount()*gridTable.getColumnCount()); i++){
+            this.imagenes.add(personajesJuego.get(i).getImagenFX());
+        }
+    }
 
     //Esta la configuaran para que muestre los personajes en el tablero
     public void mostrarPersonajesEnTablero(List<Personaje> personajes){
@@ -335,10 +418,10 @@ public class TableroController implements Initializable, PersonajesListener, Men
             buttonEnviar.setDisable(true);
             textFieldMensaje.clear();
             System.out.println("Pregunta enviada: " + mensaje);
-        // Si no es mi turno, y la pregunta fue enviada para responder y esta respondiendo si o no
+            // Si no es mi turno, y la pregunta fue enviada para responder y esta respondiendo si o no
         } else if (!esMiTurno && !textFieldMensaje.isDisable() && (mensaje.equalsIgnoreCase("SI") || mensaje.equalsIgnoreCase("NO"))) {
             /* Entonces la variable "preguntaEnviada" en el cliente que RESPONDE va a ser "true"
-            * pero solo cuando el se recibe la pregunta y se habilitara el chat para que responda si o no*/
+             * pero solo cuando el se recibe la pregunta y se habilitara el chat para que responda si o no*/
 
             cliente.enviarMensaje("RESPUESTA", mensaje);
 
@@ -349,7 +432,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
             buttonEnviar.setDisable(true);
             textFieldMensaje.clear();
             System.out.println("Respuesta enviada: " + mensaje);
-        // Si no es ningun caso, entonces aparecera que no se puede enviiar mensaje
+            // Si no es ningun caso, entonces aparecera que no se puede enviiar mensaje
         } else {
             agregarMensajeAlChat("Sistema", "No puedes enviar mensaje en este momento");
             textFieldMensaje.clear();
@@ -402,7 +485,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
                     nickNameOp = nickTurno;
                     agregarMensajeAlChat("Sistema", "Es el turno del jugador " + nickTurno);
                 }
-            // Vemos si el mensaje empieza por "PREGUNTA:"
+                // Vemos si el mensaje empieza por "PREGUNTA:"
             } else if (mensaje.startsWith("PREGUNTA:")) {
                 // Viene estructurado de la siguiente manera: "PREGUNTA:nickname:mensaje"
                 String[] mensajePartes = mensaje.split(":", 3); // Divide el mensaje en 3 partes
@@ -422,7 +505,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
                         agregarMensajeAlChat("Sistema", "El jugador oponente ha hceho una pregunta, responde (Si o No) paro");
                     }
                 }
-            // Vemos si el mensaje empieza por "RESPUESTA:"
+                // Vemos si el mensaje empieza por "RESPUESTA:"
             } else if (mensaje.startsWith("RESPUESTA:")) {
                 // Viene estructurado de la siguiente manera: "RESPUESTA:nickname:mensaje"
                 String[] mensajePartes = mensaje.split(":", 3); // Divide el mensjae en 3 partes

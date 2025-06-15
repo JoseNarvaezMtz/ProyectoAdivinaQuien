@@ -89,7 +89,6 @@ public class TerminarPartidaController extends MenuController implements Initial
             tituloLabel.getStyleClass().add("tituloPartidaFinLose");
             buttonVolverAJugar.getStyleClass().add("buttonPartidaFinLose");
             buttonRegresarMenu.getStyleClass().add("buttonPartidaFinLose");
-
         }
 
         tituloLabel.prefWidthProperty().bind(rootPane.widthProperty().divide(1.5));
