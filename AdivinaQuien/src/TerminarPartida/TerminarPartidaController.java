@@ -36,7 +36,7 @@ public class TerminarPartidaController extends MenuController implements Initial
     @FXML Button buttonRegresarMenu;
     @FXML Button buttonVolverAJugar;
 
-    public Boolean estado = true;
+    public Boolean estado = false;
 
     //Musica
     public MediaPlayer musica;
@@ -66,10 +66,6 @@ public class TerminarPartidaController extends MenuController implements Initial
             musica.play();
         }
 
-        // Agregar el estilo del CSS a los botones
-        buttonVolverAJugar.getStyleClass().add("buttonPartidaFin");
-        buttonRegresarMenu.getStyleClass().add("buttonPartidaFin");
-
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
@@ -82,7 +78,20 @@ public class TerminarPartidaController extends MenuController implements Initial
         gridPane2.prefWidthProperty().bind(rootPane.widthProperty().divide(1.5));
         gridPane2.prefHeightProperty().bind(rootPane.heightProperty().divide(2));
 
-        // Ajustando el tamaño del titulo
+
+        //Dependiendo de si ganó o perdió modifica los botones
+        if (estado == true) {
+            buttonVolverAJugar.getStyleClass().add("buttonPartidaFinWin");
+            buttonRegresarMenu.getStyleClass().add("buttonPartidaFinWin");
+            tituloLabel.getStyleClass().add("tituloPartidaFinWin");
+        }
+        else{
+            tituloLabel.getStyleClass().add("tituloPartidaFinLose");
+            buttonVolverAJugar.getStyleClass().add("buttonPartidaFinLose");
+            buttonRegresarMenu.getStyleClass().add("buttonPartidaFinLose");
+
+        }
+
         tituloLabel.prefWidthProperty().bind(rootPane.widthProperty().divide(1.5));
         tituloLabel.prefHeightProperty().bind(rootPane.heightProperty().divide(4));
         tituloLabel.setFont(new javafx.scene.text.Font(80));

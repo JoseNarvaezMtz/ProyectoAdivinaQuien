@@ -48,10 +48,3 @@
     -fx-text-fill: #ff8b00;
     -fx-effect: dropshadow(gaussian, rgba(49, 152, 238, 0.6), 8, 0.5, 4, 4);
 }
-
-.labelTitulo {
-    -fx-font-family: "Permanent Marker";
-    -fx-font-weight: bold;
-    -fx-text-fill: #ff8b00;
-    -fx-effect: dropshadow(gaussian, rgba(49, 152, 238, 0.6), 8, 0.5, 4, 4);
-}
