@@ -17,6 +17,7 @@ import Sockets.Cliente; // Importamos la clase Cliente
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -28,20 +29,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Glow;
+import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
@@ -245,6 +248,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
     public void eleccionLista(){
         contenedorListaPer.setVisible(true);
         shadowPane.setVisible(true);
+        reasignarMetodos();
     }
 
     public void cerrarListaPersonajes(ActionEvent e){
@@ -253,30 +257,42 @@ public class TableroController implements Initializable, PersonajesListener, Men
     }
 
     private void reasignarMetodos(){
-        for(int i=1; i<=24; i++){
+        for(int i=1; i<25; i++){
             this.gridTable.getChildren().get(i).setOnMouseClicked(null);
             this.gridTable.getChildren().get(i).setOnMouseEntered(mouseEvent -> {mouseEntro(mouseEvent);});
             this.gridTable.getChildren().get(i).setOnMouseExited(mouseEvent -> {mouseSalio(mouseEvent);});
+
+            StackPane stack = (StackPane)this.gridTable.getChildren().get(i);
+
+            for (Node hijo : stack.getChildren()) {
+                if (hijo instanceof ImageView) {
+                    hijo.setOnMouseClicked(null);
+                    hijo.setOnMouseEntered(null);
+                    hijo.setOnMouseExited(null);
+                    break;
+                }
+            }
         }
     }
 
     private void mouseEntro(MouseEvent e){
-        ImageView imgV = (ImageView)e.getSource();
-        Image img = imgV.getImage();
-        int indice = imagenes.indexOf(img);
+        StackPane stack = (StackPane)e.getSource();
+        if(stack.getChildren().getFirst() instanceof ImageView) {
+            Image img = ((ImageView) stack.getChildren().getFirst()).getImage();
+            int indice = imagenes.indexOf(img);
 
-        int row = 0, col = 0;
+            int row = 0, col = 0;
 
-        if(indice > 5){
-            row = indice / 6;
-            col = indice % 6;
-        } else{
-            row = 0;
-            col = indice;
-        }
+            if (indice > 5) {
+                row = indice / 6;
+                col = indice % 6;
+            } else {
+                row = 0;
+                col = indice;
+            }
 
-        BorderPane menuPersonajeContenedor = new BorderPane();
-        GridPane menuPersonaje = new GridPane();
+            BorderPane menuPersonajeContenedor = new BorderPane();
+            GridPane menuPersonaje = new GridPane();
 
             menuPersonaje.setAlignment(Pos.CENTER);
             menuPersonaje.setHgap(4);
@@ -330,11 +346,14 @@ public class TableroController implements Initializable, PersonajesListener, Men
     }
 
     private void mouseSalio(MouseEvent e){
-        ImageView imgV = (ImageView)e.getSource();
-        Image img = imgV.getImage();
-        int indice = imagenes.indexOf(img);
+        StackPane stack = (StackPane)e.getSource();
 
-
+        for (Node hijo : stack.getChildren()) {
+            if (hijo instanceof BorderPane) {
+                stack.getChildren().remove(hijo);
+                break;
+            }
+        }
     }
 
     private void voltear(MouseEvent e, int indice){
@@ -355,8 +374,16 @@ public class TableroController implements Initializable, PersonajesListener, Men
         personajesJuego.get(indice).setTachado(true);
     }
 
-    private void adivinar(MouseEvent e, int indice){
+    private void adivinar(MouseEvent e, int indice) {
         Button button = (Button) e.getSource();
+
+//        Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
+//        Scene scene = new Scene(root);
+//        scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
+//        stage = (Stage)((Node) e.getSource()).getScene().getWindow();
+//        stage.hide();
+//        stage.setScene(scene);
+//        stage.show();
     }
 
     public void setCliente(Cliente cliente) {
@@ -375,9 +402,9 @@ public class TableroController implements Initializable, PersonajesListener, Men
             this.personajesJuego = personajes; // Guardamos la lista
 
             // Mostramos los personajes en el tablero
-            mostrarPersonajesEnTablero(personajes);
-
             cargarListaImagenes();
+
+            mostrarPersonajesEnTablero();
 
             cargarListaPersonajes();
         });
@@ -390,13 +417,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
     }
 
     //Esta la configuaran para que muestre los personajes en el tablero
-    public void mostrarPersonajesEnTablero(List<Personaje> personajes){
-        for (int i = 0; i < 24; i++) {
-            byte[] ruta = personajes.get(i).getImagen();
-            Image img = new Image(new ByteArrayInputStream(ruta));
-            this.imagenes.add(img);
-        }
-
+    public void mostrarPersonajesEnTablero(){
         int indice = 0;
 
         for(int i = 0; i < 4; i++) {
@@ -409,7 +430,10 @@ public class TableroController implements Initializable, PersonajesListener, Men
                 imageView.setOnMouseClicked(mouseEvent -> {eleccionTablero(mouseEvent);});
                 imageView.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
                 imageView.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
-                this.gridTable.add(imageView, j, i);
+
+                StackPane stack = new StackPane();
+                stack.getChildren().add(imageView);
+                this.gridTable.add(stack, j, i);
                 indice++;
             }
         }

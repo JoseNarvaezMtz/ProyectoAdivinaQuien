@@ -263,30 +263,9 @@ public class MenuController implements Initializable {
     }
 
     // BOTÓN PARA CAMBIAR FONDO DEL MENU
-
-    /*PRUEBA NO OLVIDAR BORRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR*/
-    //
-    //
-    //
-    //
-    //
-    //
-
     public void bottonCambiarFondo(ActionEvent e) throws IOException {;
-        Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
-        stage = (Stage)((Node) e.getSource()).getScene().getWindow();
-        stage.hide();
-        stage.setScene(scene);
-        stage.show();
+        System.out.println("no se q pedo con este boton");
     }
-
-    //
-    //
-    //
-    //
-    //
 
     // BOTÓN PARA SILENCIAR/ACTIVAR MÚSICA
     public void bottonMusica(ActionEvent e){
