@@ -1,10 +1,12 @@
 package Menu;
 
 import Sockets.Cliente;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,12 +17,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import javax.swing.event.ChangeListener;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -178,13 +182,12 @@ public class MenuController implements Initializable {
         labelTitulo1.prefWidthProperty().bind(titlePane.widthProperty());
         labelTitulo1.prefHeightProperty().bind(titlePane.heightProperty());
 
-        Font fontTitulo = new Font(100);
+        Font fontTitulo = new Font(80);
         labelTitulo1.setFont(fontTitulo);
         labelTitulo2.setFont(fontTitulo);
 
         labelTitulo2.prefWidthProperty().bind(titlePane.widthProperty());
         labelTitulo2.prefHeightProperty().bind(titlePane.heightProperty());
-
 
         // CARGA DE ÍCONOS
 
@@ -283,9 +286,19 @@ public class MenuController implements Initializable {
         musica.setMute(!musica.isMute());
         if(desicionUsuario == true){
             desicionUsuario = false;
+            Image img = new Image(getClass().getResourceAsStream("/Menu/Assets/musicaMuteada.png"));
+            ImageView imgV = new ImageView(img);
+            imgV.setFitWidth(45);
+            imgV.setFitHeight(45);
+            buttonMusic.setGraphic(imgV);
         }
         else{
             desicionUsuario = true;
+            Image img = new Image(getClass().getResourceAsStream("/Menu/Assets/musica.png"));
+            ImageView imgV = new ImageView(img);
+            imgV.setFitWidth(45);
+            imgV.setFitHeight(45);
+            buttonMusic.setGraphic(imgV);
         }
     }
 
