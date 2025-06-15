@@ -5,6 +5,8 @@
 
 package Instrucciones;
 
+import Classes.Personaje;
+import DataBaseClasses.PersonajeDB;
 import Menu.Menu;
 import java.io.IOException;
 import java.net.URL;
@@ -47,8 +49,11 @@ public class InstruccionesController implements Initializable {
     @FXML private Label Titulo;
     @FXML private TextArea instrucciones;
 
+    @FXML private Label labelNombrePer;
+    @FXML private TextArea textAreaDescripcion;
+
     // Array de imagenes para los personajes
-    private List<Image> imagenes = new ArrayList();
+    private List<Personaje> personajes = new ArrayList();
     // Contador que indica el indice actual de la imagen seleccionada
     private int indiceActual = 0;
 
@@ -101,6 +106,10 @@ public class InstruccionesController implements Initializable {
         this.rootPane.widthProperty().addListener((obs, oldVal, newVal) -> this.ajustarFuentes());
         this.rootPane.heightProperty().addListener((obs, oldVal, newVal) -> this.ajustarFuentes());
 
+        // Adapta la imagen de los personajes a la resolución del dispositivo
+        this.personajeImage.fitWidthProperty().bind(this.rootPane.widthProperty().divide(4));
+        this.personajeImage.fitHeightProperty().bind(this.rootPane.heightProperty().divide(2));
+
         //Ajusta las fuentes que se muestran en el panel principal para que se adapte a la resolución general del dispositivo
         this.ajustarFuentes();
 
@@ -149,8 +158,8 @@ public class InstruccionesController implements Initializable {
     public void menuPersonajesInstrucciones(ActionEvent e) {
         this.contentPane.setVisible(false);
         this.contentPanePersonajes.setVisible(true);
-        this.cargarImagenes();
-        this.cambiarImagen();
+        this.cargarPersonajes();
+        this.actualizarPersonaje();
     }
 
     // Botón para cambiar al personaje anterior de la lista
@@ -159,22 +168,22 @@ public class InstruccionesController implements Initializable {
         if (this.indiceActual > 0) {
             --this.indiceActual;
         } else {
-            this.indiceActual = this.imagenes.size() - 1;
+            this.indiceActual = this.personajes.size();
         }
 
-        this.cambiarImagen();
+        this.actualizarPersonaje();
     }
 
     // Botón para cambiar al personaje siguiente de la lista
     @FXML
     public void derecha(ActionEvent e) {
-        if (this.indiceActual < this.imagenes.size() - 1) {
+        if (this.indiceActual < this.personajes.size()) {
             ++this.indiceActual;
         } else {
             this.indiceActual = 0;
         }
 
-        this.cambiarImagen();
+        this.actualizarPersonaje();
     }
 
     // Ajusta las fuentes de los paneles para que con una operación se muestren conforme a la
@@ -190,21 +199,15 @@ public class InstruccionesController implements Initializable {
     }
 
     // Carga las imagenes para que se puedan mostrar en el panel con las imagenes de los personajes
-    private void cargarImagenes() {
-        this.imagenes.clear();
-
-        for(int i = 1; i < 4; ++i) {
-            String ruta = "/Instrucciones/Assets/Personajes/cat" + i + ".jpg";
-            URL recurso = this.getClass().getResource(ruta);
-            Image img = new Image(recurso.toExternalForm());
-            this.imagenes.add(img);
-        }
-
+    private void cargarPersonajes() {
+        this.personajes = PersonajeDB.getPersonajes();
     }
 
     // Cambia la imagen actual que tiene el panel
-    private void cambiarImagen() {
-        this.personajeImage.setImage((Image)this.imagenes.get(this.indiceActual));
+    private void actualizarPersonaje() {
+        this.personajeImage.setImage(personajes.get(indiceActual).getImagenFX());
+        this.labelNombrePer.setText(this.personajes.get(this.indiceActual).getNombre());
+        this.textAreaDescripcion.setText(this.personajes.get(this.indiceActual).getDescripcionString());
     }
 
     //Regresa al menú que muestra las instrucciones

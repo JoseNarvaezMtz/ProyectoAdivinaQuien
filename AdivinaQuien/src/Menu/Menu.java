@@ -40,6 +40,8 @@ public class Menu extends Application {
 
         try {
             Font.loadFont(getClass().getResourceAsStream("/Fonts/PermanentMarker-Regular.ttf"),25);
+            Font.loadFont(getClass().getResourceAsStream("/Fonts/CherryBombOne-Regular.ttf"),25);
+            Font.loadFont(getClass().getResourceAsStream("/Fonts/FingerPaint-Regular.ttf"),25);
             Parent root = FXMLLoader.load(getClass().getResource("Menu.fxml"));
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/Menu/MenuStyles.css").toExternalForm());
