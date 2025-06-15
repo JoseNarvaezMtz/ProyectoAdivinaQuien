@@ -21,6 +21,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -49,6 +50,9 @@ public class Menu extends Application {
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
             stage.setFullScreenExitKeyCombination(KeyCombination.valueOf("f11"));
+            Image icon = new Image(getClass().getResourceAsStream("/Menu/Assets/tololitoIcono.jpg"));
+            stage.getIcons().add(icon);
+            stage.setTitle("Adivina el tolol");
             stage.show();
         }
         catch (Exception e){
