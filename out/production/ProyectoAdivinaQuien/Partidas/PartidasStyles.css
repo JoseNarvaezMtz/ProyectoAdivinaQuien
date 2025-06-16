@@ -4,14 +4,14 @@
     -fx-border-color: #000000;
     -fx-border-width: 6px;
     -fx-table-cell-border-color: transparent;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
 }
 
 /*para los encabezados de la tabla*/
 .table-view .column-header {
     -fx-background-color: #a46346;
     -fx-font-weight: bold;
-    -fx-font-size: 25px;
+    -fx-font-size: 20px;
     -fx-text-fill: black;
 }
 
@@ -43,4 +43,21 @@
 .button:hover {
     -fx-background-color: derive(#C2B280, -20%);
     -fx-border-color: derive(#1f1c0e, -20%);
+}
+
+.labelTitulo {
+    -fx-font-size: 64px;
+    -fx-font-family: "Cherry Bomb One";
+    -fx-text-fill: #723a14;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 8, 0.5, 4, 4);
+    -fx-font-weight: bold;
+}
+
+.textFieldBuscarPorUsuario {
+    -fx-background-color: #C2B280;
+    -fx-border-color: #000000;
+    -fx-prompt-text-fill: #000000;
+    -fx-border-width: 6px;
+    -fx-table-cell-border-color: transparent;
+    -fx-font-size: 18px;
 }

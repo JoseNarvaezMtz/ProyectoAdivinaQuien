@@ -18,7 +18,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import Menu.MenuController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -36,8 +40,21 @@ public class SalaDeEsperaController implements Initializable {
 
     @FXML Label labelEsperando;
 
+    //Musica
+    private static MediaPlayer oceano;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        //Pausa la música del menú
+        MenuController.musica.pause();
+
+        //Sonido de Fondo
+        Media fondo = new Media(getClass().getResource("/SalaDeEspera/Assets/ocean.mp3").toString());
+        oceano = new MediaPlayer(fondo);
+        oceano.setCycleCount(MediaPlayer.INDEFINITE);
+        oceano.play();
+
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
@@ -112,6 +129,7 @@ public class SalaDeEsperaController implements Initializable {
             scene.getStylesheets().add(getClass().getResource("/Menu/MenuStyles.css").toExternalForm());
 
             Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            oceano.stop();
             stage.hide();
             stage.setScene(scene);
             stage.show();
@@ -142,6 +160,7 @@ public class SalaDeEsperaController implements Initializable {
 
             nuevaScene.getStylesheets().add(getClass().getResource("/Tablero/TableroStyles.css").toExternalForm());
             Stage stage = (Stage) rootPane.getScene().getWindow();
+            oceano.stop();
             stage.setScene(nuevaScene);
             stage.show();
         } catch (IOException e) {

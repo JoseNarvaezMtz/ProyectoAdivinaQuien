@@ -17,12 +17,33 @@
 
 .text-area {
     -fx-background-color: #c47b41;
+    -fx-font-size: 30px;
     -fx-text-fill: #000000;
+    -fx-font-weight: bold;
     -fx-border-color: #7c0f0f;
-    -fx-border-width: 5px;
+    -fx-border-width: 2px;
+    -fx-font-family: "Cherry Bomb One";
+}
+
+.descripcion {
+    -fx-font-size: 20px;
 }
 
 .text-area .content {
     -fx-background-color: #ff9446;
     -fx-text-fill: #000000;
+}
+
+.ine {
+    -fx-background-color: #c47b41;
+    -fx-text-fill: #000000;
+    -fx-border-color: #7c0f0f;
+    -fx-border-width: 3px;
+}
+
+.nombrePer {
+    -fx-font-family: "Finger Paint";
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 35px;
 }

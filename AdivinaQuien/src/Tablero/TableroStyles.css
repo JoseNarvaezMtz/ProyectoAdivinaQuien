@@ -18,8 +18,24 @@
 }
 
 .button{
-    -fx-background-color: #032d01;
-    -fx-border-color: #000000;
-    -fx-text-fill: #ffffff;
+    -fx-background-color: #f5f5dc;
+    -fx-border-color: #67675b;
+    -fx-text-fill: #050000;
+    -fx-background-radius: 250px;
     -fx-border-width: 3px;
+    -fx-border-radius: 250px;
+    -fx-border-color: #67675b;
+}
+
+.label{
+    -fx-font-family: Arial;
+    -fx-font-size: 30px;
+}
+
+.labelTitulo {
+    -fx-font-family: "Permanent Marker";
+    -fx-font-size: 35px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff8b00;
+    -fx-effect: dropshadow(gaussian, rgba(49, 152, 238, 0.6), 8, 0.5, 4, 4);
 }

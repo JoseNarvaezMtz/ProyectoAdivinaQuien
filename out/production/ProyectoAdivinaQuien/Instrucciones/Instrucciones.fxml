@@ -7,13 +7,17 @@
 <?import javafx.scene.effect.DisplacementMap?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.effect.FloatMap?>
+<?import javafx.scene.effect.Light.Distant?>
+<?import javafx.scene.effect.Lighting?>
 <?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.effect.Shadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
 <Pane fx:id="rootPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Instrucciones.InstruccionesController">
@@ -46,7 +50,7 @@
                </font>
             </Label>
 
-            <TextArea fx:id="instrucciones" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" opacity="0.75" prefHeight="255.0" prefWidth="495.0" text="¿Adivina quién? Es un famoso juego de mesa por turnos donde el objetivo es adivinar al personaje que escogió secretamente el otro jugador mediante una serie de preguntas que describan las características de su personaje, ya sean físicas, accesorios, etc, ¡la imaginación es tu límite!&#10;&#10;En esta adaptación online puedes seleccionar un total de TOTALPERSONAJES de 3 maneras distintas: directamente del tablero, desde la lista de la derecha o aleatoriamente.&#10;&#10;Tras la selección se habilita un chat por turnos para hacer preguntas.&#10;Podrás marcar personajes descartados con botones en el tablero. ¡Cuidado! No hay marcha atrás.&#10;&#10;Cuando estés seguro, en tu turno puedes adivinar el personaje del rival. ¡Solo tienes una oportunidad!&#10;&#10;Disfruta del juego con temática de animales del mundo. ¿Responderás con la verdad?" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+            <TextArea fx:id="instrucciones" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#sonidoSplash" onMousePressed="#sonidoSplash" opacity="0.75" prefHeight="255.0" prefWidth="495.0" text="¿Adivina quién? Es un famoso juego de mesa por turnos donde el objetivo es adivinar al personaje que escogió secretamente el otro jugador mediante una serie de preguntas que describan las características de su personaje, ya sean físicas, accesorios, etc, ¡la imaginación es tu límite!&#10;&#10;En esta adaptación online puedes seleccionar un total de TOTALPERSONAJES de 3 maneras distintas: directamente del tablero, desde la lista de la derecha o aleatoriamente.&#10;&#10;Tras la selección se habilita un chat por turnos para hacer preguntas.&#10;Podrás marcar personajes descartados con botones en el tablero. ¡Cuidado! No hay marcha atrás.&#10;&#10;Cuando estés seguro, en tu turno puedes adivinar el personaje del rival. ¡Solo tienes una oportunidad!&#10;&#10;Disfruta del juego con temática de animales del mundo. ¿Responderás con la verdad?" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <effect>
                   <DisplacementMap>
                      <mapData>
@@ -56,7 +60,7 @@
                </effect>
             </TextArea>
 
-            <Button fx:id="buttonLista" onAction="#menuPersonajesInstrucciones" prefHeight="25.0" prefWidth="217.0" text="Ver la lista completa de personajes!" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+            <Button fx:id="buttonLista" onAction="#menuPersonajesInstrucciones" onMouseClicked="#sonidoSplash" onMousePressed="#sonidoSplash" prefHeight="25.0" prefWidth="217.0" text="Ver la lista completa de personajes!" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                <effect>
                   <Reflection>
                      <input>
@@ -65,7 +69,7 @@
                   </Reflection>
                </effect></Button>
 
-            <Button fx:id="buttonSalir" contentDisplay="CENTER" nodeOrientation="RIGHT_TO_LEFT" onAction="#salir" prefHeight="25.0" prefWidth="87.0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP">
+            <Button fx:id="buttonSalir" contentDisplay="CENTER" nodeOrientation="RIGHT_TO_LEFT" onAction="#salir" onMousePressed="#sonidoSplash" prefHeight="25.0" prefWidth="87.0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets left="75.0" />
                </GridPane.margin>
@@ -77,17 +81,17 @@
       </GridPane>
       <GridPane fx:id="contentPanePersonajes" prefHeight="400.0" prefWidth="600.0" visible="false">
         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="70.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" percentHeight="60.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" percentHeight="70.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" onAction="#regresarInstrucciones" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+            <Button mnemonicParsing="false" onAction="#regresarInstrucciones" onMouseClicked="#sonidoSplash" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                <effect>
                   <Reflection>
                      <input>
@@ -95,7 +99,61 @@
                      </input>
                   </Reflection>
                </effect></Button>
-            <ImageView fx:id="personajeImage" fitHeight="232.0" fitWidth="293.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            <GridPane opacity="0.89" styleClass="ine" GridPane.columnIndex="1" GridPane.rowIndex="1">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="89.0" minHeight="0.0" percentHeight="20.0" prefHeight="14.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="187.0" minHeight="10.0" percentHeight="80.0" prefHeight="173.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <StackPane styleClass="ine" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                     <children>
+                        <Label fx:id="labelNombrePer" styleClass="nombrePer" text="NOMBRE DEL PERSONAJE">
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </Label>
+                     </children>
+                  </StackPane>
+                  <GridPane GridPane.rowIndex="1">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <StackPane styleClass="ine" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <children>
+                              <ImageView fx:id="personajeImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true">
+                                 <image>
+                                    <Image url="@Assets/Instrucciones.jpg" />
+                                 </image>
+                                 <effect>
+                                    <DropShadow>
+                                       <input>
+                                          <Lighting diffuseConstant="1.55">
+                                             <bumpInput>
+                                                <Shadow />
+                                             </bumpInput>
+                                             <light>
+                                                <Light.Distant />
+                                             </light>
+                                          </Lighting>
+                                       </input>
+                                    </DropShadow>
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                        <TextArea fx:id="textAreaDescripcion" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="descripcion" wrapText="true" GridPane.columnIndex="1" />
+                     </children>
+                  </GridPane>
+               </children>
+            </GridPane>
             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -105,7 +163,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="buttonIzquierda" mnemonicParsing="false" onAction="#izquierda" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                  <Button fx:id="buttonIzquierda" mnemonicParsing="false" onAction="#izquierda" onMouseClicked="#sonidoGota" onMousePressed="#sonidoGota" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <effect>
                         <Reflection>
                            <input>
@@ -113,7 +171,7 @@
                            </input>
                         </Reflection>
                      </effect></Button>
-                  <Button fx:id="buttonDerecha" mnemonicParsing="false" onAction="#derecha" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                  <Button fx:id="buttonDerecha" mnemonicParsing="false" onAction="#derecha" onMouseClicked="#sonidoGota" onMousePressed="#sonidoGota" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <effect>
                         <Reflection>
                            <input>

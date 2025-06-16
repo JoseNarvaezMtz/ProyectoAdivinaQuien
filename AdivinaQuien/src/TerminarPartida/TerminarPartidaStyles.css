@@ -1,0 +1,51 @@
+.tituloPartidaFinWin{
+    -fx-font-size: 80px;
+    -fx-font-family: "Cherry Bomb One";
+    -fx-text-fill: #FF9E97;
+    -fx-effect: dropshadow(gaussian, rgba(96, 77, 57, 0.6), 8, 0.5, 4, 4);
+}
+
+.tituloPartidaFinLose{
+    -fx-font-size: 80px;
+    -fx-font-family: "Cherry Bomb One";
+    -fx-text-fill: #313131;
+    -fx-effect: dropshadow(gaussian, rgba(44, 40, 34, 0.6), 8, 0.5, 4, 4);
+}
+
+.buttonPartidaFinWin{
+    -fx-background-radius: 250em;
+    -fx-pref-height: 100px;
+    -fx-pref-width: 100px;
+    -fx-background-color: #FFBCB3;
+    -fx-text-fill: #D8BFD8;
+
+    -fx-border-color: #af7069;
+    -fx-border-width: 10px;
+    -fx-border-radius: 250em;
+    -fx-font-family: "Arial Black";
+    -fx-font-size: 22;
+}
+
+.buttonPartidaFinWin:hover {
+    -fx-background-color: derive(#D8BFD8, -20%);
+    -fx-border-color: derive(#595959, -20%);
+}
+
+.buttonPartidaFinLose{
+    -fx-background-radius: 250em;
+    -fx-pref-height: 100px;
+    -fx-pref-width: 100px;
+    -fx-background-color: #99919C;
+    -fx-text-fill: #F5F5F5;
+
+    -fx-border-color: #595959;
+    -fx-border-width: 10px;
+    -fx-border-radius: 250em;
+    -fx-font-family: "Arial Black";
+    -fx-font-size: 22;
+}
+
+.buttonPartidaFinLose:hover {
+    -fx-background-color: derive(#D8BFD8, -20%);
+    -fx-border-color: derive(#595959, -20%);
+}
