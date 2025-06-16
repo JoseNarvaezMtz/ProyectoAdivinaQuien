@@ -21,7 +21,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Menu extends Application {
@@ -36,7 +38,11 @@ public class Menu extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+
         try {
+            Font.loadFont(getClass().getResourceAsStream("/Fonts/PermanentMarker-Regular.ttf"),25);
+            Font.loadFont(getClass().getResourceAsStream("/Fonts/CherryBombOne-Regular.ttf"),25);
+            Font.loadFont(getClass().getResourceAsStream("/Fonts/FingerPaint-Regular.ttf"),25);
             Parent root = FXMLLoader.load(getClass().getResource("Menu.fxml"));
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/Menu/MenuStyles.css").toExternalForm());
@@ -44,6 +50,9 @@ public class Menu extends Application {
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
             stage.setFullScreenExitKeyCombination(KeyCombination.valueOf("f11"));
+            Image icon = new Image(getClass().getResourceAsStream("/Menu/Assets/tololitoIcono.jpg"));
+            stage.getIcons().add(icon);
+            stage.setTitle("Adivina el tolol");
             stage.show();
         }
         catch (Exception e){

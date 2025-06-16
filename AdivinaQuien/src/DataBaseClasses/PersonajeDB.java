@@ -20,7 +20,7 @@ public class PersonajeDB extends dataBase {
         int cont=0;
 
         while (cont < 24) {
-            int id = (int)(Math.random() * 34);
+            int id = (int)(Math.random() * 24);
             if (!personajes.contains(id)) {
                 personajes.add(id);
                 cont++;
@@ -32,22 +32,25 @@ public class PersonajeDB extends dataBase {
         String sql = "SELECT * FROM Personajes WHERE id = ?";
 
         try (Connection con = DriverManager.getConnection(url);
-             PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = con.prepareStatement(sql);) {
 
             for (int i=0; i<personajes.size(); i++) {
                 int id = personajes.get(i);
                 stmt.setInt(1, id);
                 Personaje personaje = new Personaje();
-                if (rs.next()) {
-                    personaje.setIdTablero(i);
-                    personaje.setId(id);
-                    personaje.setNombre(rs.getString("nombre"));
-                    personaje.setImagen(rs.getBytes("imagen"));
-                    personaje.setTachado(false);
-                    // Aqui cambiamos lo que le pasamos, para pasarle el string
-                    personaje.setDescripcion(rs.getString("descripcion"));
+
+                try(ResultSet rs = stmt.executeQuery();){
+                    if (rs.next()) {
+                        personaje.setIdTablero(i);
+                        personaje.setId(id);
+                        personaje.setNombre(rs.getString("nombre"));
+                        personaje.setImagen(rs.getBytes("imagen"));
+                        personaje.setTachado(false);
+                        // Aqui cambiamos lo que le pasamos, para pasarle el string
+                        personaje.setDescripcion(rs.getString("descripcion"));
+                    }
+                    lista.add(personaje);
                 }
-                lista.add(personaje);
             }
 
         } catch (Exception e) {
@@ -64,7 +67,6 @@ public class PersonajeDB extends dataBase {
 
         try (Connection con = DriverManager.getConnection(url);
              PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-
             while (rs.next()) {
                 Personaje personaje = new Personaje();
                 personaje.setId(rs.getInt("id"));
@@ -72,6 +74,7 @@ public class PersonajeDB extends dataBase {
                 personaje.setImagen(rs.getBytes("imagen"));
                 // Aqui cambiamos lo que le pasamos, para pasar el string
                 personaje.setDescripcion(rs.getString("descripcion"));
+                lista.add(personaje);
             }
 
         } catch (Exception e) {

@@ -5,57 +5,85 @@
 
 package Tablero;
 
+//HEY HOLA CHULAS JIJIJIJIJI
+//TIENEN Q AGREGAR LOS MÓDULOS DE AUDIO AL PROYECTO UWU
+// Son estos :3
+//  --add-modules javafx.controls,javafx.fxml,javafx.media --add-exports javafx.base/com.sun.javafx=ALL-UNNAMED
+
 import Classes.Personaje;
+import DataBaseClasses.PersonajeDB;
 import Menu.Menu;
 import Sockets.Cliente; // Importamos la clase Cliente
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.Glow;
+import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import Menu.MenuController;
+
 
 import Sockets.Cliente.PersonajesListener;
 import Sockets.Cliente.MensajeListener;
 
 public class TableroController implements Initializable, PersonajesListener, MensajeListener {
-    @FXML
-    Pane rootPane;
-    @FXML
-    Label labelJugador;
-    @FXML
-    ImageView fondoImage;
-    @FXML
-    GridPane contentPane;
-    @FXML
-    TextFlow chat;
-    @FXML
-    TextField textFieldMensaje;
-    @FXML
-    Label tiempoPartida;
-    @FXML
-    GridPane gridTable;
-    @FXML
-    Button buttonEnviar;
+
+    @FXML Pane rootPane;
+    @FXML GridPane contentPane;
+    @FXML GridPane gridTable;
+    @FXML GridPane sideBarPane;
+    @FXML GridPane seleccionPersonaje;
+    @FXML GridPane gridPaneListaPer;
+    @FXML GridPane contenedorListaPer;
+    @FXML Pane shadowPane;
+
+    @FXML ImageView fondoImage;
+    @FXML ImageView dadosImg;
+    @FXML ImageView userImg;
+    @FXML ImageView listaImg;
+
+    @FXML Label labelJugador;
+    @FXML Label tiempoPartida;
+
+    @FXML TextFlow chat;
+    @FXML TextField textFieldMensaje;
+
+    @FXML Button buttonEnviar;
+
+
 
     private List<Image> imagenes = new ArrayList();
     private long segundosTranscurridos = 0L;
@@ -70,28 +98,292 @@ public class TableroController implements Initializable, PersonajesListener, Men
     private List<Personaje> personajesJuego; // Lista para almacenar la lista del servidor
     private Personaje miPersonaje; // Personaje que se debe de adivinar
 
+    public int idPersonaje; // Id del personaje del usuario
+
+    //Música
+    public static MediaPlayer musica;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        //Musica
+        Media music = new Media(getClass().getResource("/Tablero/Assets/music1.mp3").toString());
+        musica = new MediaPlayer(music);
+
+        if(MenuController.desicionUsuario == true){
+            musica.setCycleCount(MediaPlayer.INDEFINITE);
+            musica.play();
+        }
+
         Platform.runLater(() -> {
             Stage stage = (Stage)this.rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
         });
+
+        this.sideBarPane.setVisible(false);
 
         this.fondoImage.fitWidthProperty().bind(this.rootPane.widthProperty());
         this.fondoImage.fitHeightProperty().bind(this.rootPane.heightProperty());
         this.contentPane.prefWidthProperty().bind(this.rootPane.widthProperty());
         this.contentPane.prefHeightProperty().bind(this.rootPane.heightProperty());
         this.labelJugador.setText(Menu.nickName);
-        this.reloj();
-
-        // Estos son los que se van a eliminar para obtener de la base de datos
-        this.cargarImagenes();
-        this.insertarPersonaje();
+        this.contenedorListaPer.prefWidthProperty().bind(this.contentPane.widthProperty());
+        this.contenedorListaPer.prefHeightProperty().bind(this.contentPane.heightProperty());
+        this.shadowPane.prefWidthProperty().bind(this.contentPane.widthProperty());
+        this.shadowPane.prefHeightProperty().bind(this.contentPane.heightProperty());
 
         // El campo de mensaje y el boton para enviar el mensaje se encuentran desabilitados
         // Hasta que se le asigne un turno o se reciba una pregunta
         textFieldMensaje.setDisable(true);
         buttonEnviar.setDisable(true);
+
+        this.userImg.fitWidthProperty().bind(this.rootPane.widthProperty().divide(6.5));
+        this.userImg.fitHeightProperty().bind(this.rootPane.heightProperty().divide(4.5));
+
+        this.dadosImg.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
+        this.dadosImg.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
+
+        this.listaImg.fitWidthProperty().bind(this.rootPane.widthProperty().divide(6.5));
+        this.listaImg.fitHeightProperty().bind(this.rootPane.heightProperty().divide(4.5));
+
+        this.listaImg.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
+        this.listaImg.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
+
+        elegirPersonaje();
+    }
+
+    private void cargarListaPersonajes() {
+        ObservableList<Personaje> personajes = FXCollections.observableArrayList(personajesJuego);
+        ListView<Personaje> listViewPersonajes = new ListView((ObservableList)personajes);
+        listViewPersonajes.setOrientation(Orientation.VERTICAL);
+
+        listViewPersonajes.setCellFactory(param -> new ListCell<Personaje>(){
+            private final ImageView imageView = new ImageView();
+            private final Label label = new Label();
+            private final VBox layout = new VBox(10, imageView, label);
+
+            @Override
+            protected void updateItem(Personaje personaje, boolean empty){
+                super.updateItem(personaje, empty);
+
+                if(empty || personaje == null){
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    Image img = personaje.getImagenFX();
+                    imageView.setImage(img);
+                    imageView.setFitWidth(100);
+                    imageView.setPreserveRatio(true);
+                    label.setText(personaje.getNombre());
+                    layout.setAlignment(Pos.CENTER);
+                    setGraphic(layout);
+                }
+            }
+        });
+
+        listViewPersonajes.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                Image img = newSelection.getImagenFX();
+                this.userImg.setImage(img);
+                this.idPersonaje = newSelection.getIdTablero() + 1;
+                System.out.println(this.idPersonaje);
+                cerrarListaPersonajes(null);
+                this.seleccionPersonaje.setVisible(false);
+                this.sideBarPane.setVisible(true);
+
+                reasignarMetodos();
+            }
+        });
+
+        gridPaneListaPer.add(listViewPersonajes, 0, 1);
+    }
+
+    private void elegirPersonaje(){
+        this.seleccionPersonaje.setVisible(true);
+
+        this.dadosImg.fitWidthProperty().bind(this.rootPane.widthProperty().divide(6));
+        this.dadosImg.fitHeightProperty().bind(this.rootPane.heightProperty().divide(4));
+    }
+
+    public void eleccionTablero(MouseEvent e){
+        ImageView imgView = (ImageView)e.getSource();
+
+        imgView.setEffect(null);
+
+        Image img = imgView.getImage();
+        this.userImg.setImage(img);
+
+        this.seleccionPersonaje.setVisible(false);
+        this.sideBarPane.setVisible(true);
+
+        reasignarMetodos();
+
+        this.idPersonaje = gridTable.getChildren().indexOf(imgView);
+
+        this.reloj();
+    }
+
+    public void eleccionRandom(){
+        Random random = new Random();
+
+        this.dadosImg.setEffect(null);
+        this.dadosImg.setOnMouseEntered(null);
+        this.dadosImg.setOnMouseExited(null);
+
+        int rand = random.nextInt(24)+1;
+
+        StackPane stackPane = (StackPane)this.gridTable.getChildren().get(rand);
+        ImageView imgView = (ImageView)stackPane.getChildren().get(0);
+
+        Image img = imgView.getImage();
+        this.userImg.setImage(img);
+
+        this.seleccionPersonaje.setVisible(false);
+        this.sideBarPane.setVisible(true);
+
+        reasignarMetodos();
+        this.reloj();
+    }
+
+    public void eleccionLista(){
+        contenedorListaPer.setVisible(true);
+        shadowPane.setVisible(true);
+        reasignarMetodos();
+    }
+
+    public void cerrarListaPersonajes(ActionEvent e){
+        contenedorListaPer.setVisible(false);
+        shadowPane.setVisible(false);
+    }
+
+    private void reasignarMetodos(){
+        for(int i=1; i<25; i++){
+            this.gridTable.getChildren().get(i).setOnMouseClicked(null);
+            this.gridTable.getChildren().get(i).setOnMouseEntered(mouseEvent -> {mouseEntro(mouseEvent);});
+            this.gridTable.getChildren().get(i).setOnMouseExited(mouseEvent -> {mouseSalio(mouseEvent);});
+
+            StackPane stack = (StackPane)this.gridTable.getChildren().get(i);
+
+            for (Node hijo : stack.getChildren()) {
+                if (hijo instanceof ImageView) {
+                    hijo.setOnMouseClicked(null);
+                    hijo.setOnMouseEntered(null);
+                    hijo.setOnMouseExited(null);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void mouseEntro(MouseEvent e){
+        StackPane stack = (StackPane)e.getSource();
+        if(stack.getChildren().getFirst() instanceof ImageView) {
+            Image img = ((ImageView) stack.getChildren().getFirst()).getImage();
+            int indice = imagenes.indexOf(img);
+
+            int row = 0, col = 0;
+
+            if (indice > 5) {
+                row = indice / 6;
+                col = indice % 6;
+            } else {
+                row = 0;
+                col = indice;
+            }
+
+            BorderPane menuPersonajeContenedor = new BorderPane();
+            GridPane menuPersonaje = new GridPane();
+
+            menuPersonaje.setAlignment(Pos.CENTER);
+            menuPersonaje.setHgap(4);
+
+            Image iconAdivinar = new Image(getClass().getResourceAsStream("/Tablero/Assets/adivinar.png"));
+            Image iconVoltear = new Image(getClass().getResourceAsStream("/Tablero/Assets/voltear.png"));
+
+            ImageView iconAdivinarIV = new ImageView(iconAdivinar);
+            ImageView iconVoltearIV = new ImageView(iconVoltear);
+
+            iconAdivinarIV.setFitWidth(24);
+            iconAdivinarIV.setFitHeight(24);
+
+            iconVoltearIV.setFitWidth(24);
+            iconVoltearIV.setFitHeight(24);
+
+            Button botonVoltear = new Button();
+            botonVoltear.setMaxWidth(Double.MAX_VALUE);
+            botonVoltear.setGraphic(iconVoltearIV);
+
+            Button botonAdivinar = new Button();
+
+            botonVoltear.setMaxWidth(Double.MAX_VALUE);
+            botonAdivinar.setGraphic(iconAdivinarIV);
+
+            botonVoltear.prefWidthProperty().bind(rootPane.widthProperty().divide(35));
+            botonVoltear.prefHeightProperty().bind(rootPane.heightProperty().divide(25));
+
+            botonAdivinar.prefWidthProperty().bind(rootPane.widthProperty().divide(35));
+            botonAdivinar.prefHeightProperty().bind(rootPane.heightProperty().divide(25));
+
+            Effect sombra = new DropShadow();
+
+            botonAdivinar.setEffect(sombra);
+            botonVoltear.setEffect(sombra);
+
+            botonAdivinar.setOnMouseClicked(mouseEvent -> {adivinar(mouseEvent, indice);});
+            botonVoltear.setOnMouseClicked(mouseEvent -> {voltear(mouseEvent, indice);});
+
+            if(personajesJuego.get(indice).isTachado()){
+                botonVoltear.setDisable(true);
+                botonAdivinar.setDisable(true);
+            }
+
+            menuPersonaje.add(botonVoltear, 0, 0);
+            menuPersonaje.add(botonAdivinar, 1, 0);
+            menuPersonajeContenedor.setBottom(menuPersonaje);
+
+            stack.getChildren().add(menuPersonajeContenedor);
+        }
+    }
+
+    private void mouseSalio(MouseEvent e){
+        StackPane stack = (StackPane)e.getSource();
+
+        for (Node hijo : stack.getChildren()) {
+            if (hijo instanceof BorderPane) {
+                stack.getChildren().remove(hijo);
+                break;
+            }
+        }
+    }
+
+    private void voltear(MouseEvent e, int indice){
+        StackPane stack = (StackPane)gridTable.getChildren().get(indice+1);
+
+        for (Node hijo : stack.getChildren()) {
+            if (hijo instanceof ImageView) {
+                Effect efecto = new SepiaTone();
+                hijo.setEffect(efecto);
+            }
+            if (hijo instanceof BorderPane){
+                GridPane grid = (GridPane)((BorderPane) hijo).getBottom();
+                grid.getChildren().get(0).setDisable(true);
+                grid.getChildren().get(1).setDisable(true);
+            }
+        }
+
+        personajesJuego.get(indice).setTachado(true);
+    }
+
+    private void adivinar(MouseEvent e, int indice) {
+        Button button = (Button) e.getSource();
+
+//        Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
+//        Scene scene = new Scene(root);
+//        scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
+//        stage = (Stage)((Node) e.getSource()).getScene().getWindow();
+//        stage.hide();
+//        stage.setScene(scene);
+//        stage.show();
     }
 
     public void setCliente(Cliente cliente) {
@@ -110,31 +402,22 @@ public class TableroController implements Initializable, PersonajesListener, Men
             this.personajesJuego = personajes; // Guardamos la lista
 
             // Mostramos los personajes en el tablero
-            mostrarPersonajesEnTablero(personajes);
+            cargarListaImagenes();
 
-            // AQUI SE AGREGA LO DEL PERSONAJE SECRETO SEGUN YO POR QUE ES DESPUES DE LA GENERACION DEL TABLERO
+            mostrarPersonajesEnTablero();
 
+            cargarListaPersonajes();
         });
     }
 
-    //Esta la configuaran para que muestre los personajes en el tablero
-    public void mostrarPersonajesEnTablero(List<Personaje> personajes) {
-
-    }
-
-
-    private void cargarImagenes() {
-        this.imagenes.clear();
-
-        for(int i = 0; i < 24; ++i) {
-            String ruta = "/Tablero/Assets/Personaje" + i + ".jpg";
-            Image img = new Image(this.getClass().getResourceAsStream(ruta));
-            this.imagenes.add(img);
+    private void cargarListaImagenes(){
+        for(int i=0; i<(gridTable.getRowCount()*gridTable.getColumnCount()); i++){
+            this.imagenes.add(personajesJuego.get(i).getImagenFX());
         }
-
     }
 
-    private void insertarPersonaje() {
+    //Esta la configuaran para que muestre los personajes en el tablero
+    public void mostrarPersonajesEnTablero(){
         int indice = 0;
 
         for(int i = 0; i < 4; i++) {
@@ -144,10 +427,31 @@ public class TableroController implements Initializable, PersonajesListener, Men
                 imageView.fitWidthProperty().bind(this.gridTable.widthProperty().divide(6).subtract(4));
                 imageView.fitHeightProperty().bind(this.gridTable.heightProperty().divide(4).subtract(4));
                 imageView.setPreserveRatio(false);
-                this.gridTable.add(imageView, j, i);
+                imageView.setOnMouseClicked(mouseEvent -> {eleccionTablero(mouseEvent);});
+                imageView.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
+                imageView.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
+
+                StackPane stack = new StackPane();
+                stack.getChildren().add(imageView);
+                this.gridTable.add(stack, j, i);
                 indice++;
             }
         }
+    }
+
+    private void imgMouseEntered(MouseEvent e){
+        ImageView imgView = (ImageView)e.getSource();
+        Effect effect = new Glow(0.6);
+        imgView.setEffect(effect);
+    }
+
+    private void imgMouseExited(MouseEvent e){
+        ImageView imgView = (ImageView)e.getSource();
+        imgView.setEffect(null);
+    }
+
+    private void insertarPersonaje() {
+
     }
 
     public void enviarMensaje(ActionEvent e) {
@@ -170,10 +474,10 @@ public class TableroController implements Initializable, PersonajesListener, Men
             buttonEnviar.setDisable(true);
             textFieldMensaje.clear();
             System.out.println("Pregunta enviada: " + mensaje);
-        // Si no es mi turno, y la pregunta fue enviada para responder y esta respondiendo si o no
+            // Si no es mi turno, y la pregunta fue enviada para responder y esta respondiendo si o no
         } else if (!esMiTurno && !textFieldMensaje.isDisable() && (mensaje.equalsIgnoreCase("SI") || mensaje.equalsIgnoreCase("NO"))) {
             /* Entonces la variable "preguntaEnviada" en el cliente que RESPONDE va a ser "true"
-            * pero solo cuando el se recibe la pregunta y se habilitara el chat para que responda si o no*/
+             * pero solo cuando el se recibe la pregunta y se habilitara el chat para que responda si o no*/
 
             cliente.enviarMensaje("RESPUESTA", mensaje);
 
@@ -184,7 +488,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
             buttonEnviar.setDisable(true);
             textFieldMensaje.clear();
             System.out.println("Respuesta enviada: " + mensaje);
-        // Si no es ningun caso, entonces aparecera que no se puede enviiar mensaje
+            // Si no es ningun caso, entonces aparecera que no se puede enviiar mensaje
         } else {
             agregarMensajeAlChat("Sistema", "No puedes enviar mensaje en este momento");
             textFieldMensaje.clear();
@@ -237,7 +541,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
                     nickNameOp = nickTurno;
                     agregarMensajeAlChat("Sistema", "Es el turno del jugador " + nickTurno);
                 }
-            // Vemos si el mensaje empieza por "PREGUNTA:"
+                // Vemos si el mensaje empieza por "PREGUNTA:"
             } else if (mensaje.startsWith("PREGUNTA:")) {
                 // Viene estructurado de la siguiente manera: "PREGUNTA:nickname:mensaje"
                 String[] mensajePartes = mensaje.split(":", 3); // Divide el mensaje en 3 partes
@@ -257,7 +561,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
                         agregarMensajeAlChat("Sistema", "El jugador oponente ha hceho una pregunta, responde (Si o No) paro");
                     }
                 }
-            // Vemos si el mensaje empieza por "RESPUESTA:"
+                // Vemos si el mensaje empieza por "RESPUESTA:"
             } else if (mensaje.startsWith("RESPUESTA:")) {
                 // Viene estructurado de la siguiente manera: "RESPUESTA:nickname:mensaje"
                 String[] mensajePartes = mensaje.split(":", 3); // Divide el mensjae en 3 partes

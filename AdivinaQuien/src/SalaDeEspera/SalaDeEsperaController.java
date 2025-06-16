@@ -1,5 +1,6 @@
 package SalaDeEspera;
 
+import java.util.Random;
 import Menu.Menu;
 import Sockets.Cliente;
 import Tablero.TableroController;
@@ -13,10 +14,15 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import Menu.MenuController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,12 +40,27 @@ public class SalaDeEsperaController implements Initializable {
 
     @FXML Label labelEsperando;
 
+    //Musica
+    private static MediaPlayer oceano;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        //Pausa la música del menú
+        MenuController.musica.pause();
+
+        //Sonido de Fondo
+        Media fondo = new Media(getClass().getResource("/SalaDeEspera/Assets/ocean.mp3").toString());
+        oceano = new MediaPlayer(fondo);
+        oceano.setCycleCount(MediaPlayer.INDEFINITE);
+        oceano.play();
+
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
         });
+
+
 
         // Adaptar el fondo a la resolución del dispositivo
         fondoImage.fitWidthProperty().bind(rootPane.widthProperty());
@@ -61,7 +82,12 @@ public class SalaDeEsperaController implements Initializable {
         imageCargando.fitWidthProperty().bind(rootPane.widthProperty().divide(5));
         imageCargando.fitHeightProperty().bind(rootPane.heightProperty().divide(5));
 
-        // Es un método de JavaFX que permite ejecutar código en el hilo principal de la interfaz de usuario
+        Random random = new Random();
+        int rand = random.nextInt(10)+1;
+        Image img = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/esperando" + rand + ".gif"));
+        imageCargando.setImage(img);
+
+        // Es un metodo de JavaFX que permite ejecutar código en el hilo principal de la interfaz de usuario
         Platform.runLater(() -> {
             double height = rootPane.getHeight();
 
@@ -103,6 +129,7 @@ public class SalaDeEsperaController implements Initializable {
             scene.getStylesheets().add(getClass().getResource("/Menu/MenuStyles.css").toExternalForm());
 
             Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            oceano.stop();
             stage.hide();
             stage.setScene(scene);
             stage.show();
@@ -133,6 +160,7 @@ public class SalaDeEsperaController implements Initializable {
 
             nuevaScene.getStylesheets().add(getClass().getResource("/Tablero/TableroStyles.css").toExternalForm());
             Stage stage = (Stage) rootPane.getScene().getWindow();
+            oceano.stop();
             stage.setScene(nuevaScene);
             stage.show();
         } catch (IOException e) {

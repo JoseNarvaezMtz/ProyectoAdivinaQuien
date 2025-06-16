@@ -6,6 +6,7 @@ import javafx.scene.text.Text;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class Personaje implements Serializable { // Implementamos la clase para serializar
     /* Incluimos su version esto es importante por que de esta manera
@@ -73,5 +74,17 @@ public class Personaje implements Serializable { // Implementamos la clase para 
     // Metodo para cuando se quiera usar la descripcion en JavaFX
     public Text getDescripcionText() {
         return new Text(descripcion);
+    }
+
+    @Override
+    public String toString() {
+        return "Personaje{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", imagen=" + Arrays.toString(imagen) +
+                ", idTablero=" + idTablero +
+                ", tachado=" + tachado +
+                ", descripcion='" + descripcion + '\'' +
+                '}';
     }
 }
