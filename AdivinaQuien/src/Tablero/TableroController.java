@@ -14,14 +14,11 @@ import Classes.Personaje;
 import DataBaseClasses.PreguntasDB;
 import Menu.Menu;
 import Sockets.Cliente;
-
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
-
 import Sockets.Servidor;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -46,8 +43,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -114,6 +109,7 @@ public class TableroController extends MenuController implements Initializable, 
     private Personaje miPersonaje; // Personaje que se debe de adivinar
 
     public int idPersonaje; // Id del personaje del usuario
+    private int volteados = 0;
 
     //Sonidos
     public static AudioClip sonidoVoltear;
@@ -353,6 +349,8 @@ public class TableroController extends MenuController implements Initializable, 
                 this.seleccionPersonaje.setVisible(false);
                 this.sideBarPane.setVisible(true);
 
+                contenedorListaPer.setVisible(false);
+                shadowPanePersonajes.setVisible(false);
                 reasignarMetodos();
             }
         });
@@ -414,13 +412,11 @@ public class TableroController extends MenuController implements Initializable, 
     }
 
     public void eleccionLista(){
-
         sonidoLista.setVolume(0.2);
         sonidoLista.play();
 
         contenedorListaPer.setVisible(true);
         shadowPanePersonajes.setVisible(true);
-        reasignarMetodos();
     }
 
     public void cerrarListaPersonajes(ActionEvent e){
@@ -505,8 +501,9 @@ public class TableroController extends MenuController implements Initializable, 
             botonVoltear.setOnMouseClicked(mouseEvent -> {voltear(mouseEvent, indice);});
 
             if(personajesJuego.get(indice).isTachado()){
-                botonVoltear.setDisable(true);
                 botonAdivinar.setDisable(true);
+            } else{
+                botonAdivinar.setDisable(false);
             }
 
             menuPersonaje.add(botonVoltear, 0, 0);
@@ -533,22 +530,41 @@ public class TableroController extends MenuController implements Initializable, 
 
         for (Node hijo : stack.getChildren()) {
             if (hijo instanceof ImageView) {
-                Effect efecto = new SepiaTone();
-                hijo.setEffect(efecto);
+                if(personajesJuego.get(indice).isTachado()){
+                    hijo.setEffect(null);
+                } else{
+                    Effect efecto = new SepiaTone();
+                    hijo.setEffect(efecto);
+                }
                 sonidoBloqueado.setVolume(0.2);
                 sonidoBloqueado.play();
                 break;
             }
             if (hijo instanceof BorderPane){
                 GridPane grid = (GridPane)((BorderPane) hijo).getBottom();
-                grid.getChildren().get(0).setDisable(true);
-                grid.getChildren().get(1).setDisable(true);
+
+                if(personajesJuego.get(indice).isTachado()) grid.getChildren().get(1).setDisable(true);
+                else grid.getChildren().get(1).setDisable(true);
+
+                System.out.println(grid.getChildren().get(0));
+                System.out.println(grid.getChildren().get(1));
+
                 sonidoVoltear.setVolume(0.2);
                 sonidoVoltear.play();
+                break;
             }
         }
 
-        personajesJuego.get(indice).setTachado(true);
+        if(personajesJuego.get(indice).isTachado()){
+            personajesJuego.get(indice).setTachado(false);
+            this.volteados--;
+        } else{
+            personajesJuego.get(indice).setTachado(true);
+            this.volteados++;
+            if(this.volteados == 24){
+                            System.out.println("Perdiste"); //              AQUI HACER QUE EL USUARIO PIERDA
+            }
+        }
     }
 
     private void adivinar(MouseEvent e, int indice) {
@@ -785,12 +801,13 @@ public class TableroController extends MenuController implements Initializable, 
         this.gridPaneRespuestas.setVisible(true);
 
         this.labelPregunta.setText(pregunta);
+        this.labelPregunta.getStyleClass().add("labelPregunta");
     }
 
     public void terminarTurno(ActionEvent e) {
         Button fuente = (Button) e.getSource();
 
-        if(fuente.getText() == "SI"){
+        if(fuente.getText().trim() == "SI"){
             this.textFieldMensaje.setText("SI");
         } else{
             this.textFieldMensaje.setText("NO");

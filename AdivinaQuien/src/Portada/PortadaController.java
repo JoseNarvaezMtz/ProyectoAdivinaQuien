@@ -71,16 +71,16 @@ public class PortadaController implements Initializable{
         gridPane.prefHeightProperty().bind(rootPane.heightProperty());
 
         // Ajustar TextFlow (ocupará toda la fila central)
-        textFlow.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.5));
-        textFlow.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.3));
+        textFlow.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.615));
+        textFlow.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.4));
 
         // Ajustar imagen UAA (izquierda arriba)
-        imageLogoUaa.fitWidthProperty().bind(rootPane.widthProperty().divide(5));
-        imageLogoUaa.fitHeightProperty().bind(rootPane.heightProperty().divide(3));
+        imageLogoUaa.fitWidthProperty().bind(rootPane.widthProperty().divide(6));
+        imageLogoUaa.fitHeightProperty().bind(rootPane.heightProperty().divide(4));
 
         // Ajustar imagen Centro (derecha arriba)
-        imageLogoCentro.fitWidthProperty().bind(rootPane.widthProperty().divide(5));
-        imageLogoCentro.fitHeightProperty().bind(rootPane.heightProperty().divide(3));
+        imageLogoCentro.fitWidthProperty().bind(rootPane.widthProperty().divide(6));
+        imageLogoCentro.fitHeightProperty().bind(rootPane.heightProperty().divide(4));
 
         // Ajustamos a los changuitos
         imageChanguito1.fitWidthProperty().bind(rootPane.widthProperty().divide(5));
