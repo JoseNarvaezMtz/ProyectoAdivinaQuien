@@ -3,9 +3,8 @@
     -fx-min-width: 50px;
     -fx-min-height: 50px;
     -fx-background-color: #deb887;
-    -fx-text-fill: #6B4423;
 
-    -fx-border-color: #482f17;
+    -fx-border-color: #75531c;
     -fx-border-width: 10px;
     -fx-border-radius: 250em;
     -fx-font-family: "Arial Black";
@@ -14,5 +13,5 @@
 
 .button:hover {
     -fx-background-color: derive(#deb887, -20%);
-    -fx-border-color: derive(#482f17, -20%);
+    -fx-border-color: derive(#75531c, -20%);
 }

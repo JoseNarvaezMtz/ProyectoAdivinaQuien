@@ -93,6 +93,7 @@ public class MenuController implements Initializable {
             musica.setCycleCount(MediaPlayer.INDEFINITE);
         }
         //Reproducimos la música
+        musica.setVolume(0.2);
         musica.play();
         //vemos si el usuario quiere escuchar música
         //Si decide que no, pone la música en muted
@@ -367,7 +368,7 @@ public class MenuController implements Initializable {
     }
 
     public void sonidoTeclado(){
-        sonidoTeclado.setVolume(0.2);
+        sonidoTeclado.setVolume(0.1);
         sonidoTeclado.play();
     }
 

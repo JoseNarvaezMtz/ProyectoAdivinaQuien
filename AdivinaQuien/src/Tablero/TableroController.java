@@ -139,6 +139,7 @@ public class TableroController extends MenuController implements Initializable, 
         //Musica
         Media music = new Media(getClass().getResource("/Tablero/Assets/music1.mp3").toString());
         musica = new MediaPlayer(music);
+        musica.setVolume(0.2);
 
         if(MenuController.desicionUsuario == true){
             musica.setCycleCount(MediaPlayer.INDEFINITE);

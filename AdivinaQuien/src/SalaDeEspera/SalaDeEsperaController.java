@@ -14,6 +14,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,6 +30,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static Menu.MenuController.desicionUsuario;
+
 public class SalaDeEsperaController implements Initializable {
 
     @FXML Pane rootPane;
@@ -39,6 +42,8 @@ public class SalaDeEsperaController implements Initializable {
     @FXML ImageView textureImg;
     @FXML ImageView imageCargando;
     @FXML Group gifPane;
+
+    @FXML Button buttonSalir;
 
     @FXML Label labelEsperando;
 
@@ -53,10 +58,20 @@ public class SalaDeEsperaController implements Initializable {
 
         //Sonido de Fondo
         Media fondo = new Media(getClass().getResource("/SalaDeEspera/Assets/ocean.mp3").toString());
+
+
         oceano = new MediaPlayer(fondo);
         oceano.setCycleCount(MediaPlayer.INDEFINITE);
+        oceano.setVolume(0.4);
         oceano.play();
 
+        //vemos si el usuario quiere escuchar música
+        //Si decide que no, pone la música en muted
+        if (!desicionUsuario) {
+            oceano.setMute(true);
+        } else {
+            oceano.setMute(false);
+        }
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
@@ -114,6 +129,13 @@ public class SalaDeEsperaController implements Initializable {
             System.out.println("Error al conectar al servidor: " + ex.getMessage());
             ex.printStackTrace();
         }
+
+        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE SALIR
+        Image imagenSalir = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/salir.png"));
+        ImageView imageView = new ImageView(imagenSalir);
+        imageView.setFitWidth(45);
+        imageView.setFitHeight(45);
+        buttonSalir.setGraphic(imageView);
     }
 
     // Método para regresar al Menú principal
