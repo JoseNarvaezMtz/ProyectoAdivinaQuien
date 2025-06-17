@@ -138,11 +138,6 @@ public class SalaDeEsperaController implements Initializable {
         }
     }
 
-    // Manda al usuario al tablero cuando se encuentra el oponente
-    public void opnenteEncontrado(ActionEvent e) throws IOException {
-       irTablero();
-    }
-
     // Carga el tablero cuando se encuentra el oponente
     public void irTablero(){
         try {

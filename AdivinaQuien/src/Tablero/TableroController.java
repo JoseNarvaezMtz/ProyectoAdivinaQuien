@@ -12,6 +12,7 @@ package Tablero;
 
 import Classes.Personaje;
 import DataBaseClasses.PersonajeDB;
+import DataBaseClasses.PreguntasDB;
 import Menu.Menu;
 import Sockets.Cliente; // Importamos la clase Cliente
 
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -31,6 +33,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -68,7 +71,10 @@ public class TableroController implements Initializable, PersonajesListener, Men
     @FXML GridPane seleccionPersonaje;
     @FXML GridPane gridPaneListaPer;
     @FXML GridPane contenedorListaPer;
-    @FXML Pane shadowPane;
+    @FXML Pane shadowPanePersonajes;
+    @FXML Pane shadowPanePreguntas;
+    @FXML GridPane contenedorListaPreguntas;
+    @FXML GridPane gridPanePreguntas;
 
     @FXML ImageView fondoImage;
     @FXML ImageView dadosImg;
@@ -82,6 +88,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
     @FXML TextField textFieldMensaje;
 
     @FXML Button buttonEnviar;
+    @FXML Button btnLstaPreguntas;
 
 
 
@@ -129,8 +136,19 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.labelJugador.setText(Menu.nickName);
         this.contenedorListaPer.prefWidthProperty().bind(this.contentPane.widthProperty());
         this.contenedorListaPer.prefHeightProperty().bind(this.contentPane.heightProperty());
-        this.shadowPane.prefWidthProperty().bind(this.contentPane.widthProperty());
-        this.shadowPane.prefHeightProperty().bind(this.contentPane.heightProperty());
+        this.shadowPanePersonajes.prefWidthProperty().bind(this.contentPane.widthProperty());
+        this.shadowPanePersonajes.prefHeightProperty().bind(this.contentPane.heightProperty());
+        this.contenedorListaPreguntas.prefWidthProperty().bind(this.contentPane.widthProperty());
+        this.contenedorListaPreguntas.prefHeightProperty().bind(this.contentPane.heightProperty());
+        this.shadowPanePreguntas.prefWidthProperty().bind(this.contentPane.widthProperty());
+        this.shadowPanePreguntas.prefHeightProperty().bind(this.contentPane.heightProperty());
+
+        this.textFieldMensaje.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(.245));
+
+        this.buttonEnviar.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.0525));
+        this.buttonEnviar.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.06));
+        this.btnLstaPreguntas.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.04));
+        this.btnLstaPreguntas.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.06));
 
         // El campo de mensaje y el boton para enviar el mensaje se encuentran desabilitados
         // Hasta que se le asigne un turno o se reciba una pregunta
@@ -149,7 +167,73 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.listaImg.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
         this.listaImg.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
 
+        Image imagenSalir = new Image(getClass().getResourceAsStream("/Tablero/Assets/mouseClick.png"));
+        ImageView imageView = new ImageView(imagenSalir);
+        imageView.setFitWidth(10);
+        imageView.setFitHeight(10);
+        buttonEnviar.setGraphic(imageView);
+
         elegirPersonaje();
+    }
+
+    public void listaPreguntas(){
+        this.shadowPanePreguntas.setVisible(true);
+        this.contenedorListaPreguntas.setVisible(true);
+        cargarListaPreguntas();
+    }
+
+    public void salirPreguntas(){
+        this.shadowPanePreguntas.setVisible(false);
+        this.contenedorListaPreguntas.setVisible(false);
+    }
+
+    private void cargarListaPreguntas() {
+        List<String> preguntasDesdeDB = PreguntasDB.obtenerPreguntas();
+        ObservableList<String> preguntasObservables = FXCollections.observableArrayList(preguntasDesdeDB);
+
+        ListView<String> listViewPreguntas = new ListView<>(preguntasObservables);
+        listViewPreguntas.setOrientation(Orientation.VERTICAL);
+        listViewPreguntas.setStyle("-fx-font-size: 14px;");
+        listViewPreguntas.setStyle("-fx-font-family: Cherry Bomb One;");
+
+        Consumer<String> accionSeleccionarPregunta = pregunta -> {
+            textFieldMensaje.setText(pregunta);
+            salirPreguntas();
+        };
+
+
+        listViewPreguntas.setCellFactory(param -> new ListCell<String>() {
+            private final BorderPane layout = new BorderPane();
+            private final Label labelPregunta = new Label();
+            private final Button botonPreguntar = new Button("Preguntar");
+
+            {
+                layout.setLeft(labelPregunta);
+                layout.setRight(botonPreguntar);
+                BorderPane.setMargin(labelPregunta, new Insets(0, 10, 0, 0));
+
+                botonPreguntar.setOnAction(event -> {
+                    if (getItem() != null && !getItem().isEmpty()) {
+                        accionSeleccionarPregunta.accept(getItem());
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(String pregunta, boolean empty) {
+                super.updateItem(pregunta, empty);
+
+                if (empty || pregunta == null) {
+                    setGraphic(null);
+                } else {
+                    labelPregunta.setText(pregunta);
+                    labelPregunta.setWrapText(true);
+                    setGraphic(layout);
+                }
+            }
+        });
+
+        gridPanePreguntas.add(listViewPreguntas, 0, 1);
     }
 
     private void cargarListaPersonajes() {
@@ -247,13 +331,13 @@ public class TableroController implements Initializable, PersonajesListener, Men
 
     public void eleccionLista(){
         contenedorListaPer.setVisible(true);
-        shadowPane.setVisible(true);
+        shadowPanePersonajes.setVisible(true);
         reasignarMetodos();
     }
 
     public void cerrarListaPersonajes(ActionEvent e){
         contenedorListaPer.setVisible(false);
-        shadowPane.setVisible(false);
+        shadowPanePersonajes.setVisible(false);
     }
 
     private void reasignarMetodos(){
@@ -448,10 +532,6 @@ public class TableroController implements Initializable, PersonajesListener, Men
     private void imgMouseExited(MouseEvent e){
         ImageView imgView = (ImageView)e.getSource();
         imgView.setEffect(null);
-    }
-
-    private void insertarPersonaje() {
-
     }
 
     public void enviarMensaje(ActionEvent e) {

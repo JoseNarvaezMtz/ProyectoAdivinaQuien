@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class JugadorDB extends dataBase{
 
@@ -75,5 +76,26 @@ public class JugadorDB extends dataBase{
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public static ArrayList<Integer> obtenerIds(String name) {
+
+        ArrayList<Integer> lista = new ArrayList<>();
+
+        String sql = "SELECT * FROM Jugadores WHERE nombre LIKE ?";
+
+        try (Connection con = DriverManager.getConnection(url); PreparedStatement stmt = con.prepareStatement (sql)) {
+
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                lista.add(rs.getInt("id"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
 }

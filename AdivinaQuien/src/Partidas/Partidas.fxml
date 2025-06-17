@@ -56,6 +56,7 @@
                  </children>
              </StackPane>
             <TextField fx:id="textFieldBuscarPorUsuario" alignment="CENTER" prefWidth="104.0" promptText="Ingresa el nombre del Usuario a buscar" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Button fx:id="ordenarPorDuracion" mnemonicParsing="false" text="Ordenar por duración" GridPane.columnIndex="2" GridPane.rowIndex="2" />
 
          </children>
       </GridPane>

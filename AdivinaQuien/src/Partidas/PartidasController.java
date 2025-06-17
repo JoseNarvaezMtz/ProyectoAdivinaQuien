@@ -1,5 +1,6 @@
 package Partidas;
 
+import DataBaseClasses.PartidaDB;
 import Menu.Menu;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -89,7 +90,7 @@ public class PartidasController implements Initializable {
 
         // Crea la matriz con el tamaño de columnas que tendrá la tabla
         for (int i = 0; i < titulos.length; i++) {
-            final int colIndex = i;
+            int colIndex = i;
             TableColumn<ObservableList<String>, String> columna = new TableColumn<>(titulos[i]);
             columna.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(colIndex)));
             tableroPartidas.getColumns().add(columna);
@@ -104,6 +105,10 @@ public class PartidasController implements Initializable {
         imageView.setFitWidth(45);
         imageView.setFitHeight(45);
         buttonSalir.setGraphic(imageView);
+
+        textFieldBuscarPorUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
+            tableroPartidas.setItems(PartidaDB.getPorNombre(textFieldBuscarPorUsuario.getText()));
+        });
     }
 
     // Función que cambia al menú principal
@@ -123,7 +128,6 @@ public class PartidasController implements Initializable {
     }
 
     //CON ESTAS FUNCIONES JOSE LUIS TIENE QUE MOSTRAR LA LISTA
-
     public void buscarUsuario(ActionEvent e){
         //AQUI TIENES QUE PONER TU MÉTODO PARA BUSCAR AL USUARIO JOSÉ
         //NO SE TE OLVODE QUE TIENES QUE ACTUALIZAR LA TABLA PARA QUE MUESTRE
@@ -133,20 +137,15 @@ public class PartidasController implements Initializable {
 
     //FUNCIÓN PARA QUE MANDES A LLAMAR EN BUSCAR USUARIOS
     public void llenarDatos(){
-        // Crear datos manualmente
-        // CAMBIAR CON LOS DATOS DE LA BASE DE DATOS
-        // Instancia de los Strings que tendrá el array list de las columnas
-        ObservableList<ObservableList<String>> datos = FXCollections.observableArrayList();
-        // Instancia de los objetos que se agreguen de base de datos
-        ObservableList<String> fila1 = FXCollections.observableArrayList("Jose", "Luis", "Jose", "Tolol el mono", "2025-06-01", "10:00");
-        // Cargar los datos en el array list de filas
-        datos.addAll(fila1);
-        //carga la tabla con los datos
-        tableroPartidas.setItems(datos);
+        tableroPartidas.setItems(PartidaDB.getHistorialPartidas());
     }
 
     public void sonidoSeleccion(){
         sonidoArena.setVolume(0.2);
         sonidoArena.play();
+    }
+
+    public void ordenarPorDuracion(){
+        tableroPartidas.setItems(PartidaDB.getHistorialOrdenado());
     }
 }

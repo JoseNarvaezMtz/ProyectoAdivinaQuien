@@ -62,7 +62,6 @@
                         <Insets top="30.0" />
                      </GridPane.margin>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#opnenteEncontrado" prefHeight="97.0" prefWidth="129.0" text="Continuar" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                </children>
             </GridPane>
          </children>
