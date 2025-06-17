@@ -47,9 +47,46 @@
     -fx-border-color: #482f17;
 }
 
-.labelTiempo{
+.labelTiempo {
     -fx-font-size: 28px;
     -fx-font-family: "Cherry Bomb One";
     -fx-text-fill: #000000;
     -fx-font-weight: bold;
+}
+
+.btnRespuestaNo {
+    -fx-border-radius: 50px;
+    -fx-background-radius: 50px;
+    -fx-background-color: #f11818;
+    -fx-border-color: #000000;
+    -fx-font-family: "Cherry Bomb One";
+    -fx-font-size: 35px;
+    -fx-text-fill: #ffffff;
+}
+
+.btnRespuestaNo:hover {
+    -fx-background-color: #b91313;
+    -fx-font-family: "Permanent Marker";
+}
+
+.btnRespuestaSi {
+    -fx-border-radius: 50px;
+    -fx-background-radius: 50px;
+    -fx-background-color: #45d32f;
+    -fx-border-color: #000000;
+    -fx-font-family: "Cherry Bomb One";
+    -fx-font-size: 35px;
+    -fx-text-fill: #ffffff;
+}
+
+.btnRespuestaSi:hover {
+    -fx-background-color: #37a426;
+    -fx-font-family: "Permanent Marker";
+}
+
+.labelPregunta {
+    -fx-font-size: 40px;
+    -fx-font-family: "Finger Paint";
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
 }

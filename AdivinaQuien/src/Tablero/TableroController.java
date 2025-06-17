@@ -11,20 +11,16 @@ package Tablero;
 //  --add-modules javafx.controls,javafx.fxml,javafx.media --add-exports javafx.base/com.sun.javafx=ALL-UNNAMED
 
 import Classes.Personaje;
-import DataBaseClasses.PersonajeDB;
 import DataBaseClasses.PreguntasDB;
 import Menu.Menu;
-import Sockets.Cliente; // Importamos la clase Cliente
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
+import Sockets.Cliente;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 
+import Sockets.Servidor;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -33,14 +29,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -77,6 +70,11 @@ public class TableroController implements Initializable, PersonajesListener, Men
     @FXML Pane shadowPanePreguntas;
     @FXML GridPane contenedorListaPreguntas;
     @FXML GridPane gridPanePreguntas;
+    @FXML GridPane gridPaneRespuestas;
+    @FXML Label labelPregunta;
+    @FXML Button btnRespNo;
+    @FXML Button btnRespSi;
+    @FXML GridPane btnsContainer;
 
     @FXML ImageView fondoImage;
     @FXML ImageView dadosImg;
@@ -95,7 +93,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
 
 
 
-    private List<Image> imagenes = new ArrayList();
+    private final List<Image> imagenes = new ArrayList();
     private long segundosTranscurridos = 0L;
 
     // ---------------------- ATRIBUTOS PARA MANEJAR EL TURNO Y EL CHAT -------------------------
@@ -152,6 +150,11 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.contenedorListaPreguntas.prefHeightProperty().bind(this.contentPane.heightProperty());
         this.shadowPanePreguntas.prefWidthProperty().bind(this.contentPane.widthProperty());
         this.shadowPanePreguntas.prefHeightProperty().bind(this.contentPane.heightProperty());
+        this.gridPaneRespuestas.prefWidthProperty().bind(this.contentPane.widthProperty());
+        this.gridPaneRespuestas.prefHeightProperty().bind(this.contentPane.heightProperty());
+        this.btnsContainer.prefWidthProperty().bind(this.contentPane.widthProperty().multiply(.8));
+        this.btnsContainer.prefHeightProperty().bind(this.contentPane.heightProperty().multiply(.5));
+
 
         this.textFieldMensaje.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(.245));
 
@@ -159,6 +162,11 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.buttonEnviar.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.06));
         this.btnLstaPreguntas.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.04));
         this.btnLstaPreguntas.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.06));
+
+        this.btnRespNo.prefWidthProperty().bind(rootPane.widthProperty().divide(10));
+        this.btnRespNo.prefHeightProperty().bind(rootPane.heightProperty().divide(8));
+        this.btnRespSi.prefWidthProperty().bind(rootPane.widthProperty().divide(10));
+        this.btnRespSi.prefHeightProperty().bind(rootPane.heightProperty().divide(8));
 
         // El campo de mensaje y el boton para enviar el mensaje se encuentran desabilitados
         // Hasta que se le asigne un turno o se reciba una pregunta
@@ -649,7 +657,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
                     if (!esMiTurno) {
                         textFieldMensaje.setDisable(false);
                         buttonEnviar.setDisable(false);
-                        agregarMensajeAlChat("Sistema", "El jugador oponente ha hceho una pregunta, responde (Si o No) paro");
+                        mostrarPregunta(pregunta);
                     }
                 }
                 // Vemos si el mensaje empieza por "RESPUESTA:"
@@ -695,6 +703,29 @@ public class TableroController implements Initializable, PersonajesListener, Men
                 agregarMensajeAlChat("Sistema", "Mensaje del servidor: " + mensaje);
             }
         });
+    }
+
+    private void mostrarPregunta(String pregunta){
+        this.shadowPanePreguntas.setVisible(true);
+        this.gridPaneRespuestas.setVisible(true);
+
+        this.labelPregunta.setText(pregunta);
+    }
+
+    public void terminarTurno(ActionEvent e) {
+        Button fuente = (Button) e.getSource();
+
+        if(fuente.getText() == "SI"){
+            this.textFieldMensaje.setText("SI");
+        } else{
+            this.textFieldMensaje.setText("NO");
+        }
+
+        enviarMensaje(e);
+
+        Servidor.cambiarTurno();
+        this.shadowPanePreguntas.setVisible(false);
+        this.gridPaneRespuestas.setVisible(false);
     }
 
     public void reloj() {
