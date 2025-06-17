@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -83,6 +85,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
 
     @FXML Label labelJugador;
     @FXML Label tiempoPartida;
+    @FXML Label labelFecha;
 
     @FXML TextFlow chat;
     @FXML TextField textFieldMensaje;
@@ -126,6 +129,13 @@ public class TableroController implements Initializable, PersonajesListener, Men
             Stage stage = (Stage)this.rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
         });
+
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        String fechaFormato = fechaActual.format(formato);
+        labelFecha.setText(fechaFormato);
+        labelFecha.getStyleClass().add("labelTiempo");
+        labelJugador.getStyleClass().add("labelTiempo");
 
         this.sideBarPane.setVisible(false);
 
@@ -305,6 +315,7 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.idPersonaje = gridTable.getChildren().indexOf(imgView);
 
         this.reloj();
+
     }
 
     public void eleccionRandom(){

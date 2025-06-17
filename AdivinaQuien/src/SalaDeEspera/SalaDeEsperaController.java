@@ -83,7 +83,7 @@ public class SalaDeEsperaController implements Initializable {
         imageCargando.fitHeightProperty().bind(rootPane.heightProperty().divide(5));
 
         Random random = new Random();
-        int rand = random.nextInt(5)+1;
+        int rand = random.nextInt(4)+1;
         Image img = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/esperando" + rand + ".gif"));
         imageCargando.setImage(img);
 

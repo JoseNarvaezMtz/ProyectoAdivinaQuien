@@ -31,11 +31,6 @@
     -fx-background-color: #7caabb;
 }
 
-.label{
-    -fx-font-family: Arial;
-    -fx-font-size: 30px;
-}
-
 .labelTitulo {
     -fx-font-family: "Permanent Marker";
     -fx-font-size: 35px;
@@ -50,4 +45,11 @@
     -fx-border-width: 3px;
     -fx-border-radius: 100px;
     -fx-border-color: #482f17;
+}
+
+.labelTiempo{
+    -fx-font-size: 28px;
+    -fx-font-family: "Cherry Bomb One";
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
 }

@@ -70,7 +70,7 @@
                      <children>
                         <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #15570BFF; -fx-border-color: #032D01FF; -fx-border-width: 6;" GridPane.rowIndex="1">
                            <children>
-                              <Label fx:id="labelJugador" contentDisplay="CENTER" layoutX="21.0" layoutY="13.0" text="JUGADOR 1" textAlignment="CENTER" textFill="WHITE">
+                              <Label fx:id="labelJugador" contentDisplay="CENTER" layoutX="19.0" layoutY="5.0" text="JUGADOR 1" textAlignment="CENTER" textFill="WHITE">
                                  <font>
                                     <Font name="Arial Black" size="18.0" />
                                  </font></Label>
@@ -78,7 +78,7 @@
                         </Pane>
                         <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #15570BFF; -fx-border-color: #032D01FF; -fx-border-width: 6;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <Label contentDisplay="CENTER" layoutX="21.0" layoutY="13.0" text="JUGADOR 2" textAlignment="CENTER" textFill="WHITE">
+                              <Label contentDisplay="CENTER" layoutX="16.0" layoutY="6.0" text="JUGADOR 2" textAlignment="CENTER" textFill="WHITE">
                                  <font>
                                     <Font name="Arial Black" size="18.0" />
                                  </font></Label>
@@ -174,6 +174,11 @@
                   </ImageView>
                </children>
             </GridPane>
+            <Label fx:id="labelFecha" text="FECHA ACTUAL" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Arial Black" size="24.0" />
+               </font>
+            </Label>
          </children>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
