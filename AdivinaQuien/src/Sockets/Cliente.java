@@ -87,7 +87,7 @@ public class Cliente {
                             // Si el listener dentro del tablero aun no esta configurado
                             // Guardamos la lista para entregarla despues
                             personajesPendientes = personajesRecibidos;
-                            System.out.println("Cliente: Personajes recibidosm pero el listener no se ha configurado");
+                            System.out.println("Cliente: Personajes recibidos pero el listener no se ha configurado");
                         }
                     } else {
                         System.out.println("Cliente: El objeto recibido no es una lista");
