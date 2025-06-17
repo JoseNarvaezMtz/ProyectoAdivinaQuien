@@ -49,11 +49,7 @@
                         <DropShadow height="25.0" radius="12.0" width="25.0" />
                      </effect>
                   </ImageView>
-                  <ImageView fx:id="imageCargando" fitHeight="101.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                     <image>
-                        <Image url="@Assets/esperando8.gif" />
-                     </image>
-                  </ImageView>
+                  <ImageView fx:id="imageCargando" fitHeight="101.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" styleClass="gid" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                   <Label fx:id="labelEsperando" text="ESPERANDO OPONENTE..." textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
                      <font>
                         <Font name="System Bold" size="24.0" />

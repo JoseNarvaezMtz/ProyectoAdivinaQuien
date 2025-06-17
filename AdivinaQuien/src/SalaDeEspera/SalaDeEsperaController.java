@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -37,6 +38,7 @@ public class SalaDeEsperaController implements Initializable {
     @FXML ImageView fondoImage;
     @FXML ImageView textureImg;
     @FXML ImageView imageCargando;
+    @FXML Group gifPane;
 
     @FXML Label labelEsperando;
 
@@ -60,8 +62,6 @@ public class SalaDeEsperaController implements Initializable {
             stage.setFullScreen(Menu.fullScreen);
         });
 
-
-
         // Adaptar el fondo a la resolución del dispositivo
         fondoImage.fitWidthProperty().bind(rootPane.widthProperty());
         fondoImage.fitHeightProperty().bind(rootPane.heightProperty());
@@ -83,9 +83,11 @@ public class SalaDeEsperaController implements Initializable {
         imageCargando.fitHeightProperty().bind(rootPane.heightProperty().divide(5));
 
         Random random = new Random();
-        int rand = random.nextInt(10)+1;
+        int rand = random.nextInt(5)+1;
         Image img = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/esperando" + rand + ".gif"));
         imageCargando.setImage(img);
+
+        imageCargando.getStyleClass().add("imageGif");
 
         // Es un metodo de JavaFX que permite ejecutar código en el hilo principal de la interfaz de usuario
         Platform.runLater(() -> {
