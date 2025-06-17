@@ -37,6 +37,7 @@ public class CreditosController implements Initializable {
 
     // BOTONES
     @FXML Button buttonSalir;
+    @FXML Button buttonPortada;
 
     private Stage stage;
     private Scene scene;
@@ -44,12 +45,17 @@ public class CreditosController implements Initializable {
 
     //Sonidos
     private static AudioClip sonidoPasto;
+    private static AudioClip sonidoMeow;
+    private static AudioClip sonidoClown;
 
     // METODO QUE SE EJECUTA AL CARGAR LA ESCENA
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         //Sonido
         sonidoPasto = new AudioClip(getClass().getResource("/Creditos/Assets/grass.mp3").toString());
+        sonidoMeow = new AudioClip(getClass().getResource("/Creditos/Assets/meow.mp3").toString());
+        sonidoClown = new AudioClip(getClass().getResource("/Creditos/Assets/clown.mp3").toString());
+
         // ADAPTAR LA ESCENA A LA RESOLUCIÓN DEL DISPOSITIVO
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
@@ -77,6 +83,10 @@ public class CreditosController implements Initializable {
         buttonSalir.prefWidthProperty().bind(rootPane.widthProperty().divide(7));
         buttonSalir.prefHeightProperty().bind(rootPane.heightProperty().divide(12));
 
+        // ADAPTAR EL BOTÓN DE SALIR A LA RESOLUCIÓN DEL DISPOSITIVO
+        buttonPortada.prefWidthProperty().bind(rootPane.widthProperty().divide(7));
+        buttonPortada.prefHeightProperty().bind(rootPane.heightProperty().divide(12));
+
         // ADAPTAR LOS PANELES A LA RESOLUCIÓN DEL DISPOSITIVO
         panel1.prefWidthProperty().bind(contentPane.widthProperty().divide(2));
         panel2.prefWidthProperty().bind(contentPane.widthProperty().divide(2));
@@ -100,9 +110,30 @@ public class CreditosController implements Initializable {
         }
     }
 
+    public void buttonVerPortada(ActionEvent e) throws IOException {
+        Parent root = (Parent) FXMLLoader.load(getClass().getResource("/Portada/Portada.fxml"));
+        Scene scene = rootPane.getScene();
+        scene.getStylesheets().add(getClass().getResource("/Portada/PortadaStyles.css").toExternalForm());
+        Stage stage = (Stage)((Node) e.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.hide();
+        stage.setScene(scene);
+        stage.show();
+    }
+
     //Sonido
     public void sonidoPasto(){
         sonidoPasto.setVolume(0.2);
         sonidoPasto.play();
+    }
+
+    public void sonidoMeow(){
+        sonidoMeow.setVolume(0.2);
+        sonidoMeow.play();
+    }
+
+    public void sonidoClown(){
+        sonidoClown.setVolume(0.2);
+        sonidoClown.play();
     }
 }

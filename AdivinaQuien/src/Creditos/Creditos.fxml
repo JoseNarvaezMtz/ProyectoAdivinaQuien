@@ -22,7 +22,7 @@
                         <Image url="@Assets/Creditos2.jpg" />
                     </image>
                 </ImageView>
-                <GridPane fx:id="contentPane" alignment="CENTER" onMousePressed="#sonidoPasto" prefHeight="819.0" prefWidth="900.0">
+                <GridPane fx:id="contentPane" alignment="CENTER" prefHeight="819.0" prefWidth="900.0">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="451.0" minWidth="10.0" percentWidth="50.0" prefWidth="451.0" />
                         <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="600.0" minWidth="10.0" percentWidth="50.0" prefWidth="449.0" />
@@ -48,7 +48,7 @@
                             </font>
                         </Label>
                         <StackPane fx:id="panel1" opacity="0.9" prefHeight="150.0" prefWidth="200.0" styleClass="lightBackground" stylesheets="@CreditosStyles.css" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                        <ImageView fx:id="perfilJulian" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                        <ImageView fx:id="perfilJulian" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#sonidoMeow" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                             <image>
                                 <Image url="@Assets/Julian.jpeg" />
                             </image>
@@ -72,7 +72,7 @@
                         </StackPane>
                         <StackPane opacity="0.9" prefHeight="150.0" prefWidth="200.0" styleClass="lightBackground" stylesheets="@CreditosStyles.css" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                             <children>
-                                <ImageView fx:id="perfilJose" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fx:id="perfilJose" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#sonidoClown" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@Assets/JoseLuis.jpeg" />
                                     </image>
@@ -87,7 +87,7 @@
                         </ImageView>
                         <StackPane opacity="0.9" prefHeight="150.0" prefWidth="200.0" styleClass="darkBackground" stylesheets="@CreditosStyles.css" GridPane.rowIndex="3" />
                         <StackPane fx:id="panel4" opacity="0.9" prefHeight="93.0" prefWidth="458.0" styleClass="darkBackground" stylesheets="@CreditosStyles.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label stylesheets="@CreditosStyles.css" text="José Luis Narvaéz Martínez" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                        <Label stylesheets="@CreditosStyles.css" text="José Luis Narváez Martínez" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                             <font>
                                 <Font size="24.0" />
                             </font>
@@ -97,6 +97,14 @@
                                 <Font size="24.0" />
                             </font>
                         </Label>
+                  <Button fx:id="buttonPortada" mnemonicParsing="false" onAction="#buttonVerPortada" onMousePressed="#sonidoPasto" prefHeight="75.0" prefWidth="202.0" styleClass="buttonRegresar" stylesheets="@CreditosStyles.css" text="Ver Portada" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                  </Button>
                     </children>
                     <StackPane.margin>
                         <Insets />
