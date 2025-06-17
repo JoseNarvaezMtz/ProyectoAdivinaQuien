@@ -14,6 +14,8 @@ import Classes.Personaje;
 import DataBaseClasses.PreguntasDB;
 import Menu.Menu;
 import Sockets.Cliente;
+
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -95,6 +97,7 @@ public class TableroController extends MenuController implements Initializable, 
     @FXML Button buttonMusica;
     @FXML Button buttonModo;
     @FXML Button buttonSalir;
+    @FXML Button buttonSiguienteMusica;
 
 
     private final List<Image> imagenes = new ArrayList();
@@ -111,9 +114,6 @@ public class TableroController extends MenuController implements Initializable, 
     private Personaje miPersonaje; // Personaje que se debe de adivinar
 
     public int idPersonaje; // Id del personaje del usuario
-
-    //Música
-    public static MediaPlayer musica;
 
     //Sonidos
     public static AudioClip sonidoVoltear;
@@ -137,14 +137,7 @@ public class TableroController extends MenuController implements Initializable, 
         sonidoLista = new AudioClip(getClass().getResource("/Tablero/Assets/paper.mp3").toString());
 
         //Musica
-        Media music = new Media(getClass().getResource("/Tablero/Assets/music1.mp3").toString());
-        musica = new MediaPlayer(music);
-        musica.setVolume(0.2);
-
-        if(MenuController.desicionUsuario == true){
-            musica.setCycleCount(MediaPlayer.INDEFINITE);
-            musica.play();
-        }
+        inicializarMusica();
 
         Platform.runLater(() -> {
             Stage stage = (Stage)this.rootPane.getScene().getWindow();
@@ -234,6 +227,12 @@ public class TableroController extends MenuController implements Initializable, 
         imageView3.setFitWidth(35);
         imageView3.setFitHeight(35);
         buttonSalir.setGraphic(imageView3);
+
+        Image imagenFondo = new Image(getClass().getResourceAsStream("/Menu/Assets/cambiarMusica.png"));
+        ImageView imageView4 = new ImageView(imagenFondo);
+        imageView4.setFitWidth(45);
+        imageView4.setFitHeight(45);
+        buttonSiguienteMusica.setGraphic(imageView4);
 
         //Dependiendo de la decisión del usuario en el menú sobre la música, cargamos el botón con el icono correspondente
         if(desicionUsuario == false){
@@ -818,21 +817,21 @@ public class TableroController extends MenuController implements Initializable, 
     }
 
     public void bottonMusica(ActionEvent e) {
-        musica.setMute(!musica.isMute());
-        if(desicionUsuario == true){
+        MenuController.musica.setMute(!MenuController.musica.isMute());
+        // Cambiamos la decisión del usuario
+        if (desicionUsuario) {
             desicionUsuario = false;
             Image img = new Image(getClass().getResourceAsStream("/Menu/Assets/musicaMuteada.png"));
             ImageView imgV = new ImageView(img);
-            imgV.setFitWidth(45);
-            imgV.setFitHeight(45);
+            imgV.setFitWidth(40);
+            imgV.setFitHeight(40);
             buttonMusica.setGraphic(imgV);
-        }
-        else{
+        } else {
             desicionUsuario = true;
             Image img = new Image(getClass().getResourceAsStream("/Menu/Assets/musica.png"));
             ImageView imgV = new ImageView(img);
-            imgV.setFitWidth(45);
-            imgV.setFitHeight(45);
+            imgV.setFitWidth(40);
+            imgV.setFitHeight(40);
             buttonMusica.setGraphic(imgV);
         }
     }
@@ -850,5 +849,10 @@ public class TableroController extends MenuController implements Initializable, 
     @Override
     public void sonidoTeclado() {
         super.sonidoTeclado();
+    }
+
+    @Override
+    public void ButtonSiguienteCancion(){
+        super.ButtonSiguienteCancion();
     }
 }

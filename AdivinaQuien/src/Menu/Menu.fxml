@@ -61,7 +61,7 @@
                         <DropShadow />
                      </effect>
                   </Button>
-                  <Button fx:id="buttonCambiarMusica" mnemonicParsing="false" onAction="#bottonCambiarMusica" onMouseClicked="#sonidoSeleccion">
+                  <Button fx:id="buttonCambiarMusica" mnemonicParsing="false" onAction="#ButtonSiguienteCancion" onMouseClicked="#sonidoSeleccion">
                      <FlowPane.margin>
                         <Insets right="10.0" />
                      </FlowPane.margin>

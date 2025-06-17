@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 import javax.swing.event.ChangeListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
@@ -75,6 +76,8 @@ public class MenuController implements Initializable {
     public static AudioClip sonidoTeclado;
 
     public static Boolean desicionUsuario = true;
+    public final static String musicas[] = {"Music1", "Music2", "Music3", "Music4", "Music5", "Music6", "Music7"};
+    private int indiceActual = 0; //Indice para las músicas aleatorias
 
     // METODO QUE SE EJECUTA AL INICIALIZAR LA PANTALLA
     @Override
@@ -86,23 +89,7 @@ public class MenuController implements Initializable {
         sonidoTeclado = new AudioClip(getClass().getResource("/Menu/Assets/keyboard.wav").toString());
 
         // Inicializando música
-        // Si no se está reproduciendo nada, reproduce la música, es para evitar conflictos cada que se instancie la scene
-        if (musica == null) {
-            Media music = new Media(getClass().getResource("/Menu/Assets/musicMenu.mp3").toString());
-            musica = new MediaPlayer(music);
-            musica.setCycleCount(MediaPlayer.INDEFINITE);
-        }
-        //Reproducimos la música
-        musica.setVolume(0.2);
-        musica.play();
-        //vemos si el usuario quiere escuchar música
-        //Si decide que no, pone la música en muted
-        if (!desicionUsuario) {
-            musica.setMute(true);
-        } else {
-            musica.setMute(false);
-        }
-
+        inicializarMusica();
 
         // ADAPTA
         javafx.application.Platform.runLater(() -> {
@@ -266,11 +253,6 @@ public class MenuController implements Initializable {
         }
     }
 
-    // BOTÓN PARA CAMBIAR FONDO DEL MENU
-    public void bottonCambiarMusica(ActionEvent e) throws IOException {;
-        System.out.println("no se q pedo con este boton");
-    }
-
     // BOTÓN PARA SILENCIAR/ACTIVAR MÚSICA
     public void bottonMusica(ActionEvent e){
         musica.setMute(!musica.isMute());
@@ -356,7 +338,7 @@ public class MenuController implements Initializable {
         stage.show();
     }
 
-    // Metodo de sonido de al seleccionar una opción
+    // Metodos de sonido de al seleccionar una opción
     public void sonidoSeleccion(){
         sonidoMadera.setVolume(0.05);
         sonidoMadera.play();
@@ -372,5 +354,52 @@ public class MenuController implements Initializable {
         sonidoTeclado.play();
     }
 
+    //botton Pata Cambiar Canción
 
+    public void ButtonSiguienteCancion() {
+        if (musica != null) {
+            musica.stop();
+        }
+        // avanza a la siguiente posición
+        // toma el residuo para que sea "Circular"
+        indiceActual = (indiceActual + 1) % musicas.length;
+
+        // Ponemos la nueva canción
+        String nueva = musicas[indiceActual];
+        Media media = new Media(getClass().getResource("/Menu/Assets/" + nueva + ".mp3").toString());
+        musica = new MediaPlayer(media);
+        musica.setCycleCount(MediaPlayer.INDEFINITE);
+        musica.setVolume(0.2);
+
+        //Si el usuario tiene la música muteada no va a sonar
+        musica.setMute(!desicionUsuario);
+        musica.play();
+    }
+
+    public void inicializarMusica(){
+        // Si no se está reproduciendo nada, reproduce la música, es para evitar conflictos cada que se instancie la scene
+        //La elegimos de la lista de manera aleatoria
+        if (musica == null) {
+            Random rand = new Random();
+            indiceActual = rand.nextInt(musicas.length); //Guarda el indice para la siguiente canción
+            int indice = rand.nextInt(musicas.length);
+            String seleccion = musicas[indice];
+
+            Media music = new Media(getClass().getResource("/Menu/Assets/" + seleccion + ".mp3").toString());
+            musica = new MediaPlayer(music);
+            musica.setCycleCount(MediaPlayer.INDEFINITE);
+        }
+
+        //Reproducimos la música
+        musica.setVolume(0.2);
+        musica.play();
+        //vemos si el usuario quiere escuchar música
+        //Si decide que no, pone la música en muted
+        if (!desicionUsuario) {
+            musica.setMute(true);
+        } else {
+            musica.setMute(false);
+        }
+
+    }
 }
