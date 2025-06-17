@@ -47,7 +47,7 @@ public class MenuController implements Initializable {
     @FXML private Button buttonPartidas;
     @FXML private Button buttonInstrucciones;
     @FXML private Button buttonMusic;
-    @FXML private Button buttonFondo;
+    @FXML private Button buttonCambiarMusica;
     @FXML private Button buttonModo;
     @FXML private Button buttonSalir;
     @FXML private Button btnNickCancelar;
@@ -155,8 +155,8 @@ public class MenuController implements Initializable {
         buttonMusic.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
 
         // ADAPTAR BOTÓN PARA CAMBIAR DE FONDO A LA RESOLUCIÓN DEL DISPOSITIVO
-        buttonFondo.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
-        buttonFondo.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
+        buttonCambiarMusica.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
+        buttonCambiarMusica.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
 
         // ADAPTAR BOTÓN PARA CAMBIAR ENTRE PANTALLA COMPLETA Y VENTANA A LA RESOLUCIÓN DEL DISPOSITIVO
         buttonModo.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
@@ -214,11 +214,11 @@ public class MenuController implements Initializable {
         }
 
         // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE CAMBIAR EL FONDO
-        Image imagenFondo = new Image(getClass().getResourceAsStream("/Menu/Assets/fondo.png"));
+        Image imagenFondo = new Image(getClass().getResourceAsStream("/Menu/Assets/cambiarMusica.png"));
         ImageView imageView3 = new ImageView(imagenFondo);
         imageView3.setFitWidth(45);
         imageView3.setFitHeight(45);
-        buttonFondo.setGraphic(imageView3);
+        buttonCambiarMusica.setGraphic(imageView3);
 
         // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE SALIR
         Image imagenModo = new Image(getClass().getResourceAsStream("/Menu/Assets/maximizar.png"));
@@ -263,7 +263,7 @@ public class MenuController implements Initializable {
     }
 
     // BOTÓN PARA CAMBIAR FONDO DEL MENU
-    public void bottonCambiarFondo(ActionEvent e) throws IOException {;
+    public void bottonCambiarMusica(ActionEvent e) throws IOException {;
         System.out.println("no se q pedo con este boton");
     }
 
@@ -315,7 +315,6 @@ public class MenuController implements Initializable {
     public void iniciarSesion(ActionEvent e){
         darkness.setVisible(true);
         nickNameContainer.setVisible(true);
-        contentPane.setDisable(true);
     }
 
     // BOTÓN PARA DESACTIVAR EL SUBMENU PARA INGRESAR EL NICKNAME DEL USUARIO
