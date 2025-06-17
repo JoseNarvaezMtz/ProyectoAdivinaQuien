@@ -136,7 +136,7 @@
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="TextFieldNickname" prefHeight="25.0" prefWidth="137.0" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                  <TextField fx:id="TextFieldNickname" onKeyPressed="#sonidoTeclado" prefHeight="25.0" prefWidth="137.0" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                      <GridPane.margin>
                         <Insets left="30.0" right="30.0" />
                      </GridPane.margin>

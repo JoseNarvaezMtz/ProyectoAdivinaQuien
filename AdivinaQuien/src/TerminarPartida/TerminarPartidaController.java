@@ -15,6 +15,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
@@ -42,6 +43,7 @@ public class TerminarPartidaController extends MenuController implements Initial
     public MediaPlayer musica;
     Media musicWin = new Media(getClass().getResource("/TerminarPartida/Assets/sunny.mp3").toString());
     Media musicLost = new Media(getClass().getResource("/TerminarPartida/Assets/rain.mp3").toString());
+    AudioClip sonidoClick = new AudioClip(getClass().getResource("/TerminarPartida/Assets/confirmTab.mp3").toString());
 
 
     @Override
@@ -168,5 +170,10 @@ public class TerminarPartidaController extends MenuController implements Initial
             fondoImage.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/TerminarPartida/Assets/loser.png")));
             tituloLabel.setText("Perdiste, Lo siento!");
         }
+    }
+
+    public void sonidoClick(){
+        sonidoClick.setVolume(0.2);
+        sonidoClick.play();
     }
 }

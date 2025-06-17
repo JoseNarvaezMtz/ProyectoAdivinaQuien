@@ -72,6 +72,8 @@ public class MenuController implements Initializable {
     public static MediaPlayer musica;
     private static AudioClip sonidoMadera;
     private static AudioClip sonidoGaviota;
+    public static AudioClip sonidoTeclado;
+
     public static Boolean desicionUsuario = true;
 
     // METODO QUE SE EJECUTA AL INICIALIZAR LA PANTALLA
@@ -81,6 +83,7 @@ public class MenuController implements Initializable {
         // Inicializando sonido
         sonidoMadera = new AudioClip(getClass().getResource("/Menu/Assets/woodHit.mp3").toString());
         sonidoGaviota = new AudioClip(getClass().getResource("/Menu/Assets/seagull.mp3").toString());
+        sonidoTeclado = new AudioClip(getClass().getResource("/Menu/Assets/keyboard.wav").toString());
 
         // Inicializando música
         // Si no se está reproduciendo nada, reproduce la música, es para evitar conflictos cada que se instancie la scene
@@ -362,5 +365,11 @@ public class MenuController implements Initializable {
         sonidoGaviota.setVolume(0.2);
         sonidoGaviota.play();
     }
+
+    public void sonidoTeclado(){
+        sonidoTeclado.setVolume(0.2);
+        sonidoTeclado.play();
+    }
+
 
 }

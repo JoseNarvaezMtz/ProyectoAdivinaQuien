@@ -43,6 +43,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
@@ -114,8 +115,26 @@ public class TableroController extends MenuController implements Initializable, 
     //Música
     public static MediaPlayer musica;
 
+    //Sonidos
+    public static AudioClip sonidoVoltear;
+    public static AudioClip sonidoMandar;
+    public static AudioClip sonidoAdivinar;
+    public static AudioClip sonidoBloqueado;
+    public static AudioClip sonidoDados;
+    public static AudioClip sonidoTablero;
+    public static AudioClip sonidoLista;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        //Sonidos
+        sonidoVoltear = new AudioClip(getClass().getResource("/Tablero/Assets/door.mp3").toString());
+        sonidoMandar = new AudioClip(getClass().getResource("/Tablero/Assets/send.mp3").toString());
+        sonidoAdivinar = new AudioClip(getClass().getResource("/Tablero/Assets/confirm.wav").toString());
+        sonidoBloqueado = new AudioClip(getClass().getResource("/Tablero/Assets/blocked.wav").toString());
+        sonidoDados = new AudioClip(getClass().getResource("/Tablero/Assets/dice.mp3").toString());
+        sonidoTablero = new AudioClip(getClass().getResource("/Tablero/Assets/confirmTab.mp3").toString());
+        sonidoLista = new AudioClip(getClass().getResource("/Tablero/Assets/paper.mp3").toString());
 
         //Musica
         Media music = new Media(getClass().getResource("/Tablero/Assets/music1.mp3").toString());
@@ -350,6 +369,8 @@ public class TableroController extends MenuController implements Initializable, 
 
     public void eleccionTablero(MouseEvent e){
         ImageView imgView = (ImageView)e.getSource();
+        sonidoTablero.setVolume(0.2);
+        sonidoTablero.play();
 
         imgView.setEffect(null);
 
@@ -369,6 +390,9 @@ public class TableroController extends MenuController implements Initializable, 
 
     public void eleccionRandom(){
         Random random = new Random();
+
+        sonidoDados.setVolume(0.2);
+        sonidoDados.play();
 
         this.dadosImg.setEffect(null);
         this.dadosImg.setOnMouseEntered(null);
@@ -390,6 +414,10 @@ public class TableroController extends MenuController implements Initializable, 
     }
 
     public void eleccionLista(){
+
+        sonidoLista.setVolume(0.2);
+        sonidoLista.play();
+
         contenedorListaPer.setVisible(true);
         shadowPanePersonajes.setVisible(true);
         reasignarMetodos();
@@ -507,11 +535,16 @@ public class TableroController extends MenuController implements Initializable, 
             if (hijo instanceof ImageView) {
                 Effect efecto = new SepiaTone();
                 hijo.setEffect(efecto);
+                sonidoBloqueado.setVolume(0.2);
+                sonidoBloqueado.play();
+                break;
             }
             if (hijo instanceof BorderPane){
                 GridPane grid = (GridPane)((BorderPane) hijo).getBottom();
                 grid.getChildren().get(0).setDisable(true);
                 grid.getChildren().get(1).setDisable(true);
+                sonidoVoltear.setVolume(0.2);
+                sonidoVoltear.play();
             }
         }
 
@@ -520,7 +553,8 @@ public class TableroController extends MenuController implements Initializable, 
 
     private void adivinar(MouseEvent e, int indice) {
         Button button = (Button) e.getSource();
-
+        sonidoAdivinar.setVolume(0.2);
+        sonidoAdivinar.play();
 //        Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
 //        Scene scene = new Scene(root);
 //        scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
@@ -802,8 +836,18 @@ public class TableroController extends MenuController implements Initializable, 
         }
     }
 
+    public void sonidoEnviar(){
+        sonidoMandar.setVolume(0.2);
+        sonidoMandar.play();
+    }
+
     @Override
     public void bottonCambiarModo(ActionEvent e) {
         super.bottonCambiarModo(e);
+    }
+
+    @Override
+    public void sonidoTeclado() {
+        super.sonidoTeclado();
     }
 }

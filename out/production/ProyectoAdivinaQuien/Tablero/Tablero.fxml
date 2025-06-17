@@ -111,8 +111,8 @@
                      <children>
                         <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="textFieldMensaje" prefHeight="44.0" prefWidth="144.0" style="-fx-background-color: #FEE3AE; -fx-border-color: #8F510A; -fx-border-width: 4px;" />
-                              <Button fx:id="buttonEnviar" contentDisplay="CENTER" mnemonicParsing="false" onAction="#enviarMensaje" />
+                              <TextField fx:id="textFieldMensaje" onKeyPressed="#sonidoTeclado" prefHeight="44.0" prefWidth="144.0" style="-fx-background-color: #FEE3AE; -fx-border-color: #8F510A; -fx-border-width: 4px;" />
+                              <Button fx:id="buttonEnviar" contentDisplay="CENTER" mnemonicParsing="false" onAction="#enviarMensaje" onMouseClicked="#sonidoEnviar" />
                               <Button fx:id="btnLstaPreguntas" contentDisplay="CENTER" mnemonicParsing="false" onAction="#listaPreguntas" />
                            </children>
                         </FlowPane>
