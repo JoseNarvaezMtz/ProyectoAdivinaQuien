@@ -57,30 +57,29 @@ import Menu.MenuController;
 import Sockets.Cliente.PersonajesListener;
 import Sockets.Cliente.MensajeListener;
 
-public class TableroController implements Initializable, PersonajesListener, MensajeListener {
+public class TableroController extends MenuController implements Initializable, PersonajesListener, MensajeListener {
 
-    @FXML Pane rootPane;
     @FXML GridPane contentPane;
     @FXML GridPane gridTable;
     @FXML GridPane sideBarPane;
     @FXML GridPane seleccionPersonaje;
     @FXML GridPane gridPaneListaPer;
-    @FXML GridPane contenedorListaPer;
-    @FXML Pane shadowPanePersonajes;
-    @FXML Pane shadowPanePreguntas;
     @FXML GridPane contenedorListaPreguntas;
     @FXML GridPane gridPanePreguntas;
-    @FXML GridPane gridPaneRespuestas;
-    @FXML Label labelPregunta;
-    @FXML Button btnRespNo;
-    @FXML Button btnRespSi;
+    @FXML GridPane contenedorListaPer;
     @FXML GridPane btnsContainer;
+    @FXML GridPane gridPaneRespuestas;
+    @FXML Pane shadowPanePreguntas;
+    @FXML Pane rootPane;
+    @FXML Pane shadowPanePersonajes;
 
     @FXML ImageView fondoImage;
     @FXML ImageView dadosImg;
     @FXML ImageView userImg;
+    @FXML ImageView userRival;
     @FXML ImageView listaImg;
 
+    @FXML Label labelPregunta;
     @FXML Label labelJugador;
     @FXML Label tiempoPartida;
     @FXML Label labelFecha;
@@ -90,7 +89,11 @@ public class TableroController implements Initializable, PersonajesListener, Men
 
     @FXML Button buttonEnviar;
     @FXML Button btnLstaPreguntas;
-
+    @FXML Button btnRespNo;
+    @FXML Button btnRespSi;
+    @FXML Button buttonMusica;
+    @FXML Button buttonModo;
+    @FXML Button buttonSalir;
 
 
     private final List<Image> imagenes = new ArrayList();
@@ -176,6 +179,9 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.userImg.fitWidthProperty().bind(this.rootPane.widthProperty().divide(6.5));
         this.userImg.fitHeightProperty().bind(this.rootPane.heightProperty().divide(4.5));
 
+        this.userRival.fitWidthProperty().bind(this.rootPane.widthProperty().divide(6.5));
+        this.userRival.fitHeightProperty().bind(this.rootPane.heightProperty().divide(4.5));
+
         this.dadosImg.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
         this.dadosImg.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
 
@@ -185,11 +191,45 @@ public class TableroController implements Initializable, PersonajesListener, Men
         this.listaImg.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
         this.listaImg.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
 
-        Image imagenSalir = new Image(getClass().getResourceAsStream("/Tablero/Assets/mouseClick.png"));
-        ImageView imageView = new ImageView(imagenSalir);
-        imageView.setFitWidth(10);
-        imageView.setFitHeight(10);
+        Image imagenEnviar = new Image(getClass().getResourceAsStream("/Tablero/Assets/mouseClick.png"));
+        ImageView imageView = new ImageView(imagenEnviar);
+        imageView.setFitWidth(35);
+        imageView.setFitHeight(35);
         buttonEnviar.setGraphic(imageView);
+
+        Image imagenPregunta = new Image(getClass().getResourceAsStream("/Tablero/Assets/lista.png"));
+        ImageView imageView1 = new ImageView(imagenPregunta);
+        imageView1.setFitWidth(35);
+        imageView1.setFitHeight(35);
+        btnLstaPreguntas.setGraphic(imageView1);
+
+        Image imagenModo= new Image(getClass().getResourceAsStream("/Menu/Assets/maximizar.png"));
+        ImageView imageView2 = new ImageView(imagenModo);
+        imageView2.setFitWidth(40);
+        imageView2.setFitHeight(40);
+        buttonModo.setGraphic(imageView2);
+
+        Image imagenSalir = new Image(getClass().getResourceAsStream("/Tablero/Assets/salir.png"));
+        ImageView imageView3 = new ImageView(imagenSalir);
+        imageView3.setFitWidth(35);
+        imageView3.setFitHeight(35);
+        buttonSalir.setGraphic(imageView3);
+
+        //Dependiendo de la decisión del usuario en el menú sobre la música, cargamos el botón con el icono correspondente
+        if(desicionUsuario == false){
+            Image img = new Image(getClass().getResourceAsStream("/Menu/Assets/musicaMuteada.png"));
+            ImageView imgV = new ImageView(img);
+            imgV.setFitWidth(40);
+            imgV.setFitHeight(40);
+            buttonMusica.setGraphic(imgV);
+        }
+        else{
+            Image img = new Image(getClass().getResourceAsStream("/Menu/Assets/musica.png"));
+            ImageView imgV = new ImageView(img);
+            imgV.setFitWidth(40);
+            imgV.setFitHeight(40);
+            buttonMusica.setGraphic(imgV);
+        }
 
         elegirPersonaje();
     }
@@ -210,9 +250,10 @@ public class TableroController implements Initializable, PersonajesListener, Men
         ObservableList<String> preguntasObservables = FXCollections.observableArrayList(preguntasDesdeDB);
 
         ListView<String> listViewPreguntas = new ListView<>(preguntasObservables);
+        listViewPreguntas.getStyleClass().add("listView");
         listViewPreguntas.setOrientation(Orientation.VERTICAL);
-        listViewPreguntas.setStyle("-fx-font-size: 14px;");
         listViewPreguntas.setStyle("-fx-font-family: Cherry Bomb One;");
+        listViewPreguntas.setStyle("-fx-font-size: 14px;");
 
         Consumer<String> accionSeleccionarPregunta = pregunta -> {
             textFieldMensaje.setText(pregunta);
@@ -739,5 +780,30 @@ public class TableroController implements Initializable, PersonajesListener, Men
         }, new KeyValue[0])});
         timeline.setCycleCount(-1);
         timeline.play();
+    }
+
+    public void bottonMusica(ActionEvent e) {
+        musica.setMute(!musica.isMute());
+        if(desicionUsuario == true){
+            desicionUsuario = false;
+            Image img = new Image(getClass().getResourceAsStream("/Menu/Assets/musicaMuteada.png"));
+            ImageView imgV = new ImageView(img);
+            imgV.setFitWidth(45);
+            imgV.setFitHeight(45);
+            buttonMusica.setGraphic(imgV);
+        }
+        else{
+            desicionUsuario = true;
+            Image img = new Image(getClass().getResourceAsStream("/Menu/Assets/musica.png"));
+            ImageView imgV = new ImageView(img);
+            imgV.setFitWidth(45);
+            imgV.setFitHeight(45);
+            buttonMusica.setGraphic(imgV);
+        }
+    }
+
+    @Override
+    public void bottonCambiarModo(ActionEvent e) {
+        super.bottonCambiarModo(e);
     }
 }

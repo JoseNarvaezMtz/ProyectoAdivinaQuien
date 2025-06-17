@@ -38,7 +38,7 @@
                         <StackPane opacity="0.9" prefHeight="150.0" prefWidth="200.0" styleClass="lightBackground" stylesheets="@CreditosStyles.css" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                         <ImageView fx:id="perfilHarim" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                             <image>
-                                <Image url="@Assets/harim.jpg" />
+                                <Image url="@Assets/Hairm.jpeg" />
                             </image>
                         </ImageView>
                         <StackPane opacity="0.9" prefHeight="98.0" prefWidth="195.0" styleClass="darkBackground" stylesheets="@CreditosStyles.css" GridPane.rowIndex="1" />
@@ -50,16 +50,16 @@
                         <StackPane fx:id="panel1" opacity="0.9" prefHeight="150.0" prefWidth="200.0" styleClass="lightBackground" stylesheets="@CreditosStyles.css" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                         <ImageView fx:id="perfilJulian" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                             <image>
-                                <Image url="@Assets/julian.png" />
+                                <Image url="@Assets/Julian.jpeg" />
                             </image>
                         </ImageView>
                         <Button fx:id="buttonSalir" mnemonicParsing="false" onAction="#bottonSalir" onMousePressed="#sonidoPasto" prefHeight="75.0" prefWidth="202.0" styleClass="buttonRegresar" stylesheets="@CreditosStyles.css" text="Regresar" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                             <font>
                                 <Font name="System Bold" size="18.0" />
                             </font>
-                     <effect>
-                        <DropShadow />
-                     </effect>
+                            <effect>
+                                <DropShadow />
+                            </effect>
                         </Button>
                         <StackPane fx:id="panel2" opacity="0.9" prefHeight="98.0" prefWidth="458.0" styleClass="darkBackground" stylesheets="@CreditosStyles.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <children>
@@ -74,7 +74,7 @@
                             <children>
                                 <ImageView fx:id="perfilJose" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@Assets/jose.jpg" />
+                                        <Image url="@Assets/JoseLuis.jpeg" />
                                     </image>
                                 </ImageView>
                             </children>
@@ -82,7 +82,7 @@
                         <StackPane fx:id="panel3" opacity="0.9" prefHeight="150.0" prefWidth="200.0" styleClass="lightBackground" stylesheets="@CreditosStyles.css" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
                         <ImageView fx:id="perfilSantos" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                             <image>
-                                <Image url="@Assets/santos.jpg" />
+                                <Image url="@Assets/Santos.jpeg" />
                             </image>
                         </ImageView>
                         <StackPane opacity="0.9" prefHeight="150.0" prefWidth="200.0" styleClass="darkBackground" stylesheets="@CreditosStyles.css" GridPane.rowIndex="3" />

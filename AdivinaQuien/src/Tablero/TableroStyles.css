@@ -90,3 +90,9 @@
     -fx-font-weight: bold;
     -fx-text-fill: #ffffff;
 }
+
+.label {
+    -fx-font-family: "Cherry Bomb One";
+    -fx-font-size: 35px;
+    -fx-text-fill: #000000;
+}

@@ -139,7 +139,7 @@ public class TerminarPartidaController extends MenuController implements Initial
         EstadoPartidaTerminada();
     }
 
-    //Toma al padre para mandar a llamar al método que manda al usuario a partidas registradas
+    //Toma al padre para mandar a llamar al método del padre que manda al usuario a partidas registradas
     @Override
     public void partidasRegistradas(ActionEvent e) throws IOException {
         if(MenuController.desicionUsuario == true ){
@@ -149,7 +149,7 @@ public class TerminarPartidaController extends MenuController implements Initial
         super.partidasRegistradas(e);
     }
 
-    //Toma al padre para mandar a llamar al método que manda al usuario a Sala de espera
+    //Toma al padre para mandar a llamar al método del padre que manda al usuario a Sala de espera
     @Override
     public void cambiarSalaDeEspera(ActionEvent e) throws IOException {
         if(MenuController.desicionUsuario == true ){
