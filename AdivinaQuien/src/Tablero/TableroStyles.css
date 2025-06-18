@@ -18,7 +18,7 @@
 }
 
 .button{
-    -fx-background-color: #f5f5dc;
+    -fx-background-color: #c1e7f6;
     -fx-border-color: #67675b;
     -fx-text-fill: #050000;
     -fx-background-radius: 250px;
@@ -27,9 +27,8 @@
     -fx-border-color: #67675b;
 }
 
-.label{
-    -fx-font-family: Arial;
-    -fx-font-size: 30px;
+.button:hover{
+    -fx-background-color: #7caabb;
 }
 
 .labelTitulo {
@@ -38,4 +37,62 @@
     -fx-font-weight: bold;
     -fx-text-fill: #ff8b00;
     -fx-effect: dropshadow(gaussian, rgba(49, 152, 238, 0.6), 8, 0.5, 4, 4);
+}
+
+.preguntasPane {
+    -fx-background-color: #c79b70;
+    -fx-background-radius: 100px;
+    -fx-border-width: 3px;
+    -fx-border-radius: 100px;
+    -fx-border-color: #482f17;
+}
+
+.labelTiempo {
+    -fx-font-size: 28px;
+    -fx-font-family: "Cherry Bomb One";
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+}
+
+.btnRespuestaNo {
+    -fx-border-radius: 50px;
+    -fx-background-radius: 50px;
+    -fx-background-color: #f11818;
+    -fx-border-color: #000000;
+    -fx-font-family: "Cherry Bomb One";
+    -fx-font-size: 35px;
+    -fx-text-fill: #ffffff;
+}
+
+.btnRespuestaNo:hover {
+    -fx-background-color: #b91313;
+    -fx-font-family: "Permanent Marker";
+}
+
+.btnRespuestaSi {
+    -fx-border-radius: 50px;
+    -fx-background-radius: 50px;
+    -fx-background-color: #45d32f;
+    -fx-border-color: #000000;
+    -fx-font-family: "Cherry Bomb One";
+    -fx-font-size: 35px;
+    -fx-text-fill: #ffffff;
+}
+
+.btnRespuestaSi:hover {
+    -fx-background-color: #37a426;
+    -fx-font-family: "Permanent Marker";
+}
+
+.label {
+    -fx-font-family: "Cherry Bomb One";
+    -fx-font-size: 35px;
+    -fx-text-fill: #000000;
+}
+
+.labelPregunta {
+    -fx-font-size: 40px;
+    -fx-font-family: "Finger Paint";
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
 }

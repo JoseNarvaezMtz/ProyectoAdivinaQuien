@@ -1,0 +1,21 @@
+.label {
+    -fx-font-size: 32px;
+    -fx-font-family: "Finger Paint";
+    -fx-font-weight: bold;
+}
+
+.button{
+    -fx-background-radius: 250em;
+    -fx-min-width: 50px;
+    -fx-min-height: 50px;
+    -fx-background-color: #deb887;
+
+    -fx-border-color: #75531c;
+    -fx-border-width: 10px;
+    -fx-border-radius: 250em;
+}
+
+.button:hover {
+    -fx-background-color: derive(#deb887, -20%);
+    -fx-border-color: derive(#75531c, -20%);
+}

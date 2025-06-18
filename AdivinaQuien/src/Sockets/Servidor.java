@@ -234,7 +234,7 @@ public class Servidor {
     }
 
     //Metodo para cambiar de turno
-    private static void cambiarTurno(){
+    public static void cambiarTurno(){
         // Si ya hay 2 jugadores conectados asignamos el turno
         if (clientes.size() == 2){
             // Buscamos al otro jugador

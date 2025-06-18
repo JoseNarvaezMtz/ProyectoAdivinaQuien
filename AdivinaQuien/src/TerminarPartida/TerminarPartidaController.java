@@ -15,6 +15,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
@@ -36,12 +37,13 @@ public class TerminarPartidaController extends MenuController implements Initial
     @FXML Button buttonRegresarMenu;
     @FXML Button buttonVolverAJugar;
 
-    public Boolean estado = false;
+    public static Boolean estado = false;
 
     //Musica
     public MediaPlayer musica;
     Media musicWin = new Media(getClass().getResource("/TerminarPartida/Assets/sunny.mp3").toString());
     Media musicLost = new Media(getClass().getResource("/TerminarPartida/Assets/rain.mp3").toString());
+    AudioClip sonidoClick = new AudioClip(getClass().getResource("/TerminarPartida/Assets/confirmTab.mp3").toString());
 
 
     @Override
@@ -139,7 +141,7 @@ public class TerminarPartidaController extends MenuController implements Initial
         EstadoPartidaTerminada();
     }
 
-    //Toma al padre para mandar a llamar al método que manda al usuario a partidas registradas
+    //Toma al padre para mandar a llamar al método del padre que manda al usuario a partidas registradas
     @Override
     public void partidasRegistradas(ActionEvent e) throws IOException {
         if(MenuController.desicionUsuario == true ){
@@ -149,7 +151,7 @@ public class TerminarPartidaController extends MenuController implements Initial
         super.partidasRegistradas(e);
     }
 
-    //Toma al padre para mandar a llamar al método que manda al usuario a Sala de espera
+    //Toma al padre para mandar a llamar al método del padre que manda al usuario a Sala de espera
     @Override
     public void cambiarSalaDeEspera(ActionEvent e) throws IOException {
         if(MenuController.desicionUsuario == true ){
@@ -168,5 +170,10 @@ public class TerminarPartidaController extends MenuController implements Initial
             fondoImage.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/TerminarPartida/Assets/loser.png")));
             tituloLabel.setText("Perdiste, Lo siento!");
         }
+    }
+
+    public void sonidoClick(){
+        sonidoClick.setVolume(0.2);
+        sonidoClick.play();
     }
 }

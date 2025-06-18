@@ -5,7 +5,7 @@ import DataBaseClasses.JugadorDB;
 import java.time.Duration;
 import java.time.LocalDate;
 
-public class Partida {
+public class Partida implements Comparable<Partida> {
     private LocalDate fecha;
     private Duration tiempo;
     private String jugador1;
@@ -20,6 +20,9 @@ public class Partida {
         this.jugador2 = JugadorDB.getJugador(idj2);
         this.winner = idW == idP ? this.jugador1 : this.jugador2;
     }
+
+    @Override
+    public int compareTo(Partida o) { return (int)( this.tiempo.toSeconds() - o.getTiempo().toSeconds() ); }
 
     public LocalDate getFecha() {
         return fecha;

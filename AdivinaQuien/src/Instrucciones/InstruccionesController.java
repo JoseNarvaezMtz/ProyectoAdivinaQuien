@@ -45,9 +45,23 @@ public class InstruccionesController implements Initializable {
     @FXML private Button buttonLista;
     @FXML private Button buttonIzquierda;
     @FXML private Button buttonDerecha;
+    @FXML private Button buttonRegresar;
 
     @FXML private Label Titulo;
-    @FXML private TextArea instrucciones;
+    @FXML private TextArea textArea1;
+    @FXML private TextArea textArea2;
+    @FXML private TextArea textArea3;
+    @FXML private TextArea textArea4;
+    @FXML private TextArea textArea5;
+    @FXML private TextArea textArea6;
+    @FXML private TextArea textArea7;
+    @FXML private ImageView img1;
+    @FXML private ImageView img2;
+    @FXML private ImageView img3;
+    @FXML private ImageView img4;
+    @FXML private ImageView img5;
+    @FXML private ImageView img6;
+    @FXML private ImageView img7;
 
     @FXML private Label labelNombrePer;
     @FXML private TextArea textAreaDescripcion;
@@ -71,7 +85,6 @@ public class InstruccionesController implements Initializable {
             if (stage != null) {
                 stage.setFullScreen(Menu.fullScreen);
             }
-
         });
 
         // Adapta la imagen de fondo a la resolución del dispositivo
@@ -91,27 +104,62 @@ public class InstruccionesController implements Initializable {
         this.Titulo.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.1));
 
         // Adapta un TextArea que muestra las instrucciones del juego y la adapta a la resolución del dispositivo
-        this.instrucciones.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.85));
-        this.instrucciones.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.6));
+        this.textArea1.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
+        this.textArea1.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(1.65));
+
+        this.textArea2.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
+        this.textArea2.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.55));
+
+        this.textArea3.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
+        this.textArea3.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.35));
+
+        this.textArea4.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
+        this.textArea4.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.73));
+
+        this.textArea5.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
+        this.textArea5.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.37));
+
+        this.textArea6.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
+        this.textArea6.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.73));
+
+        this.textArea7.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
+        this.textArea7.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.61));
+
+        this.img1.fitWidthProperty().bind(this.rootPane.widthProperty().multiply(0.8));
+        this.img1.fitHeightProperty().bind(this.rootPane.widthProperty().multiply(0.45));
+
+        this.img2.fitWidthProperty().bind(this.rootPane.widthProperty().multiply(0.8));
+        this.img2.fitHeightProperty().bind(this.rootPane.widthProperty().multiply(0.45));
+
+        this.img3.fitWidthProperty().bind(this.rootPane.widthProperty().multiply(0.8));
+        this.img3.fitHeightProperty().bind(this.rootPane.widthProperty().multiply(0.45));
+
+        this.img4.fitWidthProperty().bind(this.rootPane.widthProperty().multiply(0.8));
+        this.img4.fitHeightProperty().bind(this.rootPane.widthProperty().multiply(0.45));
+
+        this.img5.fitWidthProperty().bind(this.rootPane.widthProperty().multiply(0.8));
+        this.img5.fitHeightProperty().bind(this.rootPane.widthProperty().multiply(0.45));
+
+        this.img6.fitWidthProperty().bind(this.rootPane.widthProperty().multiply(0.8));
+        this.img6.fitHeightProperty().bind(this.rootPane.widthProperty().multiply(0.45));
+
+        this.img7.fitWidthProperty().bind(this.rootPane.widthProperty().multiply(0.8));
+        this.img7.fitHeightProperty().bind(this.rootPane.widthProperty().multiply(0.45));
 
         // Adapta el botón de regreso a la resolución del dispositivo
-        this.buttonSalir.prefWidthProperty().bind(this.rootPane.widthProperty().divide(5));
+        this.buttonSalir.prefWidthProperty().bind(this.rootPane.widthProperty().divide(12));
         this.buttonSalir.prefHeightProperty().bind(this.rootPane.heightProperty().divide(10));
+
+        this.buttonRegresar.prefWidthProperty().bind(this.rootPane.widthProperty().divide(12));
+        this.buttonRegresar.prefHeightProperty().bind(this.rootPane.heightProperty().divide(10));
 
         // Adapta el botón que muestra la lista de los personajes a la resolución del dispositivo
         this.buttonLista.prefWidthProperty().bind(this.rootPane.widthProperty().divide(4));
         this.buttonLista.prefHeightProperty().bind(this.rootPane.heightProperty().divide(8));
 
-        // Adapta el root principal a la resolución del dispositivo
-        this.rootPane.widthProperty().addListener((obs, oldVal, newVal) -> this.ajustarFuentes());
-        this.rootPane.heightProperty().addListener((obs, oldVal, newVal) -> this.ajustarFuentes());
-
         // Adapta la imagen de los personajes a la resolución del dispositivo
         this.personajeImage.fitWidthProperty().bind(this.rootPane.widthProperty().divide(4));
         this.personajeImage.fitHeightProperty().bind(this.rootPane.heightProperty().divide(2));
-
-        //Ajusta las fuentes que se muestran en el panel principal para que se adapte a la resolución general del dispositivo
-        this.ajustarFuentes();
 
         // Carga la imagen del botón de salir
         Image imagenSalir = new Image(this.getClass().getResourceAsStream("/Instrucciones/Assets/regresar.png"));
@@ -119,6 +167,12 @@ public class InstruccionesController implements Initializable {
         imageView.setFitWidth((double)50.0F);
         imageView.setFitHeight((double)50.0F);
         this.buttonSalir.setGraphic(imageView);
+
+        Image imagenRegresar = new Image(this.getClass().getResourceAsStream("/Instrucciones/Assets/regresar.png"));
+        ImageView imgV = new ImageView(imagenRegresar);
+        imgV.setFitWidth((double)50.0F);
+        imgV.setFitHeight((double)50.0F);
+        this.buttonRegresar.setGraphic(imgV);
 
         // Carga la imagen del botón para cambiar al personaje anterior de la lista
         Image imagenIzquierda = new Image(this.getClass().getResourceAsStream("/Instrucciones/Assets/flechaIzquierda.png"));
@@ -166,9 +220,9 @@ public class InstruccionesController implements Initializable {
     @FXML
     public void izquierda(ActionEvent e) {
         if (this.indiceActual > 0) {
-            --this.indiceActual;
+            this.indiceActual--;
         } else {
-            this.indiceActual = this.personajes.size();
+            this.indiceActual = this.personajes.size()-1;
         }
 
         this.actualizarPersonaje();
@@ -177,8 +231,8 @@ public class InstruccionesController implements Initializable {
     // Botón para cambiar al personaje siguiente de la lista
     @FXML
     public void derecha(ActionEvent e) {
-        if (this.indiceActual < this.personajes.size()) {
-            ++this.indiceActual;
+        if (this.indiceActual < this.personajes.size()-1) {
+            this.indiceActual++;
         } else {
             this.indiceActual = 0;
         }
@@ -192,7 +246,7 @@ public class InstruccionesController implements Initializable {
         double ancho = this.rootPane.getWidth();
         double alto = this.rootPane.getHeight();
         double escala = Math.min(ancho / (double)1280.0F, alto / (double)720.0F);
-        this.instrucciones.setFont(new Font("Arial", (double)24.0F * escala));
+        this.textArea1.setFont(new Font("Arial", (double)24.0F * escala));
         this.buttonLista.setFont(new Font("Arial", (double)17.0F * escala));
         this.Titulo.setFont(new Font("Chiller", (double)48.0F * escala));
         this.Titulo.setAlignment(Pos.CENTER);

@@ -3,11 +3,21 @@
     -fx-min-width: 100px;
     -fx-min-height: 50px;
     -fx-background-color: #ff8000;
-    -fx-text-fill: #1d1d1d;
 
     -fx-border-color: #7c0f0f;
     -fx-border-width: 10px;
     -fx-border-radius: 250em;
+
+    -fx-font-family: "Finger Paint";
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+.label {
+    -fx-font-size: 40px;
+    -fx-font-family: "Permanent Marker";
+    -fx-text-fill: #000000;
+    -fx-text-alignment: Center;
 }
 
 .button:hover {

@@ -10,9 +10,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,6 +30,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static Menu.MenuController.desicionUsuario;
+
 public class SalaDeEsperaController implements Initializable {
 
     @FXML Pane rootPane;
@@ -37,6 +41,9 @@ public class SalaDeEsperaController implements Initializable {
     @FXML ImageView fondoImage;
     @FXML ImageView textureImg;
     @FXML ImageView imageCargando;
+    @FXML Group gifPane;
+
+    @FXML Button buttonSalir;
 
     @FXML Label labelEsperando;
 
@@ -51,16 +58,24 @@ public class SalaDeEsperaController implements Initializable {
 
         //Sonido de Fondo
         Media fondo = new Media(getClass().getResource("/SalaDeEspera/Assets/ocean.mp3").toString());
+
+
         oceano = new MediaPlayer(fondo);
         oceano.setCycleCount(MediaPlayer.INDEFINITE);
+        oceano.setVolume(0.4);
         oceano.play();
 
+        //vemos si el usuario quiere escuchar música
+        //Si decide que no, pone la música en muted
+        if (!desicionUsuario) {
+            oceano.setMute(true);
+        } else {
+            oceano.setMute(false);
+        }
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
         });
-
-
 
         // Adaptar el fondo a la resolución del dispositivo
         fondoImage.fitWidthProperty().bind(rootPane.widthProperty());
@@ -83,9 +98,11 @@ public class SalaDeEsperaController implements Initializable {
         imageCargando.fitHeightProperty().bind(rootPane.heightProperty().divide(5));
 
         Random random = new Random();
-        int rand = random.nextInt(10)+1;
+        int rand = random.nextInt(4)+1;
         Image img = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/esperando" + rand + ".gif"));
         imageCargando.setImage(img);
+
+        imageCargando.getStyleClass().add("imageGif");
 
         // Es un metodo de JavaFX que permite ejecutar código en el hilo principal de la interfaz de usuario
         Platform.runLater(() -> {
@@ -112,6 +129,13 @@ public class SalaDeEsperaController implements Initializable {
             System.out.println("Error al conectar al servidor: " + ex.getMessage());
             ex.printStackTrace();
         }
+
+        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE SALIR
+        Image imagenSalir = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/salir.png"));
+        ImageView imageView = new ImageView(imagenSalir);
+        imageView.setFitWidth(45);
+        imageView.setFitHeight(45);
+        buttonSalir.setGraphic(imageView);
     }
 
     // Método para regresar al Menú principal
@@ -136,11 +160,6 @@ public class SalaDeEsperaController implements Initializable {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-    }
-
-    // Manda al usuario al tablero cuando se encuentra el oponente
-    public void opnenteEncontrado(ActionEvent e) throws IOException {
-       irTablero();
     }
 
     // Carga el tablero cuando se encuentra el oponente

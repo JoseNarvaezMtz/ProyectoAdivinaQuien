@@ -3,17 +3,16 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.effect.DisplacementMap?>
 <?import javafx.scene.effect.DropShadow?>
-<?import javafx.scene.effect.FloatMap?>
-<?import javafx.scene.effect.Light.Distant?>
 <?import javafx.scene.effect.Lighting?>
 <?import javafx.scene.effect.Reflection?>
 <?import javafx.scene.effect.Shadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -31,34 +30,74 @@
 
       <GridPane fx:id="contentPane" prefHeight="400.0" prefWidth="600.0">
          <columnConstraints>
-            <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints minWidth="10.0" />
-            <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
+            <ColumnConstraints minWidth="10.0" percentWidth="80.0" />
+            <ColumnConstraints minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
          </columnConstraints>
          <rowConstraints>
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" percentHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" percentHeight="55.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" percentHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" percentHeight="15.0" vgrow="SOMETIMES" />
          </rowConstraints>
 
          <children>
 
-            <Label fx:id="Titulo" contentDisplay="CENTER" text="Aprende a jugar ¿Adivina Quién?" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0">
+            <Label fx:id="Titulo" contentDisplay="CENTER" text="Aprende a jugar Adivina ¿Quién?" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0">
                <font>
                   <Font name="Chiller" size="36.0" />
                </font>
             </Label>
-
-            <TextArea fx:id="instrucciones" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#sonidoSplash" onMousePressed="#sonidoSplash" opacity="0.75" prefHeight="255.0" prefWidth="495.0" text="¿Adivina quién? Es un famoso juego de mesa por turnos donde el objetivo es adivinar al personaje que escogió secretamente el otro jugador mediante una serie de preguntas que describan las características de su personaje, ya sean físicas, accesorios, etc, ¡la imaginación es tu límite!&#10;&#10;En esta adaptación online puedes seleccionar un total de TOTALPERSONAJES de 3 maneras distintas: directamente del tablero, desde la lista de la derecha o aleatoriamente.&#10;&#10;Tras la selección se habilita un chat por turnos para hacer preguntas.&#10;Podrás marcar personajes descartados con botones en el tablero. ¡Cuidado! No hay marcha atrás.&#10;&#10;Cuando estés seguro, en tu turno puedes adivinar el personaje del rival. ¡Solo tienes una oportunidad!&#10;&#10;Disfruta del juego con temática de animales del mundo. ¿Responderás con la verdad?" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-               <effect>
-                  <DisplacementMap>
-                     <mapData>
-                        <FloatMap />
-                     </mapData>
-                  </DisplacementMap>
-               </effect>
-            </TextArea>
+            <ScrollPane opacity="0.85" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+              <content>
+                  <FlowPane alignment="CENTER" prefHeight="217.0" prefWidth="435.0">
+                     <children>
+                        <TextArea fx:id="textArea1" editable="false" prefHeight="124.0" prefWidth="421.0" text="¿Adivina quién? Es un famoso juego de mesa por turnos donde el objetivo es adivinar al personaje que escogió secretamente el otro jugador mediante una serie de preguntas que describan las características de su personaje, ya sean físicas, accesorios, etc, ¡la imaginación es tu límite!&#10;&#10;En esta adaptación online puedes seleccionar un total de 34 de 3 maneras distintas: directamente del tablero, desde la lista de la derecha o aleatoriamente.&#10;&#10;Tras la selección se habilita un chat por turnos para hacer preguntas.Podrás marcar personajes descartados con botones en el tablero. ¡Cuidado! No hay marcha atrás.&#10;&#10;Cuando estés seguro, en tu turno puedes adivinar el personaje del rival. ¡Solo tienes una oportunidad!&#10;&#10;Disfruta del juego con temática de animales del mundo. ¿Responderás con la verdad?&#10;&#10;¿CÓMO JUGAR?&#10;&#10;Al iniciar la partida, se te presentará un tablero aleatorio con 24 personajes, !ELIGE TU FAVORITO¡ . Tienes tres maneras de hacerlo:" wrapText="true" />
+                        <ImageView fx:id="img1" fitHeight="150.0" fitWidth="346.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Assets/eleccionPersonaje.png" />
+                           </image>
+                        </ImageView>
+                        <TextArea fx:id="textArea2" editable="false" prefHeight="200.0" prefWidth="200.0" text="La primera opción será elegir un personaje aleatorio del tablero. Lo único que tienes que hacer es presionar el ícono de los dados en la parte superior derecha.&#10;&#10;Como segunda opción, puedes elegir tu personaje deseado de una lista con los personajes dle tablero. Esta lista, además del personaje indicará su nombre. Lo único que debes hacer es seleccionar el personaje que desees." wrapText="true" />
+                        <ImageView fx:id="img2" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Assets/listaPersonajes.png" />
+                           </image>
+                        </ImageView>
+                        <TextArea fx:id="textArea3" editable="false" prefHeight="200.0" prefWidth="200.0" text="Como tercera y última opción, puedes simplemente dar click en el personaje del tablero que más te guste.&#10;&#10;Al terminar de elegir personaje, tu pantalla se verá de la siguiente manera:" wrapText="true" />
+                        <ImageView fx:id="img3" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Assets/tablero.png" />
+                           </image>
+                        </ImageView>
+                        <TextArea fx:id="textArea4" editable="false" prefHeight="200.0" prefWidth="200.0" text="En la parte inferior derecha se encuentra el chat que tendrás con tu amigo. Deberas pensar en las preguntas más adecuadas para ir eliminando personajes y poder adivinar el que tiene tu compañero.&#10;Para mandar tu pregunta, solo debes dar click en el botón que tiene el ícono de un &quot;mosuse feliz&quot;.&#10;&#10;Si en algún momento te quedas sin ideas, !NO TE PREOCUPES!, nosotros te sugerimos algunas. Lo único que debes hacer es dar click en el botón que tiene el ícono de una &quot;lista&quot;. &#10;Esto te desplegará la lista de preguntas sugeridas como se muestra en la siguiente imágen." wrapText="true" />
+                        <ImageView fx:id="img4" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Assets/listaPreguntas.png" />
+                           </image>
+                        </ImageView>
+                        <TextArea fx:id="textArea5" editable="false" prefHeight="200.0" prefWidth="200.0" text="Cuando tu compañero te mande una pregunta, tendrás únicamente dos opciones: Responder con un &quot;SI&quot;, o con un &quot;NO&quot;. Entonces ¡ten mucho cuidado con lo que preguntas!&#10;Para poder responder, solo tienes que presionar uno de los siguientes botones:" wrapText="true" />
+                        <ImageView fx:id="img5" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Assets/respuesta.png" />
+                           </image>
+                        </ImageView>
+                        <TextArea fx:id="textArea6" editable="false" prefHeight="200.0" prefWidth="200.0" text="Cada que tu compañero te responda una pregunta, deberás descartar los personajes que pienses que NO son el de tu amigo. ¿Cómo lo harás?&#10;Bueno, pues muy facil, cada que pases el mouse por encima de un personaje, se te desplegará un pequeño menú con dos botones: uno con una tacha y otro con una palomita.&#10;Estos botones sirven, tanto para adivinar, como para &quot;voltear&quot; tus cartas. Si estas seguro de que ese personaje NO es el de tu compañero, entonces voltéalo para que estes seguro de ello.&#10;Al dar click en el botón de la tacha, tu personaje se volteará y se verá de la siguiente manera:" wrapText="true" />
+                        <ImageView fx:id="img6" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Assets/voltearPersonaje.png" />
+                           </image>
+                        </ImageView>
+                        <TextArea fx:id="textArea7" editable="false" prefHeight="200.0" prefWidth="200.0" text="Si en algún momento dudas de tus selecciones, !NO TE PREOCUPES¡ puedes volver a voltear las cartas, para que estén disponibles de nuevo.&#10;&#10;!PERO TEN MUCHO CUIDADO¡ si volteas todas tus cartas, perderás automáticamente.&#10;&#10;Cuando estés seguro de qué personaje tiene tu amigo, solo da click en el botón de la palomita." wrapText="true" />
+                        <ImageView fx:id="img7" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Assets/adivinar.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </FlowPane>
+              </content>
+            </ScrollPane>
 
             <Button fx:id="buttonLista" onAction="#menuPersonajesInstrucciones" onMouseClicked="#sonidoSplash" onMousePressed="#sonidoSplash" prefHeight="25.0" prefWidth="217.0" text="Ver la lista completa de personajes!" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                <effect>
@@ -69,21 +108,24 @@
                   </Reflection>
                </effect></Button>
 
-            <Button fx:id="buttonSalir" contentDisplay="CENTER" nodeOrientation="RIGHT_TO_LEFT" onAction="#salir" onMousePressed="#sonidoSplash" prefHeight="25.0" prefWidth="87.0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP">
+            <Button fx:id="buttonSalir" contentDisplay="CENTER" nodeOrientation="RIGHT_TO_LEFT" onAction="#salir" onMousePressed="#sonidoSplash" prefHeight="25.0" prefWidth="37.0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                <GridPane.margin>
-                  <Insets left="75.0" />
+                  <Insets bottom="20.0" />
                </GridPane.margin>
                <effect>
-                  <DropShadow />
+                  <DropShadow>
+                     <input>
+                        <Reflection />
+                     </input></DropShadow>
                </effect></Button>
 
          </children>
       </GridPane>
       <GridPane fx:id="contentPanePersonajes" prefHeight="400.0" prefWidth="600.0" visible="false">
         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="70.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -91,7 +133,7 @@
           <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" onAction="#regresarInstrucciones" onMouseClicked="#sonidoSplash" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+            <Button fx:id="buttonRegresar" mnemonicParsing="false" onAction="#regresarInstrucciones" onMouseClicked="#sonidoSplash" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                <effect>
                   <Reflection>
                      <input>
@@ -129,9 +171,6 @@
                         <StackPane styleClass="ine" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                            <children>
                               <ImageView fx:id="personajeImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@Assets/Instrucciones.jpg" />
-                                 </image>
                                  <effect>
                                     <DropShadow>
                                        <input>
@@ -139,9 +178,6 @@
                                              <bumpInput>
                                                 <Shadow />
                                              </bumpInput>
-                                             <light>
-                                                <Light.Distant />
-                                             </light>
                                           </Lighting>
                                        </input>
                                     </DropShadow>

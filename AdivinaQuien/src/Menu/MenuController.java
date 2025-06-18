@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -27,6 +28,7 @@ import javafx.stage.Stage;
 import javax.swing.event.ChangeListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
@@ -47,7 +49,7 @@ public class MenuController implements Initializable {
     @FXML private Button buttonPartidas;
     @FXML private Button buttonInstrucciones;
     @FXML private Button buttonMusic;
-    @FXML private Button buttonFondo;
+    @FXML private Button buttonCambiarMusica;
     @FXML private Button buttonModo;
     @FXML private Button buttonSalir;
     @FXML private Button btnNickCancelar;
@@ -72,7 +74,11 @@ public class MenuController implements Initializable {
     public static MediaPlayer musica;
     private static AudioClip sonidoMadera;
     private static AudioClip sonidoGaviota;
+    public static AudioClip sonidoTeclado;
+
     public static Boolean desicionUsuario = true;
+    public final static String musicas[] = {"Music1", "Music2", "Music3", "Music4", "Music5", "Music6", "Music7"};
+    private int indiceActual = 0; //Indice para las músicas aleatorias
 
     // METODO QUE SE EJECUTA AL INICIALIZAR LA PANTALLA
     @Override
@@ -81,24 +87,10 @@ public class MenuController implements Initializable {
         // Inicializando sonido
         sonidoMadera = new AudioClip(getClass().getResource("/Menu/Assets/woodHit.mp3").toString());
         sonidoGaviota = new AudioClip(getClass().getResource("/Menu/Assets/seagull.mp3").toString());
+        sonidoTeclado = new AudioClip(getClass().getResource("/Menu/Assets/keyboard.wav").toString());
 
         // Inicializando música
-        // Si no se está reproduciendo nada, reproduce la música, es para evitar conflictos cada que se instancie la scene
-        if (musica == null) {
-            Media music = new Media(getClass().getResource("/Menu/Assets/musicMenu.mp3").toString());
-            musica = new MediaPlayer(music);
-            musica.setCycleCount(MediaPlayer.INDEFINITE);
-        }
-        //Reproducimos la música
-        musica.play();
-        //vemos si el usuario quiere escuchar música
-        //Si decide que no, pone la música en muted
-        if (!desicionUsuario) {
-            musica.setMute(true);
-        } else {
-            musica.setMute(false);
-        }
-
+        inicializarMusica();
 
         // ADAPTA
         javafx.application.Platform.runLater(() -> {
@@ -143,7 +135,7 @@ public class MenuController implements Initializable {
         buttonCreditos.prefHeightProperty().bind(rootPane.heightProperty().divide(10));
 
         // ADAPTAR EL TAMAÑO DEL BOTÓN PARA IR A LAS INSTRUCCIONES A LA RESOLUCIÓN DEL DISPOSITIVO
-        buttonInstrucciones.prefWidthProperty().bind(rootPane.widthProperty().divide(7));
+        buttonInstrucciones.prefWidthProperty().bind(rootPane.widthProperty().divide(6));
         buttonInstrucciones.prefHeightProperty().bind(rootPane.heightProperty().divide(10));
 
         // ADAPTAR EL TAMAÑO DEL BOTÓN PARA IR A LAS PARTIDAS REGISTRADAS A LA RESOLUCIÓN DEL DISPOSITIVO
@@ -155,8 +147,8 @@ public class MenuController implements Initializable {
         buttonMusic.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
 
         // ADAPTAR BOTÓN PARA CAMBIAR DE FONDO A LA RESOLUCIÓN DEL DISPOSITIVO
-        buttonFondo.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
-        buttonFondo.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
+        buttonCambiarMusica.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
+        buttonCambiarMusica.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
 
         // ADAPTAR BOTÓN PARA CAMBIAR ENTRE PANTALLA COMPLETA Y VENTANA A LA RESOLUCIÓN DEL DISPOSITIVO
         buttonModo.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
@@ -214,11 +206,11 @@ public class MenuController implements Initializable {
         }
 
         // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE CAMBIAR EL FONDO
-        Image imagenFondo = new Image(getClass().getResourceAsStream("/Menu/Assets/fondo.png"));
+        Image imagenFondo = new Image(getClass().getResourceAsStream("/Menu/Assets/cambiarMusica.png"));
         ImageView imageView3 = new ImageView(imagenFondo);
         imageView3.setFitWidth(45);
         imageView3.setFitHeight(45);
-        buttonFondo.setGraphic(imageView3);
+        buttonCambiarMusica.setGraphic(imageView3);
 
         // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE SALIR
         Image imagenModo = new Image(getClass().getResourceAsStream("/Menu/Assets/maximizar.png"));
@@ -260,11 +252,6 @@ public class MenuController implements Initializable {
             stage.setFullScreen(true);
             Menu.fullScreen = true;
         }
-    }
-
-    // BOTÓN PARA CAMBIAR FONDO DEL MENU
-    public void bottonCambiarFondo(ActionEvent e) throws IOException {;
-        System.out.println("no se q pedo con este boton");
     }
 
     // BOTÓN PARA SILENCIAR/ACTIVAR MÚSICA
@@ -315,8 +302,9 @@ public class MenuController implements Initializable {
     public void iniciarSesion(ActionEvent e){
         darkness.setVisible(true);
         nickNameContainer.setVisible(true);
-        contentPane.setDisable(true);
+        TextFieldNickname.clear();
     }
+
 
     // BOTÓN PARA DESACTIVAR EL SUBMENU PARA INGRESAR EL NICKNAME DEL USUARIO
     public void cancelarInicioSesion(){
@@ -353,7 +341,7 @@ public class MenuController implements Initializable {
         stage.show();
     }
 
-    // Metodo de sonido de al seleccionar una opción
+    // Metodos de sonido de al seleccionar una opción
     public void sonidoSeleccion(){
         sonidoMadera.setVolume(0.05);
         sonidoMadera.play();
@@ -364,4 +352,57 @@ public class MenuController implements Initializable {
         sonidoGaviota.play();
     }
 
+    public void sonidoTeclado(){
+        sonidoTeclado.setVolume(0.1);
+        sonidoTeclado.play();
+    }
+
+    //botton Pata Cambiar Canción
+
+    public void ButtonSiguienteCancion() {
+        if (musica != null) {
+            musica.stop();
+        }
+        // avanza a la siguiente posición
+        // toma el residuo para que sea "Circular"
+        indiceActual = (indiceActual + 1) % musicas.length;
+
+        // Ponemos la nueva canción
+        String nueva = musicas[indiceActual];
+        Media media = new Media(getClass().getResource("/Menu/Assets/" + nueva + ".mp3").toString());
+        musica = new MediaPlayer(media);
+        musica.setCycleCount(MediaPlayer.INDEFINITE);
+        musica.setVolume(0.2);
+
+        //Si el usuario tiene la música muteada no va a sonar
+        musica.setMute(!desicionUsuario);
+        musica.play();
+    }
+
+    public void inicializarMusica(){
+        // Si no se está reproduciendo nada, reproduce la música, es para evitar conflictos cada que se instancie la scene
+        //La elegimos de la lista de manera aleatoria
+        if (musica == null) {
+            Random rand = new Random();
+            indiceActual = rand.nextInt(musicas.length); //Guarda el indice para la siguiente canción
+            int indice = rand.nextInt(musicas.length);
+            String seleccion = musicas[indice];
+
+            Media music = new Media(getClass().getResource("/Menu/Assets/" + seleccion + ".mp3").toString());
+            musica = new MediaPlayer(music);
+            musica.setCycleCount(MediaPlayer.INDEFINITE);
+        }
+
+        //Reproducimos la música
+        musica.setVolume(0.2);
+        musica.play();
+        //vemos si el usuario quiere escuchar música
+        //Si decide que no, pone la música en muted
+        if (!desicionUsuario) {
+            musica.setMute(true);
+        } else {
+            musica.setMute(false);
+        }
+
+    }
 }

@@ -8,13 +8,14 @@
     -fx-border-color: #482f17;
     -fx-border-width: 10px;
     -fx-border-radius: 250em;
-    -fx-font-family: "Arial Black";
+    -fx-font-family: "Cherry Bomb One";
     -fx-font-size: 22;
 }
 
 .button:hover {
     -fx-background-color: derive(#deb887, -20%);
     -fx-border-color: derive(#482f17, -20%);
+    -fx-font-family: "Permanent Marker";
 }
 
 .panelNickname{
@@ -47,4 +48,16 @@
     -fx-font-weight: bold;
     -fx-text-fill: #ff8b00;
     -fx-effect: dropshadow(gaussian, rgba(49, 152, 238, 0.6), 8, 0.5, 4, 4);
+}
+
+.text-field {
+    -fx-font-family: "Permanent Marker";
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+}
+
+.labelIngresaTuNick {
+    -fx-font-family: "Cherry Bomb One";
+    -fx-font-size: 20px;
+    -fx-text-fill: #ffffff;
 }
