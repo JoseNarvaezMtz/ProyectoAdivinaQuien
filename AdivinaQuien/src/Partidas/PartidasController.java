@@ -37,6 +37,7 @@ public class PartidasController implements Initializable {
     @FXML TextField textFieldBuscarPorUsuario;
 
     @FXML Button buttonSalir;
+    @FXML Button ordenarPorDuracion;
 
     @FXML TableView tableroPartidas;
 
@@ -89,6 +90,9 @@ public class PartidasController implements Initializable {
         // Adaptar el tablero que muestra los datos de las partidas
         tableroPartidas.prefWidthProperty().bind(gridPane.widthProperty().multiply(0.9));
         tableroPartidas.prefHeightProperty().bind(gridPane.heightProperty().multiply(0.9));
+
+        ordenarPorDuracion.prefWidthProperty().bind(rootPane.widthProperty().divide(8));
+        ordenarPorDuracion.prefHeightProperty().bind(rootPane.heightProperty().divide(13));
 
         // Crear los títulos que tendrán las columnas de la tabla mediante un array de Strings
         String[] titulos = { "Jugador 1", "Jugador 2", "Ganador", "Personaje Ganador", "Fecha", "Duración Partida"};

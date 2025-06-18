@@ -302,6 +302,7 @@ public class MenuController implements Initializable {
     public void iniciarSesion(ActionEvent e){
         darkness.setVisible(true);
         nickNameContainer.setVisible(true);
+        TextFieldNickname.clear();
     }
 
     // BOTÓN PARA DESACTIVAR EL SUBMENU PARA INGRESAR EL NICKNAME DEL USUARIO
