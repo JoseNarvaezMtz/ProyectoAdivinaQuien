@@ -184,7 +184,48 @@ public class Servidor {
                         clientesOut.get(cliente).println("ERROR: No puedes responder en este momento");
                         System.out.println("ERROR: " + clientesNickName.get(cliente) + " intento responder");
                     }
-                }else if (mensaje.startsWith("PERSONAJE_ELEGIDO:")) {
+                } else if (mensaje.startsWith("ADIVINAR:")) {
+                    Socket jugadorAdivinador = cliente;
+                    String nickGanador = clientesNickName.get(jugadorAdivinador);
+
+                    // Buscamos al oponente
+                    Socket oponente = null;
+                    for (Socket client : clientes) {
+                        if (!client.equals(jugadorAdivinador)){
+                            oponente = client;
+                            break;
+                        }
+                    }
+
+                    if (oponente != null){
+                        // Obtenemos el Id del personaje secreto del oponente
+                        int idPersonajeSecretoOP = personajesSecretos.get(oponente);
+
+                        // Obtenemos el Id que el jugador intento adivinar
+                        int idAdivinado = Integer.parseInt(mensaje.substring("ADIVINAR:".length()).trim());
+
+                        System.out.println("\nServidor: " + nickGanador + " intenta adivinar.");
+                        System.out.println("Servidor: El adivino: " + idAdivinado);
+                        System.out.println("Servidor: El personaje secreto es: " + idPersonajeSecretoOP);
+
+                        String mensajeAdivnar;
+                        if (idAdivinado == idPersonajeSecretoOP){
+                            // Si adivino correctamente
+                            System.out.println("\nServidor: Adivino el personaje ya chingo");
+                            mensajeAdivnar = "RESULTADO:GANASTE:" + nickGanador;
+                        } else {
+                            // Si no adivino el ganador es el oponente
+                            String nickOponente = clientesNickName.get(oponente);
+                            System.out.println("Servidor: No adivino el personaje ya pelo gano: " + nickOponente);
+                            mensajeAdivnar = "RESULTADO:GANASTE:" + nickOponente;
+                        }
+
+                        // Enviamos el resultado a los dos jugadores para terminar la partida
+                        for (Socket client : clientes) {
+                            clientesOut.get(client).println(mensajeAdivnar);
+                        }
+                    }
+                } else if (mensaje.startsWith("PERSONAJE_ELEGIDO:")) {
                     System.out.println("Servidor: Mensaje de \"PERSONAJE_ELEGIDO\" recibido del jugador: " + clientesNickName.get(cliente));
 
                     synchronized (Servidor.class){

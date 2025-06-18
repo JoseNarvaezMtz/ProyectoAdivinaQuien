@@ -623,24 +623,23 @@ public class TableroController extends MenuController implements Initializable, 
         sonidoAdivinar.setVolume(0.2);
         sonidoAdivinar.play();
 
-        // QUE EL CONTADOR NO EMPIECE HASTA QUE LOS DOS HAYAN ELEGIDO PERSONAJE
+        // Obtenemos el indice que selecciono para adivinar
+        int idAdivinar = indice + 1;
 
-        // QUE JALEN LOS TURNOS
+        // Le decimos al servidor que el usuario adivino personaje
+        cliente.enviarMensaje("ADIVINAR", String.valueOf(idAdivinar));
 
-        // QUE SE CARGUE EL NICKNAME DEL OTRO JUGADOR
+        // PARA LA REDIRECCION LA MANEJO DESDE EL SERVIDOR PARA EL ID Y SI ES O NO
 
-        // 1.- MANDAR POR SOCKETS HACIA EL SERVER, Y DE ALGUNA MANERA DEBES CHECAR SI ESE ÍNDICE ES IGUAL AL IDPERSONAJE DEL OTRO JUGADOR
 
-        // 2.- SI ES IGUAL, ENTONCES HACES TRU EL BOOLEANO DE LA PARTIDA TERMINADA, SI NO, LO HACES FALSE
-
-        Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
+        /*Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
         Stage stage = new Stage();
         stage = (Stage)((Node) e.getSource()).getScene().getWindow();
         stage.hide();
         stage.setScene(scene);
-        stage.show();
+        stage.show();*/
     }
 
     public void setCliente(Cliente cliente) {
@@ -836,6 +835,39 @@ public class TableroController extends MenuController implements Initializable, 
                         // Aquí es donde un botón de "Terminar Turno"
                     }
                 }
+            } else if (mensaje.startsWith("RESULTADO")) {
+                // // Viene estructurado de la siguiente manera: "RESULTADO:GANASTE:nickGanador"
+                String [] partes = mensaje.split(":");
+                String resultado = partes[1]; // GANASTE
+                String nickGanador = partes[2];
+
+                if (nickGanador.equals(miNickname)) {
+                    System.out.println("Gane, GG WP");
+                    TerminarPartidaController.estado = true; // Pantalla de ganaste
+                } else {
+                    System.out.println("Perdi, NT, MB");
+                    TerminarPartidaController.estado = false; // Pantalla de perdiste
+                }
+
+                Platform.runLater(() -> {
+                    try {
+                        Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
+                        Scene scene = new Scene(root);
+                        scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
+                        Stage stage = new Stage();
+
+                        // Obtenemos la ventana actual desde el rootPane creo
+                        stage =  (Stage) rootPane.getScene().getWindow();
+
+                        stage.hide();
+                        stage.setScene(scene);
+                        stage.show();
+                    } catch (IOException ex){
+                        ex.printStackTrace();
+                    }
+
+
+                });
             } else if (mensaje.startsWith("INICIAR_CRONOMETRO")) {
                 agregarMensajeAlChat("Sistema", "Los jugadores han elegido personaje. QUE COMIENCE EL JUEGO :=");
                 reloj();
@@ -874,7 +906,7 @@ public class TableroController extends MenuController implements Initializable, 
     public void terminarTurno(ActionEvent e) {
         Button fuente = (Button) e.getSource();
 
-        if(fuente.getText().trim() == "SI"){
+        if(fuente.getText().equals("SI")){
             this.textFieldMensaje.setText("SI");
         } else{
             this.textFieldMensaje.setText("NO");

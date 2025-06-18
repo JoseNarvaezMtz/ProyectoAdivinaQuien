@@ -118,6 +118,7 @@ public class Cliente {
                             mensaje.startsWith("PREGUNTA:") ||
                             mensaje.startsWith("RESPUESTA:") ||
                             mensaje.startsWith("INICIAR_CRONOMETRO") ||
+                            mensaje.startsWith("RESULTADO") ||
                             mensaje.equals("TURNO TERMINADO") ||
                             mensaje.startsWith("ERROR:")) {
 
