@@ -79,7 +79,7 @@
                         </Pane>
                         <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #0383EE; -fx-border-color: #02377A; -fx-border-width: 4;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                            <children>
-                              <Label contentDisplay="CENTER" layoutX="16.0" layoutY="6.0" text="JUGADOR 2" textAlignment="CENTER" textFill="WHITE">
+                              <Label fx:id="labelJugador2" contentDisplay="CENTER" layoutX="16.0" layoutY="6.0" text="JUGADOR 2" textAlignment="CENTER" textFill="WHITE">
                                  <font>
                                     <Font name="Arial Black" size="18.0" />
                                  </font></Label>

@@ -85,6 +85,7 @@ public class TableroController extends MenuController implements Initializable, 
 
     @FXML Label labelPregunta;
     @FXML Label labelJugador;
+    @FXML Label labelJugador2;
     @FXML Label tiempoPartida;
     @FXML Label labelFecha;
 
@@ -252,6 +253,11 @@ public class TableroController extends MenuController implements Initializable, 
         }
 
         elegirPersonaje();
+    } // Fin Initialize
+
+    public void setOponente(String oponente){
+        this.nickNameOp = oponente;
+        this.labelJugador2.setText(oponente);
     }
 
     public void listaPreguntas(){
@@ -357,10 +363,24 @@ public class TableroController extends MenuController implements Initializable, 
                 contenedorListaPer.setVisible(false);
                 shadowPanePersonajes.setVisible(false);
                 reasignarMetodos();
+
+                // Determinamos el Id y llamamos al metodo de personaje elegido
+                int idPersonajeSelec = newSelection.getIdTablero() + 1;
+                personajeElegido(idPersonajeSelec);
             }
         });
 
         gridPaneListaPer.add(listViewPersonajes, 0, 1);
+    }
+
+    // Metodo para avisar que se ejigio personaje
+    private void personajeElegido(int idPersonajeSelec) {
+        //Guardamos el Id del personaje
+        this.idPersonaje = idPersonajeSelec;
+
+        // Avisamos que el personaje se ha elegido
+        cliente.enviarMensaje("PERSONAJE_ELEGIDO", String.valueOf(idPersonajeSelec));
+        agregarMensajeAlChat("Sistema", "Has elegido tu personaje. Esperando a tu oponente ;)");
     }
 
     private void elegirPersonaje(){
@@ -385,9 +405,12 @@ public class TableroController extends MenuController implements Initializable, 
 
         reasignarMetodos();
 
-        this.idPersonaje = gridTable.getChildren().indexOf(imgView);
+        int idPersonajeSelec = gridTable.getChildren().indexOf(imgView);
 
-        this.reloj();
+        // Cronometro sincronizada jaja xd lol
+        personajeElegido(idPersonajeSelec);
+
+        //this.reloj();
 
     }
 
@@ -413,7 +436,11 @@ public class TableroController extends MenuController implements Initializable, 
         this.sideBarPane.setVisible(true);
 
         reasignarMetodos();
-        this.reloj();
+
+        // Cronometro sincronizada jaja xd lol
+        personajeElegido(rand);
+
+        //this.reloj();
     }
 
     public void eleccionLista(){
@@ -809,6 +836,9 @@ public class TableroController extends MenuController implements Initializable, 
                         // Aquí es donde un botón de "Terminar Turno"
                     }
                 }
+            } else if (mensaje.startsWith("INICIAR_CRONOMETRO")) {
+                agregarMensajeAlChat("Sistema", "Los jugadores han elegido personaje. QUE COMIENCE EL JUEGO :=");
+                reloj();
             } else if (mensaje.startsWith("OPONENTE DESCONECTADO:")) {
                 // Viene estructurado de la siguiente manera: "OPONENTE DESCONECTADO:nickname"
                 String nickNameDesconectado = mensaje.substring("OPONENTE DESCONECTADO:".length()).trim();
