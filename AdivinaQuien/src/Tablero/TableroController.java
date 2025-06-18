@@ -856,6 +856,7 @@ public class TableroController extends MenuController implements Initializable, 
         this.gridPaneRespuestas.setVisible(false);
     }
 
+
     public void reloj() {
         Timeline timeline = new Timeline(new KeyFrame[]{new KeyFrame(Duration.seconds((double)1.0F), (event) -> {
             ++this.segundosTranscurridos;
