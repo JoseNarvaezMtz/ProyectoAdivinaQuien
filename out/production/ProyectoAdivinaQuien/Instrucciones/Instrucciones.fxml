@@ -31,9 +31,9 @@
 
       <GridPane fx:id="contentPane" prefHeight="400.0" prefWidth="600.0">
          <columnConstraints>
-            <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints minWidth="10.0" />
-            <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
+            <ColumnConstraints minWidth="10.0" percentWidth="80.0" />
+            <ColumnConstraints minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -69,21 +69,24 @@
                   </Reflection>
                </effect></Button>
 
-            <Button fx:id="buttonSalir" contentDisplay="CENTER" nodeOrientation="RIGHT_TO_LEFT" onAction="#salir" onMousePressed="#sonidoSplash" prefHeight="25.0" prefWidth="87.0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP">
+            <Button fx:id="buttonSalir" contentDisplay="CENTER" nodeOrientation="RIGHT_TO_LEFT" onAction="#salir" onMousePressed="#sonidoSplash" prefHeight="25.0" prefWidth="37.0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                <GridPane.margin>
-                  <Insets left="75.0" />
+                  <Insets bottom="20.0" />
                </GridPane.margin>
                <effect>
-                  <DropShadow />
+                  <DropShadow>
+                     <input>
+                        <Reflection />
+                     </input></DropShadow>
                </effect></Button>
 
          </children>
       </GridPane>
       <GridPane fx:id="contentPanePersonajes" prefHeight="400.0" prefWidth="600.0" visible="false">
         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="70.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -91,7 +94,7 @@
           <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" onAction="#regresarInstrucciones" onMouseClicked="#sonidoSplash" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+            <Button fx:id="buttonRegresar" mnemonicParsing="false" onAction="#regresarInstrucciones" onMouseClicked="#sonidoSplash" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                <effect>
                   <Reflection>
                      <input>
@@ -129,9 +132,6 @@
                         <StackPane styleClass="ine" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                            <children>
                               <ImageView fx:id="personajeImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@Assets/Instrucciones.jpg" />
-                                 </image>
                                  <effect>
                                     <DropShadow>
                                        <input>

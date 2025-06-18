@@ -45,6 +45,7 @@ public class InstruccionesController implements Initializable {
     @FXML private Button buttonLista;
     @FXML private Button buttonIzquierda;
     @FXML private Button buttonDerecha;
+    @FXML private Button buttonRegresar;
 
     @FXML private Label Titulo;
     @FXML private TextArea instrucciones;
@@ -71,7 +72,6 @@ public class InstruccionesController implements Initializable {
             if (stage != null) {
                 stage.setFullScreen(Menu.fullScreen);
             }
-
         });
 
         // Adapta la imagen de fondo a la resolución del dispositivo
@@ -95,8 +95,11 @@ public class InstruccionesController implements Initializable {
         this.instrucciones.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.6));
 
         // Adapta el botón de regreso a la resolución del dispositivo
-        this.buttonSalir.prefWidthProperty().bind(this.rootPane.widthProperty().divide(5));
+        this.buttonSalir.prefWidthProperty().bind(this.rootPane.widthProperty().divide(12));
         this.buttonSalir.prefHeightProperty().bind(this.rootPane.heightProperty().divide(10));
+
+        this.buttonRegresar.prefWidthProperty().bind(this.rootPane.widthProperty().divide(12));
+        this.buttonRegresar.prefHeightProperty().bind(this.rootPane.heightProperty().divide(10));
 
         // Adapta el botón que muestra la lista de los personajes a la resolución del dispositivo
         this.buttonLista.prefWidthProperty().bind(this.rootPane.widthProperty().divide(4));
@@ -119,6 +122,12 @@ public class InstruccionesController implements Initializable {
         imageView.setFitWidth((double)50.0F);
         imageView.setFitHeight((double)50.0F);
         this.buttonSalir.setGraphic(imageView);
+
+        Image imagenRegresar = new Image(this.getClass().getResourceAsStream("/Instrucciones/Assets/regresar.png"));
+        ImageView imgV = new ImageView(imagenRegresar);
+        imgV.setFitWidth((double)50.0F);
+        imgV.setFitHeight((double)50.0F);
+        this.buttonRegresar.setGraphic(imgV);
 
         // Carga la imagen del botón para cambiar al personaje anterior de la lista
         Image imagenIzquierda = new Image(this.getClass().getResourceAsStream("/Instrucciones/Assets/flechaIzquierda.png"));
@@ -166,9 +175,9 @@ public class InstruccionesController implements Initializable {
     @FXML
     public void izquierda(ActionEvent e) {
         if (this.indiceActual > 0) {
-            --this.indiceActual;
+            this.indiceActual--;
         } else {
-            this.indiceActual = this.personajes.size();
+            this.indiceActual = this.personajes.size()-1;
         }
 
         this.actualizarPersonaje();
@@ -177,8 +186,8 @@ public class InstruccionesController implements Initializable {
     // Botón para cambiar al personaje siguiente de la lista
     @FXML
     public void derecha(ActionEvent e) {
-        if (this.indiceActual < this.personajes.size()) {
-            ++this.indiceActual;
+        if (this.indiceActual < this.personajes.size()-1) {
+            this.indiceActual++;
         } else {
             this.indiceActual = 0;
         }

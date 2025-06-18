@@ -19,6 +19,9 @@
 
 .label{
     -fx-text-fill: #ffffff;
+    -fx-font-family: "Cherry Bomb One";
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
 }
 
 .lightBackground{

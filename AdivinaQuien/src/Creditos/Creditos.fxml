@@ -53,7 +53,7 @@
                                 <Image url="@Assets/Julian.jpeg" />
                             </image>
                         </ImageView>
-                        <Button fx:id="buttonSalir" mnemonicParsing="false" onAction="#bottonSalir" onMousePressed="#sonidoPasto" prefHeight="75.0" prefWidth="202.0" styleClass="buttonRegresar" stylesheets="@CreditosStyles.css" text="Regresar" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                        <Button fx:id="buttonSalir" mnemonicParsing="false" onAction="#bottonSalir" onMousePressed="#sonidoPasto" prefHeight="75.0" prefWidth="202.0" styleClass="buttonRegresar" stylesheets="@CreditosStyles.css" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                             <font>
                                 <Font name="System Bold" size="18.0" />
                             </font>
@@ -97,7 +97,7 @@
                                 <Font size="24.0" />
                             </font>
                         </Label>
-                  <Button fx:id="buttonPortada" mnemonicParsing="false" onAction="#buttonVerPortada" onMousePressed="#sonidoPasto" prefHeight="75.0" prefWidth="202.0" styleClass="buttonRegresar" stylesheets="@CreditosStyles.css" text="Ver Portada" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                  <Button fx:id="buttonPortada" mnemonicParsing="false" onAction="#buttonVerPortada" onMousePressed="#sonidoPasto" prefHeight="75.0" prefWidth="202.0" styleClass="buttonRegresar" stylesheets="@CreditosStyles.css" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>

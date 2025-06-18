@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -80,18 +81,30 @@ public class CreditosController implements Initializable {
         });
 
         // ADAPTAR EL BOTÓN DE SALIR A LA RESOLUCIÓN DEL DISPOSITIVO
-        buttonSalir.prefWidthProperty().bind(rootPane.widthProperty().divide(7));
-        buttonSalir.prefHeightProperty().bind(rootPane.heightProperty().divide(12));
+        buttonSalir.prefWidthProperty().bind(rootPane.widthProperty().divide(10));
+        buttonSalir.prefHeightProperty().bind(rootPane.heightProperty().divide(10));
 
         // ADAPTAR EL BOTÓN DE SALIR A LA RESOLUCIÓN DEL DISPOSITIVO
-        buttonPortada.prefWidthProperty().bind(rootPane.widthProperty().divide(7));
-        buttonPortada.prefHeightProperty().bind(rootPane.heightProperty().divide(12));
+        buttonPortada.prefWidthProperty().bind(rootPane.widthProperty().divide(10));
+        buttonPortada.prefHeightProperty().bind(rootPane.heightProperty().divide(10));
 
         // ADAPTAR LOS PANELES A LA RESOLUCIÓN DEL DISPOSITIVO
         panel1.prefWidthProperty().bind(contentPane.widthProperty().divide(2));
         panel2.prefWidthProperty().bind(contentPane.widthProperty().divide(2));
         panel3.prefWidthProperty().bind(contentPane.widthProperty().divide(2));
         panel4.prefWidthProperty().bind(contentPane.widthProperty().divide(2));
+
+        Image imagenSalir = new Image(getClass().getResourceAsStream("/Creditos/Assets/salir.png"));
+        ImageView imageView = new ImageView(imagenSalir);
+        imageView.setFitWidth(45);
+        imageView.setFitHeight(45);
+        buttonSalir.setGraphic(imageView);
+
+        Image imagenPortada = new Image(getClass().getResourceAsStream("/Creditos/Assets/portadaIcon.png"));
+        ImageView imageView2 = new ImageView(imagenPortada);
+        imageView2.setFitWidth(45);
+        imageView2.setFitHeight(45);
+        buttonPortada.setGraphic(imageView2);
     }
 
     // METODO PARA EL BOTON QUE REGRESA AL MENU DEL JUEGO

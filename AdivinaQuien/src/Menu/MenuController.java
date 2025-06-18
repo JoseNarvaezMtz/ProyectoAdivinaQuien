@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -134,7 +135,7 @@ public class MenuController implements Initializable {
         buttonCreditos.prefHeightProperty().bind(rootPane.heightProperty().divide(10));
 
         // ADAPTAR EL TAMAÑO DEL BOTÓN PARA IR A LAS INSTRUCCIONES A LA RESOLUCIÓN DEL DISPOSITIVO
-        buttonInstrucciones.prefWidthProperty().bind(rootPane.widthProperty().divide(7));
+        buttonInstrucciones.prefWidthProperty().bind(rootPane.widthProperty().divide(6));
         buttonInstrucciones.prefHeightProperty().bind(rootPane.heightProperty().divide(10));
 
         // ADAPTAR EL TAMAÑO DEL BOTÓN PARA IR A LAS PARTIDAS REGISTRADAS A LA RESOLUCIÓN DEL DISPOSITIVO
