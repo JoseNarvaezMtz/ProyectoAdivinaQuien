@@ -277,6 +277,7 @@ public class Servidor {
                 e.printStackTrace();
             }
 
+
             // Notificamos que el jugador oponente se desconecto
             for (Socket client : clientes) {
                 try {
