@@ -147,6 +147,18 @@ public class Servidor {
                         System.out.println("Enviando respuesta a " + clientesNickName.get(jugadorEspResp));
                         jugadorEspResp = null; // Limpiamos despues de enviar la respuesta
 
+                        // Cambio de turno despues de 5 segundos
+                        try{
+                            System.out.println("Servidor: Espera de 5 segundos antes de pasar turno");
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.out.println("Servidor: Error al pasar turno: " + e.getMessage());
+                        }
+
+                        // Cambiamos de turno
+                        cambiarTurno();
+
                         /* Una vez que respondio y se reenvio la respuesta, el turno vuelve al que pregunto.
                         Cabe aclarar que el turno se manejara en el Tablero.
                         */

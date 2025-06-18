@@ -851,7 +851,6 @@ public class TableroController extends MenuController implements Initializable, 
 
         enviarMensaje(e);
 
-        Servidor.cambiarTurno();
         this.shadowPanePreguntas.setVisible(false);
         this.gridPaneRespuestas.setVisible(false);
     }
