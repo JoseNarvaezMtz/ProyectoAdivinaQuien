@@ -305,6 +305,7 @@ public class MenuController implements Initializable {
         TextFieldNickname.clear();
     }
 
+
     // BOTÓN PARA DESACTIVAR EL SUBMENU PARA INGRESAR EL NICKNAME DEL USUARIO
     public void cancelarInicioSesion(){
         darkness.setVisible(false);

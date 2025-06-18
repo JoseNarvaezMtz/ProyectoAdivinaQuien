@@ -97,6 +97,7 @@ public class PartidasController implements Initializable {
         // Crear los títulos que tendrán las columnas de la tabla mediante un array de Strings
         String[] titulos = { "Jugador 1", "Jugador 2", "Ganador", "Personaje Ganador", "Fecha", "Duración Partida"};
 
+
         // Crea la matriz con el tamaño de columnas que tendrá la tabla
         for (int i = 0; i < titulos.length; i++) {
             int colIndex = i;
