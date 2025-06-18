@@ -832,6 +832,7 @@ public class TableroController extends MenuController implements Initializable, 
         });
     }
 
+
     private void mostrarPregunta(String pregunta){
         this.shadowPanePreguntas.setVisible(true);
         this.gridPaneRespuestas.setVisible(true);
