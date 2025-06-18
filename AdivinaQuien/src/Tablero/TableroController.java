@@ -90,6 +90,7 @@ public class TableroController extends MenuController implements Initializable, 
     @FXML Label labelFecha;
 
     @FXML TextFlow chat;
+    @FXML ScrollPane chatScroll;
     @FXML TextField textFieldMensaje;
 
     @FXML Button buttonEnviar;
@@ -196,6 +197,12 @@ public class TableroController extends MenuController implements Initializable, 
 
         this.userRival.fitWidthProperty().bind(this.rootPane.widthProperty().divide(6.5));
         this.userRival.fitHeightProperty().bind(this.rootPane.heightProperty().divide(4.5));
+
+        this.chatScroll.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.32));
+        this.chatScroll.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.52));
+
+        this.chat.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.32));
+        this.chat.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.52));
 
         this.dadosImg.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
         this.dadosImg.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
@@ -751,10 +758,10 @@ public class TableroController extends MenuController implements Initializable, 
     private void agregarMensajeAlChat(String nick, String mensaje) {
         Platform.runLater(() -> {
             Text nickText = new Text(nick + ": ");
-            nickText.setFont(Font.font("System", FontWeight.BOLD, 16));
+            nickText.setFont(Font.font("System", FontWeight.BOLD, 22));
 
             Text mensajeText = new Text(mensaje + "\n");
-            mensajeText.setFont(Font.font("System", FontWeight.NORMAL, 14));
+            mensajeText.setFont(Font.font("System", FontWeight.NORMAL, 20));
 
             chat.getChildren().addAll(nickText, mensajeText);
 
