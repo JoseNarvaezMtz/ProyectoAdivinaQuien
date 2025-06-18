@@ -86,7 +86,7 @@ public class JugadorDB extends dataBase{
 
         try (Connection con = DriverManager.getConnection(url); PreparedStatement stmt = con.prepareStatement (sql)) {
 
-            stmt.setString(1, name);
+            stmt.setString(1, "%" + name + "%");
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
