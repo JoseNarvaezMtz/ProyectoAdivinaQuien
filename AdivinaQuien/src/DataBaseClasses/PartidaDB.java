@@ -58,7 +58,6 @@ public class PartidaDB extends dataBase{
                     jugador1=JugadorDB.getJugador(rs.getInt("id_jugador1"));
                     jugador2=JugadorDB.getJugador(rs.getInt("id_jugador2"));
                     ganador=JugadorDB.getJugador(rs.getInt("id_ganador"));
-                    System.out.println(jugador1 + " " + jugador2 + " " + ganador + " " + rs.getInt("id_ganador"));
                     personaje=PersonajeDB.getPersonaje(rs.getInt("id_personaje_ganador"),true, false,false).getNombre();
                     ObservableList<String> aux= FXCollections.observableArrayList(
                             jugador1, jugador2, ganador, personaje,
