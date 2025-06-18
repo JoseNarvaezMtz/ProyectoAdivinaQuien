@@ -36,7 +36,7 @@
                     </rowConstraints>
                     <children>
                         <StackPane opacity="0.9" prefHeight="150.0" prefWidth="200.0" styleClass="lightBackground" stylesheets="@CreditosStyles.css" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                        <ImageView fx:id="perfilHarim" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                        <ImageView fx:id="perfilHarim" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#sonidoZombie" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                             <image>
                                 <Image url="@Assets/Hairm.jpeg" />
                             </image>
@@ -80,7 +80,7 @@
                             </children>
                         </StackPane>
                         <StackPane fx:id="panel3" opacity="0.9" prefHeight="150.0" prefWidth="200.0" styleClass="lightBackground" stylesheets="@CreditosStyles.css" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                        <ImageView fx:id="perfilSantos" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                        <ImageView fx:id="perfilSantos" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#sonidoBonk" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                             <image>
                                 <Image url="@Assets/Santos.jpeg" />
                             </image>

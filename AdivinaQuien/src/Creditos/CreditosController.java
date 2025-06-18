@@ -48,6 +48,8 @@ public class CreditosController implements Initializable {
     private static AudioClip sonidoPasto;
     private static AudioClip sonidoMeow;
     private static AudioClip sonidoClown;
+    private static AudioClip sonidoZombie;
+    private static AudioClip sonidoBonk;
 
     // METODO QUE SE EJECUTA AL CARGAR LA ESCENA
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -56,6 +58,8 @@ public class CreditosController implements Initializable {
         sonidoPasto = new AudioClip(getClass().getResource("/Creditos/Assets/grass.mp3").toString());
         sonidoMeow = new AudioClip(getClass().getResource("/Creditos/Assets/meow.mp3").toString());
         sonidoClown = new AudioClip(getClass().getResource("/Creditos/Assets/clown.mp3").toString());
+        sonidoZombie = new AudioClip(getClass().getResource("/Creditos/Assets/zombie.mp3").toString());
+        sonidoBonk = new AudioClip(getClass().getResource("/Creditos/Assets/bonk.mp3").toString());
 
         // ADAPTAR LA ESCENA A LA RESOLUCIÓN DEL DISPOSITIVO
         javafx.application.Platform.runLater(() -> {
@@ -148,5 +152,15 @@ public class CreditosController implements Initializable {
     public void sonidoClown(){
         sonidoClown.setVolume(0.2);
         sonidoClown.play();
+    }
+
+    public void sonidoZombie(){
+        sonidoZombie.setVolume(0.2);
+        sonidoZombie.play();
+    }
+
+    public void sonidoBonk(){
+        sonidoBonk.setVolume(0.2);
+        sonidoBonk.play();
     }
 }
