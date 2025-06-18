@@ -1,3 +1,9 @@
+.label {
+    -fx-font-size: 32px;
+    -fx-font-family: "Finger Paint";
+    -fx-font-weight: bold;
+}
+
 .button{
     -fx-background-radius: 250em;
     -fx-min-width: 50px;
@@ -7,8 +13,6 @@
     -fx-border-color: #75531c;
     -fx-border-width: 10px;
     -fx-border-radius: 250em;
-    -fx-font-family: "Arial Black";
-    -fx-font-size: 22;
 }
 
 .button:hover {

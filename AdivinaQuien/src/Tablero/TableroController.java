@@ -14,12 +14,15 @@ import Classes.Personaje;
 import DataBaseClasses.PreguntasDB;
 import Menu.Menu;
 import Sockets.Cliente;
+
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 import Sockets.Servidor;
+import TerminarPartida.TerminarPartidaController;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -28,11 +31,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -106,7 +112,6 @@ public class TableroController extends MenuController implements Initializable, 
     private String nickNameOp = ""; // Cadena para saber el nickname del oponente
 
     private List<Personaje> personajesJuego; // Lista para almacenar la lista del servidor
-    private Personaje miPersonaje; // Personaje que se debe de adivinar
 
     public int idPersonaje; // Id del personaje del usuario
     private int volteados = 0;
@@ -497,8 +502,20 @@ public class TableroController extends MenuController implements Initializable, 
             botonAdivinar.setEffect(sombra);
             botonVoltear.setEffect(sombra);
 
-            botonAdivinar.setOnMouseClicked(mouseEvent -> {adivinar(mouseEvent, indice);});
-            botonVoltear.setOnMouseClicked(mouseEvent -> {voltear(mouseEvent, indice);});
+            botonAdivinar.setOnMouseClicked(mouseEvent -> {
+                try {
+                    adivinar(mouseEvent, indice);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            botonVoltear.setOnMouseClicked(mouseEvent -> {
+                try {
+                    voltear(mouseEvent, indice);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
 
             if(personajesJuego.get(indice).isTachado()){
                 botonAdivinar.setDisable(true);
@@ -525,7 +542,7 @@ public class TableroController extends MenuController implements Initializable, 
         }
     }
 
-    private void voltear(MouseEvent e, int indice){
+    private void voltear(MouseEvent e, int indice) throws IOException {
         StackPane stack = (StackPane)gridTable.getChildren().get(indice+1);
 
         for (Node hijo : stack.getChildren()) {
@@ -562,22 +579,41 @@ public class TableroController extends MenuController implements Initializable, 
             personajesJuego.get(indice).setTachado(true);
             this.volteados++;
             if(this.volteados == 24){
-                            System.out.println("Perdiste"); //              AQUI HACER QUE EL USUARIO PIERDA
+                TerminarPartidaController.estado = false;
+                Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
+                Stage stage = new Stage();
+                stage = (Stage)((Node) e.getSource()).getScene().getWindow();
+                stage.hide();
+                stage.setScene(scene);
+                stage.show();
             }
         }
     }
 
-    private void adivinar(MouseEvent e, int indice) {
-        Button button = (Button) e.getSource();
+    private void adivinar(MouseEvent e, int indice) throws IOException {
         sonidoAdivinar.setVolume(0.2);
         sonidoAdivinar.play();
-//        Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
-//        Scene scene = new Scene(root);
-//        scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
-//        stage = (Stage)((Node) e.getSource()).getScene().getWindow();
-//        stage.hide();
-//        stage.setScene(scene);
-//        stage.show();
+
+        // QUE EL CONTADOR NO EMPIECE HASTA QUE LOS DOS HAYAN ELEGIDO PERSONAJE
+
+        // QUE JALEN LOS TURNOS
+
+        // QUE SE CARGUE EL NICKNAME DEL OTRO JUGADOR
+
+        // 1.- MANDAR POR SOCKETS HACIA EL SERVER, Y DE ALGUNA MANERA DEBES CHECAR SI ESE ÍNDICE ES IGUAL AL IDPERSONAJE DEL OTRO JUGADOR
+
+        // 2.- SI ES IGUAL, ENTONCES HACES TRU EL BOOLEANO DE LA PARTIDA TERMINADA, SI NO, LO HACES FALSE
+
+        Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
+        Stage stage = new Stage();
+        stage = (Stage)((Node) e.getSource()).getScene().getWindow();
+        stage.hide();
+        stage.setScene(scene);
+        stage.show();
     }
 
     public void setCliente(Cliente cliente) {

@@ -13,6 +13,13 @@
     -fx-font-size: 15px;
 }
 
+.label {
+    -fx-font-size: 40px;
+    -fx-font-family: "Permanent Marker";
+    -fx-text-fill: #000000;
+    -fx-text-alignment: Center;
+}
+
 .button:hover {
     -fx-background-color: derive(#ff8000, -20%);
     -fx-border-color: derive(#7c0f0f, -20%);

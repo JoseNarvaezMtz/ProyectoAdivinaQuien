@@ -37,7 +37,7 @@ public class TerminarPartidaController extends MenuController implements Initial
     @FXML Button buttonRegresarMenu;
     @FXML Button buttonVolverAJugar;
 
-    public Boolean estado = false;
+    public static Boolean estado = false;
 
     //Musica
     public MediaPlayer musica;
