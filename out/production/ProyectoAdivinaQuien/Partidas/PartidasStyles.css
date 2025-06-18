@@ -48,7 +48,7 @@
 }
 
 .labelTitulo {
-    -fx-font-size: 64px;
+    -fx-font-size: 45px;
     -fx-font-family: "Cherry Bomb One";
     -fx-text-fill: #723a14;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 8, 0.5, 4, 4);

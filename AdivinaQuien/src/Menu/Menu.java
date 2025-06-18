@@ -3,7 +3,7 @@ package Menu;
 // COMANDO PA CORRER ESTA MAMADA (SANTOS): --module-path "C:\javafx-sdk-24.0.1\lib" --add-modules javafx.controls,javafx.fxml
 // COMANDO PA CORRER ESTA MAMADA (JULIAN): --module-path "C:\Users\julia\Downloads\openjfx-24.0.1_windows-x64_bin-sdk\javafx-sdk-24.0.1\lib" --add-modules javafx.controls,javafx.fxml
 // COMANDO PA CORRER ESTA MAMADA (JOSÉ LUIS):
-// COMANDO PA CORRER ESTA MAMADA (HARIM): --module-path "C:\Users\erick\openjfx-24.0.1_windows-x64_bin-sdk\javafx-sdk-24.0.1\lib" --add-modules javafx.controls,javafx.fxml
+// COMANDO PA CORRER ESTA MAMADA (HARIM): --module-path "C:\Users\erick\openjfx-24.0.1_windows-x64_bin-sdk\javafx-sdk-24.0.1\lib" --add-modules javafx.controls,javafx.fxml --add-modules javafx.controls,javafx.fxml,javafx.media --add-exports javafx.base/com.sun.javafx=ALL-UNNAMED
 
 /*
     TODO

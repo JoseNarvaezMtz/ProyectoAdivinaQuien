@@ -89,8 +89,9 @@ public class PersonajeDB extends dataBase {
         Personaje personaje = new Personaje();
 
         try (Connection con = DriverManager.getConnection(url);
-             PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
             if(rs.next()) {
 
                 if (nombre)

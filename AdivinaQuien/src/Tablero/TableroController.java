@@ -85,10 +85,12 @@ public class TableroController extends MenuController implements Initializable, 
 
     @FXML Label labelPregunta;
     @FXML Label labelJugador;
+    @FXML Label labelJugador2;
     @FXML Label tiempoPartida;
     @FXML Label labelFecha;
 
     @FXML TextFlow chat;
+    @FXML ScrollPane chatScroll;
     @FXML TextField textFieldMensaje;
 
     @FXML Button buttonEnviar;
@@ -196,6 +198,12 @@ public class TableroController extends MenuController implements Initializable, 
         this.userRival.fitWidthProperty().bind(this.rootPane.widthProperty().divide(6.5));
         this.userRival.fitHeightProperty().bind(this.rootPane.heightProperty().divide(4.5));
 
+        this.chatScroll.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.32));
+        this.chatScroll.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.52));
+
+        this.chat.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.32));
+        this.chat.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.52));
+
         this.dadosImg.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
         this.dadosImg.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
 
@@ -252,6 +260,11 @@ public class TableroController extends MenuController implements Initializable, 
         }
 
         elegirPersonaje();
+    } // Fin Initialize
+
+    public void setOponente(String oponente){
+        this.nickNameOp = oponente;
+        this.labelJugador2.setText(oponente);
     }
 
     public void listaPreguntas(){
@@ -357,10 +370,24 @@ public class TableroController extends MenuController implements Initializable, 
                 contenedorListaPer.setVisible(false);
                 shadowPanePersonajes.setVisible(false);
                 reasignarMetodos();
+
+                // Determinamos el Id y llamamos al metodo de personaje elegido
+                int idPersonajeSelec = newSelection.getIdTablero() + 1;
+                personajeElegido(idPersonajeSelec);
             }
         });
 
         gridPaneListaPer.add(listViewPersonajes, 0, 1);
+    }
+
+    // Metodo para avisar que se ejigio personaje
+    private void personajeElegido(int idPersonajeSelec) {
+        //Guardamos el Id del personaje
+        this.idPersonaje = idPersonajeSelec;
+
+        // Avisamos que el personaje se ha elegido
+        cliente.enviarMensaje("PERSONAJE_ELEGIDO", String.valueOf(idPersonajeSelec));
+        agregarMensajeAlChat("Sistema", "Has elegido tu personaje. Esperando a tu oponente ;)");
     }
 
     private void elegirPersonaje(){
@@ -385,9 +412,12 @@ public class TableroController extends MenuController implements Initializable, 
 
         reasignarMetodos();
 
-        this.idPersonaje = gridTable.getChildren().indexOf(imgView);
+        int idPersonajeSelec = gridTable.getChildren().indexOf(imgView);
 
-        this.reloj();
+        // Cronometro sincronizada jaja xd lol
+        personajeElegido(idPersonajeSelec);
+
+        //this.reloj();
 
     }
 
@@ -413,7 +443,11 @@ public class TableroController extends MenuController implements Initializable, 
         this.sideBarPane.setVisible(true);
 
         reasignarMetodos();
-        this.reloj();
+
+        // Cronometro sincronizada jaja xd lol
+        personajeElegido(rand);
+
+        //this.reloj();
     }
 
     public void eleccionLista(){
@@ -596,24 +630,23 @@ public class TableroController extends MenuController implements Initializable, 
         sonidoAdivinar.setVolume(0.2);
         sonidoAdivinar.play();
 
-        // QUE EL CONTADOR NO EMPIECE HASTA QUE LOS DOS HAYAN ELEGIDO PERSONAJE
+        // Obtenemos el indice que selecciono para adivinar
+        int idAdivinar = indice + 1;
 
-        // QUE JALEN LOS TURNOS
+        // Le decimos al servidor que el usuario adivino personaje
+        cliente.enviarMensaje("ADIVINAR", String.valueOf(idAdivinar));
 
-        // QUE SE CARGUE EL NICKNAME DEL OTRO JUGADOR
+        // PARA LA REDIRECCION LA MANEJO DESDE EL SERVIDOR PARA EL ID Y SI ES O NO
 
-        // 1.- MANDAR POR SOCKETS HACIA EL SERVER, Y DE ALGUNA MANERA DEBES CHECAR SI ESE ÍNDICE ES IGUAL AL IDPERSONAJE DEL OTRO JUGADOR
 
-        // 2.- SI ES IGUAL, ENTONCES HACES TRU EL BOOLEANO DE LA PARTIDA TERMINADA, SI NO, LO HACES FALSE
-
-        Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
+        /*Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
         Stage stage = new Stage();
         stage = (Stage)((Node) e.getSource()).getScene().getWindow();
         stage.hide();
         stage.setScene(scene);
-        stage.show();
+        stage.show();*/
     }
 
     public void setCliente(Cliente cliente) {
@@ -725,10 +758,10 @@ public class TableroController extends MenuController implements Initializable, 
     private void agregarMensajeAlChat(String nick, String mensaje) {
         Platform.runLater(() -> {
             Text nickText = new Text(nick + ": ");
-            nickText.setFont(Font.font("System", FontWeight.BOLD, 16));
+            nickText.setFont(Font.font("System", FontWeight.BOLD, 22));
 
             Text mensajeText = new Text(mensaje + "\n");
-            mensajeText.setFont(Font.font("System", FontWeight.NORMAL, 14));
+            mensajeText.setFont(Font.font("System", FontWeight.NORMAL, 20));
 
             chat.getChildren().addAll(nickText, mensajeText);
 
@@ -809,6 +842,42 @@ public class TableroController extends MenuController implements Initializable, 
                         // Aquí es donde un botón de "Terminar Turno"
                     }
                 }
+            } else if (mensaje.startsWith("RESULTADO")) {
+                // // Viene estructurado de la siguiente manera: "RESULTADO:GANASTE:nickGanador"
+                String [] partes = mensaje.split(":");
+                String resultado = partes[1]; // GANASTE
+                String nickGanador = partes[2];
+
+                if (nickGanador.equals(miNickname)) {
+                    System.out.println("Gane, GG WP");
+                    TerminarPartidaController.estado = true; // Pantalla de ganaste
+                } else {
+                    System.out.println("Perdi, NT, MB");
+                    TerminarPartidaController.estado = false; // Pantalla de perdiste
+                }
+
+                Platform.runLater(() -> {
+                    try {
+                        Parent root = FXMLLoader.load(getClass().getResource("/TerminarPartida/TerminarPartida.fxml"));
+                        Scene scene = new Scene(root);
+                        scene.getStylesheets().add(getClass().getResource("/TerminarPartida/TerminarPartidaStyles.css").toExternalForm());
+                        Stage stage = new Stage();
+
+                        // Obtenemos la ventana actual desde el rootPane creo
+                        stage =  (Stage) rootPane.getScene().getWindow();
+
+                        stage.hide();
+                        stage.setScene(scene);
+                        stage.show();
+                    } catch (IOException ex){
+                        ex.printStackTrace();
+                    }
+
+
+                });
+            } else if (mensaje.startsWith("INICIAR_CRONOMETRO")) {
+                agregarMensajeAlChat("Sistema", "Los jugadores han elegido personaje. QUE COMIENCE EL JUEGO :=");
+                reloj();
             } else if (mensaje.startsWith("OPONENTE DESCONECTADO:")) {
                 // Viene estructurado de la siguiente manera: "OPONENTE DESCONECTADO:nickname"
                 String nickNameDesconectado = mensaje.substring("OPONENTE DESCONECTADO:".length()).trim();
@@ -832,6 +901,7 @@ public class TableroController extends MenuController implements Initializable, 
         });
     }
 
+
     private void mostrarPregunta(String pregunta){
         this.shadowPanePreguntas.setVisible(true);
         this.gridPaneRespuestas.setVisible(true);
@@ -843,7 +913,7 @@ public class TableroController extends MenuController implements Initializable, 
     public void terminarTurno(ActionEvent e) {
         Button fuente = (Button) e.getSource();
 
-        if(fuente.getText().trim() == "SI"){
+        if(fuente.getText().equals("SI")){
             this.textFieldMensaje.setText("SI");
         } else{
             this.textFieldMensaje.setText("NO");
@@ -851,10 +921,10 @@ public class TableroController extends MenuController implements Initializable, 
 
         enviarMensaje(e);
 
-        Servidor.cambiarTurno();
         this.shadowPanePreguntas.setVisible(false);
         this.gridPaneRespuestas.setVisible(false);
     }
+
 
     public void reloj() {
         Timeline timeline = new Timeline(new KeyFrame[]{new KeyFrame(Duration.seconds((double)1.0F), (event) -> {

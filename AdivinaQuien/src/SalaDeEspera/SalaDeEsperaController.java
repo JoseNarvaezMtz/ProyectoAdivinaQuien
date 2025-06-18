@@ -120,9 +120,9 @@ public class SalaDeEsperaController implements Initializable {
         try {
             Menu.cliente = new Cliente("localhost", 5000, new Cliente.ClienteListener() {
                 @Override
-                public void onIniciarPartida() {
-                    System.out.println("Iniciando partida");
-                    Platform.runLater(() -> irTablero());
+                public void onIniciarPartida(String oponenteNick) {
+                    System.out.println("Iniciando partida contra: " + oponenteNick);
+                    Platform.runLater(() -> irTablero(oponenteNick));
                 }
             });
         } catch (IOException ex) {
@@ -163,7 +163,7 @@ public class SalaDeEsperaController implements Initializable {
     }
 
     // Carga el tablero cuando se encuentra el oponente
-    public void irTablero(){
+    public void irTablero(String oponenteNick) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Tablero/Tablero.fxml")); // Crea el FXMLLoader
             Parent nuevoRoot = loader.load();
@@ -176,6 +176,9 @@ public class SalaDeEsperaController implements Initializable {
             } else {
                 System.err.println("Error: Menu.cliente es null al ir al Tablero.");
             }
+
+            //Pasamos el nick del oponente
+            tableroController.setOponente(oponenteNick);
 
             nuevaScene.getStylesheets().add(getClass().getResource("/Tablero/TableroStyles.css").toExternalForm());
             Stage stage = (Stage) rootPane.getScene().getWindow();

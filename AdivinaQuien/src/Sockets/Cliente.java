@@ -65,10 +65,14 @@ public class Cliente {
                 System.out.println("Cliente: Mensaje Inicial es: " + mensaje);
 
                 // Si el mensaje es "LOS JUGADORES SE HAN CONECTADO"
-                if ("LOS JUGADORES SE HAN CONECTADO".equals(mensaje)) {
+                if (mensaje != null && mensaje.startsWith("PARTIDA_INICIADA:")) {
+                    // Extraemos el nickname del oponente del mensaje
+                    String oponenteNick = mensaje.substring("PARTIDA_INICIADA:".length()).trim();
+                    System.out.println("Cliente: Partida iniciada. Oponente: " + oponenteNick);
+
                     if (clienteListener != null) {
-                        System.out.println("Cliente: Jugadores conectados, iniciando partida");
-                        Platform.runLater(clienteListener::onIniciarPartida);
+                        // Llamamos al listener y le pasamos el nickname
+                        Platform.runLater(() -> clienteListener.onIniciarPartida(oponenteNick));
                     }
 
                     // Aqui leemos la lista antes de leer los mensajes para que se lo primero que obtiene el cliente
@@ -113,6 +117,8 @@ public class Cliente {
                             mensaje.startsWith("TU_TURNO:") ||
                             mensaje.startsWith("PREGUNTA:") ||
                             mensaje.startsWith("RESPUESTA:") ||
+                            mensaje.startsWith("INICIAR_CRONOMETRO") ||
+                            mensaje.startsWith("RESULTADO") ||
                             mensaje.equals("TURNO TERMINADO") ||
                             mensaje.startsWith("ERROR:")) {
 
@@ -202,7 +208,7 @@ public class Cliente {
 
     // Interfaz para recibir los mensajes de eventos (Iniciar la partida)
     public interface ClienteListener{
-        void onIniciarPartida();
+        void onIniciarPartida(String oponenteNick);
     }
 
     public interface PersonajesListener{
