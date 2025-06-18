@@ -45,12 +45,17 @@ public class PartidasController implements Initializable {
     private Scene scene;
     private Parent root;
 
+    //Audis
     private static AudioClip sonidoArena;
+    private static AudioClip sonidoTeclado;
+    public static AudioClip sonidoEnviar;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         sonidoArena = new AudioClip(getClass().getResource("/Partidas/Assets/sand.mp3").toString());
+        sonidoTeclado = new AudioClip(getClass().getResource("/Partidas/Assets/keyboard.wav ").toString());
+        sonidoEnviar = new AudioClip(getClass().getResource("/Partidas/Assets/send.mp3").toString());
 
         javafx.application.Platform.runLater(() -> {
             if (rootPane.getScene() != null) {
@@ -143,6 +148,16 @@ public class PartidasController implements Initializable {
     public void sonidoSeleccion(){
         sonidoArena.setVolume(0.2);
         sonidoArena.play();
+    }
+
+    public void sonidoTeclado(){
+        sonidoTeclado.setVolume(0.2);
+        sonidoTeclado.play();
+    }
+
+    public void sonidoEnviar(){
+        sonidoEnviar.setVolume(0.2);
+        sonidoEnviar.play();
     }
 
     public void ordenarPorDuracion(){
