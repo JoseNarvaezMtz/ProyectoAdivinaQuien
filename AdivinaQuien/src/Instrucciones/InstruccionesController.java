@@ -105,25 +105,25 @@ public class InstruccionesController implements Initializable {
 
         // Adapta un TextArea que muestra las instrucciones del juego y la adapta a la resolución del dispositivo
         this.textArea1.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
-        this.textArea1.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(1.65));
+        this.textArea1.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.95));
 
         this.textArea2.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
-        this.textArea2.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.55));
+        this.textArea2.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.58));
 
         this.textArea3.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
-        this.textArea3.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.35));
+        this.textArea3.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.38));
 
         this.textArea4.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
-        this.textArea4.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.73));
+        this.textArea4.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.80));
 
         this.textArea5.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
-        this.textArea5.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.37));
+        this.textArea5.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.39));
 
         this.textArea6.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
-        this.textArea6.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.73));
+        this.textArea6.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.78));
 
         this.textArea7.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
-        this.textArea7.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.61));
+        this.textArea7.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.64));
 
         this.img1.fitWidthProperty().bind(this.rootPane.widthProperty().multiply(0.8));
         this.img1.fitHeightProperty().bind(this.rootPane.widthProperty().multiply(0.45));
