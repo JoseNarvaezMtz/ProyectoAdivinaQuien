@@ -46,6 +46,7 @@ import javafx.scene.effect.Glow;
 import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.AudioClip;
@@ -398,24 +399,30 @@ public class TableroController extends MenuController implements Initializable, 
     }
 
     public void eleccionTablero(MouseEvent e){
-        ImageView imgView = (ImageView)e.getSource();
+        StackPane stack = (StackPane) e.getSource();
         sonidoTablero.setVolume(0.2);
         sonidoTablero.play();
 
-        imgView.setEffect(null);
+        for (Node hijo : stack.getChildren()) {
+            if (hijo instanceof ImageView) {
+                hijo.setEffect(null);
 
-        Image img = imgView.getImage();
-        this.userImg.setImage(img);
+                Image img = ((ImageView)hijo).getImage();
+                this.userImg.setImage(img);
+                break;
+            }
+        }
 
         this.seleccionPersonaje.setVisible(false);
         this.sideBarPane.setVisible(true);
 
         reasignarMetodos();
 
-        int idPersonajeSelec = gridTable.getChildren().indexOf(imgView);
+        this.idPersonaje = gridTable.getChildren().indexOf(stack);
+        System.out.println("SE ELIGIÓ: " + this.idPersonaje);
 
         // Cronometro sincronizada jaja xd lol
-        personajeElegido(idPersonajeSelec);
+        personajeElegido(this.idPersonaje);
 
         //this.reloj();
 
@@ -464,21 +471,16 @@ public class TableroController extends MenuController implements Initializable, 
     }
 
     private void reasignarMetodos(){
-        for(int i=1; i<25; i++){
+        for(int i=1; i<25; i++) {
             this.gridTable.getChildren().get(i).setOnMouseClicked(null);
-            this.gridTable.getChildren().get(i).setOnMouseEntered(mouseEvent -> {mouseEntro(mouseEvent);});
-            this.gridTable.getChildren().get(i).setOnMouseExited(mouseEvent -> {mouseSalio(mouseEvent);});
+            this.gridTable.getChildren().get(i).setOnMouseEntered(mouseEvent -> {
+                mouseEntro(mouseEvent);
+            });
+            this.gridTable.getChildren().get(i).setOnMouseExited(mouseEvent -> {
+                mouseSalio(mouseEvent);
+            });
 
-            StackPane stack = (StackPane)this.gridTable.getChildren().get(i);
-
-            for (Node hijo : stack.getChildren()) {
-                if (hijo instanceof ImageView) {
-                    hijo.setOnMouseClicked(null);
-                    hijo.setOnMouseEntered(null);
-                    hijo.setOnMouseExited(null);
-                    break;
-                }
-            }
+            StackPane stack = (StackPane) this.gridTable.getChildren().get(i);
         }
     }
 
@@ -630,6 +632,8 @@ public class TableroController extends MenuController implements Initializable, 
         sonidoAdivinar.setVolume(0.2);
         sonidoAdivinar.play();
 
+        System.out.println("SE ADIVINO: " + indice);
+
         // Obtenemos el indice que selecciono para adivinar
         int idAdivinar = indice + 1;
 
@@ -690,12 +694,14 @@ public class TableroController extends MenuController implements Initializable, 
                 imageView.fitWidthProperty().bind(this.gridTable.widthProperty().divide(6).subtract(4));
                 imageView.fitHeightProperty().bind(this.gridTable.heightProperty().divide(4).subtract(4));
                 imageView.setPreserveRatio(false);
-                imageView.setOnMouseClicked(mouseEvent -> {eleccionTablero(mouseEvent);});
-                imageView.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
-                imageView.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
 
                 StackPane stack = new StackPane();
                 stack.getChildren().add(imageView);
+
+                stack.setOnMouseClicked(mouseEvent -> {eleccionTablero(mouseEvent);});
+                stack.setOnMouseEntered(mouseEvent -> {imgMouseEntered(mouseEvent);});
+                stack.setOnMouseExited(mouseEvent -> {imgMouseExited(mouseEvent);});
+
                 this.gridTable.add(stack, j, i);
                 indice++;
             }
@@ -703,14 +709,35 @@ public class TableroController extends MenuController implements Initializable, 
     }
 
     private void imgMouseEntered(MouseEvent e){
-        ImageView imgView = (ImageView)e.getSource();
-        Effect effect = new Glow(0.6);
-        imgView.setEffect(effect);
+        if(e.getSource() instanceof ImageView){
+            Effect effect = new Glow(0.6);
+            ImageView imageView = (ImageView)e.getSource();
+            imageView.setEffect(effect);
+        } else if(e.getSource() instanceof StackPane){
+            StackPane stack = (StackPane) e.getSource();
+
+            for(Node hijo : stack.getChildren()){
+                if(hijo instanceof ImageView){
+                    Effect effect = new Glow(0.6);
+                    hijo.setEffect(effect);
+                }
+            }
+        }
     }
 
     private void imgMouseExited(MouseEvent e){
-        ImageView imgView = (ImageView)e.getSource();
-        imgView.setEffect(null);
+        if(e.getSource() instanceof ImageView){
+            ImageView imageView = (ImageView)e.getSource();
+            imageView.setEffect(null);
+        } else if(e.getSource() instanceof StackPane){
+            StackPane stack = (StackPane) e.getSource();
+
+            for(Node hijo : stack.getChildren()){
+                if(hijo instanceof ImageView){
+                    hijo.setEffect(null);
+                }
+            }
+        }
     }
 
     public void enviarMensaje(ActionEvent e) {
