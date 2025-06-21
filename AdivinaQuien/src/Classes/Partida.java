@@ -47,4 +47,16 @@ public class Partida implements Comparable<Partida> {
     public Personaje getPersonajeWinner() {
         return personajeWinner;
     }
+
+    @Override
+    public String toString() {
+        return "Partida{" +
+                "fecha=" + fecha +
+                ", tiempo=" + tiempo +
+                ", jugador1='" + jugador1 + '\'' +
+                ", jugador2='" + jugador2 + '\'' +
+                ", winner='" + winner + '\'' +
+                ", personajeWinner=" + personajeWinner +
+                '}';
+    }
 }

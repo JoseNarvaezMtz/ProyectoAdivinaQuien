@@ -117,8 +117,9 @@ public class PartidasController implements Initializable {
         buttonSalir.setGraphic(imageView);
 
         textFieldBuscarPorUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
-            tableroPartidas.setItems(PartidaDB.getPorNombre(textFieldBuscarPorUsuario.getText()));
+            tableroPartidas.setItems(FXCollections.observableArrayList(PartidaDB.getPorNombre(textFieldBuscarPorUsuario.getText())));
         });
+
     }
 
     // Función que cambia al menú principal
@@ -135,14 +136,6 @@ public class PartidasController implements Initializable {
         }catch (IOException e1){
             e1.printStackTrace();
         }
-    }
-
-    //CON ESTAS FUNCIONES JOSE LUIS TIENE QUE MOSTRAR LA LISTA
-    public void buscarUsuario(ActionEvent e){
-        //AQUI TIENES QUE PONER TU MÉTODO PARA BUSCAR AL USUARIO JOSÉ
-        //NO SE TE OLVODE QUE TIENES QUE ACTUALIZAR LA TABLA PARA QUE MUESTRE
-        //LAS PARTIDAS CON ESE USUARIO
-        llenarDatos();
     }
 
     //FUNCIÓN PARA QUE MANDES A LLAMAR EN BUSCAR USUARIOS

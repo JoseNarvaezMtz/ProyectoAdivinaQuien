@@ -36,7 +36,7 @@
                   <Button fx:id="buttonRegresarMenu" mnemonicParsing="false" onAction="#partidasRegistradas" prefWidth="204.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
                </children>
             </GridPane>
-            <Label fx:id="tituloLabel" prefHeight="17.0" prefWidth="253.0" text="TEXTO GANAR/PERDER" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+            <Label fx:id="tituloLabel" prefHeight="17.0" prefWidth="253.0" text="TEXTO GANAR/PERDER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
          </children>
       </GridPane>
    </children>

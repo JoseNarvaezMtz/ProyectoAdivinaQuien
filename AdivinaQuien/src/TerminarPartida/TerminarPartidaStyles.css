@@ -1,12 +1,12 @@
 .tituloPartidaFinWin{
-    -fx-font-size: 80px;
+    -fx-font-size: 64px;
     -fx-font-family: "Cherry Bomb One";
     -fx-text-fill: #FF9E97;
     -fx-effect: dropshadow(gaussian, rgba(96, 77, 57, 0.6), 8, 0.5, 4, 4);
 }
 
 .tituloPartidaFinLose{
-    -fx-font-size: 80px;
+    -fx-font-size: 64px;
     -fx-font-family: "Cherry Bomb One";
     -fx-text-fill: #313131;
     -fx-effect: dropshadow(gaussian, rgba(44, 40, 34, 0.6), 8, 0.5, 4, 4);
