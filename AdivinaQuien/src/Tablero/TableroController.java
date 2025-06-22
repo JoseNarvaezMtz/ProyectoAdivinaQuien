@@ -188,7 +188,7 @@ public class TableroController extends MenuController implements Initializable, 
         this.btnRespSi.prefWidthProperty().bind(rootPane.widthProperty().divide(10));
         this.btnRespSi.prefHeightProperty().bind(rootPane.heightProperty().divide(8));
 
-        // El campo de mensaje y el boton para enviar el mensaje se encuentran desabilitados
+        // El campo de mensaje y el botón para enviar el mensaje se encuentran deshabilitados
         // Hasta que se le asigne un turno o se reciba una pregunta
         textFieldMensaje.setDisable(true);
         buttonEnviar.setDisable(true);
@@ -284,10 +284,8 @@ public class TableroController extends MenuController implements Initializable, 
         ObservableList<String> preguntasObservables = FXCollections.observableArrayList(preguntasDesdeDB);
 
         ListView<String> listViewPreguntas = new ListView<>(preguntasObservables);
-        listViewPreguntas.getStyleClass().add("listView");
         listViewPreguntas.setOrientation(Orientation.VERTICAL);
-        listViewPreguntas.setStyle("-fx-font-family: Cherry Bomb One;");
-        listViewPreguntas.setStyle("-fx-font-size: 14px;");
+        listViewPreguntas.getStyleClass().add("labelPreguntaLista");
 
         Consumer<String> accionSeleccionarPregunta = pregunta -> {
             textFieldMensaje.setText(pregunta);
@@ -310,6 +308,8 @@ public class TableroController extends MenuController implements Initializable, 
                         accionSeleccionarPregunta.accept(getItem());
                     }
                 });
+
+                labelPregunta.getStyleClass().add("listView");
             }
 
             @Override
@@ -419,13 +419,9 @@ public class TableroController extends MenuController implements Initializable, 
         reasignarMetodos();
 
         this.idPersonaje = gridTable.getChildren().indexOf(stack);
-        System.out.println("SE ELIGIÓ: " + this.idPersonaje);
 
-        // Cronometro sincronizada jaja xd lol
+        // Cronometro sincronizada
         personajeElegido(this.idPersonaje);
-
-        //this.reloj();
-
     }
 
     public void eleccionRandom(){
