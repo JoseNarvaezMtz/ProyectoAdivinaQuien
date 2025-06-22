@@ -1,10 +1,6 @@
 package DataBaseClasses;
 
 import Classes.Personaje;
-import javafx.scene.image.Image;
-import javafx.scene.text.Text;
-
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -12,7 +8,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class PersonajeDB extends dataBase {
     public static ArrayList<Personaje> generarTablero() {
@@ -20,7 +15,7 @@ public class PersonajeDB extends dataBase {
         int cont=0;
 
         while (cont < 24) {
-            int id = (int)(Math.random() * 24);
+            int id = (int)(Math.random() * 35);
             if (!personajes.contains(id)) {
                 personajes.add(id);
                 cont++;
