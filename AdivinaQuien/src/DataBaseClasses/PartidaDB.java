@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class PartidaDB extends dataBase{
 
-    public void insertarPartida(Partida partida) {
+    public static void insertarPartida(Partida partida) {
         String fecha = partida.getFecha().toString();
         int tiempo = partida.getTiempo().toSecondsPart();
         int idj1 = JugadorDB.obtenerID(partida.getJugador1());

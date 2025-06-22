@@ -11,6 +11,7 @@ package Tablero;
 //  --add-modules javafx.controls,javafx.fxml,javafx.media --add-exports javafx.base/com.sun.javafx=ALL-UNNAMED
 
 import Classes.Personaje;
+import DataBaseClasses.PartidaDB;
 import DataBaseClasses.PreguntasDB;
 import Menu.Menu;
 import Sockets.Cliente;
@@ -154,6 +155,10 @@ public class TableroController extends MenuController implements Initializable, 
         labelFecha.getStyleClass().add("labelTiempo");
         labelJugador.getStyleClass().add("labelTiempo");
 
+        //Mandamos la fecha a base de datos
+        Servidor.partida.setFecha(fechaActual);
+        Cliente.partidaCliente.setFecha(fechaActual);
+
         this.sideBarPane.setVisible(false);
 
         this.fondoImage.fitWidthProperty().bind(this.rootPane.widthProperty());
@@ -258,13 +263,14 @@ public class TableroController extends MenuController implements Initializable, 
             imgV.setFitHeight(40);
             buttonMusica.setGraphic(imgV);
         }
-
-        elegirPersonaje();
     } // Fin Initialize
 
     public void setOponente(String oponente){
         this.nickNameOp = oponente;
         this.labelJugador2.setText(oponente);
+
+        // Mandamos el nickname del oponente a la base de datos
+        Cliente.partidaCliente.setJugador2(this.nickNameOp);
     }
 
     public void listaPreguntas(){
@@ -388,6 +394,10 @@ public class TableroController extends MenuController implements Initializable, 
         // Avisamos que el personaje se ha elegido
         cliente.enviarMensaje("PERSONAJE_ELEGIDO", String.valueOf(idPersonajeSelec));
         agregarMensajeAlChat("Sistema", "Has elegido tu personaje. Esperando a tu oponente ;)");
+
+        // Deshabilita la selección de personaje y habilita la interfaz de juego
+        this.seleccionPersonaje.setVisible(false);
+        this.sideBarPane.setVisible(true); // Asumo que esto muestra el chat..
     }
 
     private void elegirPersonaje(){
@@ -416,9 +426,6 @@ public class TableroController extends MenuController implements Initializable, 
 
         // Cronometro sincronizada jaja xd lol
         personajeElegido(idPersonajeSelec);
-
-        //this.reloj();
-
     }
 
     public void eleccionRandom(){
@@ -431,7 +438,7 @@ public class TableroController extends MenuController implements Initializable, 
         this.dadosImg.setOnMouseEntered(null);
         this.dadosImg.setOnMouseExited(null);
 
-        int rand = random.nextInt(24)+1;
+        int rand = random.nextInt(24);
 
         StackPane stackPane = (StackPane)this.gridTable.getChildren().get(rand);
         ImageView imgView = (ImageView)stackPane.getChildren().get(0);
@@ -446,8 +453,6 @@ public class TableroController extends MenuController implements Initializable, 
 
         // Cronometro sincronizada jaja xd lol
         personajeElegido(rand);
-
-        //this.reloj();
     }
 
     public void eleccionLista(){
@@ -464,7 +469,7 @@ public class TableroController extends MenuController implements Initializable, 
     }
 
     private void reasignarMetodos(){
-        for(int i=1; i<25; i++){
+        for(int i=1; i<24; i++){
             this.gridTable.getChildren().get(i).setOnMouseClicked(null);
             this.gridTable.getChildren().get(i).setOnMouseEntered(mouseEvent -> {mouseEntro(mouseEvent);});
             this.gridTable.getChildren().get(i).setOnMouseExited(mouseEvent -> {mouseSalio(mouseEvent);});
@@ -606,6 +611,13 @@ public class TableroController extends MenuController implements Initializable, 
             }
         }
 
+        // Mandamos los segundos a la base de datos
+        Servidor.partida.setTiempo(java.time.Duration.ofSeconds(segundosTranscurridos));
+        Cliente.partidaCliente.setTiempo(java.time.Duration.ofSeconds(segundosTranscurridos));
+
+        PartidaDB.insertarPartida(Servidor.partida);
+        PartidaDB.insertarPartida(Cliente.partidaCliente);
+
         if(personajesJuego.get(indice).isTachado()){
             personajesJuego.get(indice).setTachado(false);
             this.volteados--;
@@ -652,6 +664,10 @@ public class TableroController extends MenuController implements Initializable, 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
 
+        // Reiniciar estados del turno y pregunta para una nueva partida
+        this.esMiTurno = false;
+        this.preguntaEnviada = false;
+
         // Configuramos listeners
         this.cliente.setMensajeListener(this::onManejarMensajeServidor);
         this.cliente.setPersonajeListener(this::onPersonajesRecibidos);
@@ -664,12 +680,29 @@ public class TableroController extends MenuController implements Initializable, 
             System.out.println("TableroController: Lista de personajes recibida");
             this.personajesJuego = personajes; // Guardamos la lista
 
+            // Limpiamos completamente la rejilla y la lista de imágenes de la partida anterior.
+            gridTable.getChildren().clear();
+            imagenes.clear();
+            chat.getChildren().clear();
+            this.segundosTranscurridos = 0L;
+
+            // Reiniciar los estados del turno y pregunta para la NUEVA partida.
+            this.esMiTurno = false;
+            this.preguntaEnviada = false;
+
             // Mostramos los personajes en el tablero
             cargarListaImagenes();
-
             mostrarPersonajesEnTablero();
-
             cargarListaPersonajes();
+
+            // Deshabilitar el chat inicialmente (será habilitado cuando se reciba el TU_TURNO)
+            textFieldMensaje.setDisable(true);
+            buttonEnviar.setDisable(true);
+            textFieldMensaje.clear(); // Limpiar cualquier texto viejo
+
+            // Movi la seleccion de personajes despues de cargar todo
+            System.out.println("\nLLAMANDO A ELEGIR PERSONAJE");
+            elegirPersonaje();
         });
     }
 
@@ -876,7 +909,7 @@ public class TableroController extends MenuController implements Initializable, 
 
                 });
             } else if (mensaje.startsWith("INICIAR_CRONOMETRO")) {
-                agregarMensajeAlChat("Sistema", "Los jugadores han elegido personaje. QUE COMIENCE EL JUEGO :=");
+                agregarMensajeAlChat("Sistema", "Los jugadores han elegido personaje. QUE COMIENCE EL JUEGO ");
                 reloj();
             } else if (mensaje.startsWith("OPONENTE DESCONECTADO:")) {
                 // Viene estructurado de la siguiente manera: "OPONENTE DESCONECTADO:nickname"

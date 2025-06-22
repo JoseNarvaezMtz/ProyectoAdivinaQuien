@@ -25,9 +25,11 @@ public class JugadorDB extends dataBase{
     }
 
     public static String conectarse(String name) {
-        if (verificarJugador(name))
+        if (verificarJugador(name)) {
             registrarJugador(name);
+        }
         return name;
+
     }
 
     public static void registrarJugador(String name) {

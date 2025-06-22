@@ -1,5 +1,6 @@
 package Partidas;
 
+import Classes.Personaje;
 import DataBaseClasses.PartidaDB;
 import Menu.Menu;
 import javafx.beans.property.SimpleStringProperty;

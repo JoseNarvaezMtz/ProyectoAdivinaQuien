@@ -1,6 +1,9 @@
 package SalaDeEspera;
 
+import java.util.List;
 import java.util.Random;
+
+import Classes.Personaje;
 import Menu.Menu;
 import Sockets.Cliente;
 import Tablero.TableroController;
@@ -52,29 +55,29 @@ public class SalaDeEsperaController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        //Pausa la música del menú
-        MenuController.musica.pause();
-
-        //Sonido de Fondo
-        Media fondo = new Media(getClass().getResource("/SalaDeEspera/Assets/ocean.mp3").toString());
+        configurarUI(); // Primero configuramos la pantalla
+        reproducirMusica(); // Despues reproducimos la musica
+        gestionarConexion(); // Hacemos la conexion del cliente o la gestionamos en caso de que ya exista
+    }
 
 
-        oceano = new MediaPlayer(fondo);
-        oceano.setCycleCount(MediaPlayer.INDEFINITE);
-        oceano.setVolume(0.4);
-        oceano.play();
-
-        //vemos si el usuario quiere escuchar música
-        //Si decide que no, pone la música en muted
-        if (!desicionUsuario) {
-            oceano.setMute(true);
-        } else {
-            oceano.setMute(false);
-        }
+    private void configurarUI() {
+        // Metodo que se encarga de mantener la pantalla completa
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
+        });
+
+        // Es un metodo de JavaFX que permite ejecutar código en el hilo principal de la interfaz de usuario
+        Platform.runLater(() -> {
+            double height = rootPane.getHeight();
+
+            GridPane.setMargin(labelEsperando, new Insets(
+                    height/19,
+                    0,
+                    0,
+                    0
+            ));
         });
 
         // Adaptar el fondo a la resolución del dispositivo
@@ -101,34 +104,7 @@ public class SalaDeEsperaController implements Initializable {
         int rand = random.nextInt(4)+1;
         Image img = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/esperando" + rand + ".gif"));
         imageCargando.setImage(img);
-
         imageCargando.getStyleClass().add("imageGif");
-
-        // Es un metodo de JavaFX que permite ejecutar código en el hilo principal de la interfaz de usuario
-        Platform.runLater(() -> {
-            double height = rootPane.getHeight();
-
-            GridPane.setMargin(labelEsperando, new Insets(
-                    height/19,
-                    0,
-                    0,
-                    0
-            ));
-        });
-
-        // Hacemos las conexiones al servidor para pasar al tablero
-        try {
-            Menu.cliente = new Cliente("localhost", 5000, new Cliente.ClienteListener() {
-                @Override
-                public void onIniciarPartida(String oponenteNick) {
-                    System.out.println("Iniciando partida contra: " + oponenteNick);
-                    Platform.runLater(() -> irTablero(oponenteNick));
-                }
-            });
-        } catch (IOException ex) {
-            System.out.println("Error al conectar al servidor: " + ex.getMessage());
-            ex.printStackTrace();
-        }
 
         // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE SALIR
         Image imagenSalir = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/salir.png"));
@@ -138,7 +114,56 @@ public class SalaDeEsperaController implements Initializable {
         buttonSalir.setGraphic(imageView);
     }
 
-    // Método para regresar al Menú principal
+    private void reproducirMusica() {
+        //Pausa la música del menú
+        MenuController.musica.pause();
+
+        //Sonido de Fondo
+        Media fondo = new Media(getClass().getResource("/SalaDeEspera/Assets/ocean.mp3").toString());
+
+        oceano = new MediaPlayer(fondo);
+        oceano.setCycleCount(MediaPlayer.INDEFINITE);
+        oceano.setVolume(0.4);
+        oceano.play();
+
+        //vemos si el usuario quiere escuchar música
+        //Si decide que no, pone la música en muted
+        if (!desicionUsuario) {
+            oceano.setMute(true);
+        } else {
+            oceano.setMute(false);
+        }
+    }
+
+    private void gestionarConexion() {
+        // REVANCHA: (el cliente ya existe). Esto es rápido y no necesita hilo.
+        if (Menu.cliente != null && !Menu.cliente.isClosed()) {
+            System.out.println("SalaDeEspera: Conexión existente encontrada. Reutilizándola.");
+            labelEsperando.setText("Esperando revancha...");
+            Menu.cliente.setClienteListener((oponenteNick, personajes) -> {
+                Platform.runLater(() -> irTablero(oponenteNick, personajes));
+            });
+            return;
+        }
+
+        // NUEVA PARTIDA: La conexión se crea en un hilo secundario para NO congelar la UI.
+        labelEsperando.setText("Conectando al servidor...");
+        new Thread(() -> {
+            try {
+                // Esta operación de red ahora es segura y no afecta la UI.
+                Menu.cliente = new Cliente("localhost", 5000, (oponenteNick, personajes) -> {
+                    Platform.runLater(() -> irTablero(oponenteNick, personajes));
+                });
+                // Actualizamos la UI desde el hilo secundario usando Platform.runLater
+                Platform.runLater(() -> labelEsperando.setText("¡Conectado! Buscando oponente..."));
+            } catch (IOException ex) {
+                Platform.runLater(() -> labelEsperando.setText("Error de conexión. Vuelve al menú."));
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+
+    // Metodo para regresar al Menú principal
     public void salir(ActionEvent e) {
         try {
             // Cerramos la conexion del cliente si existe
@@ -163,7 +188,7 @@ public class SalaDeEsperaController implements Initializable {
     }
 
     // Carga el tablero cuando se encuentra el oponente
-    public void irTablero(String oponenteNick) {
+    public void irTablero(String oponenteNick, List<Personaje> personajes) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Tablero/Tablero.fxml")); // Crea el FXMLLoader
             Parent nuevoRoot = loader.load();
@@ -176,9 +201,10 @@ public class SalaDeEsperaController implements Initializable {
             } else {
                 System.err.println("Error: Menu.cliente es null al ir al Tablero.");
             }
-
             //Pasamos el nick del oponente
             tableroController.setOponente(oponenteNick);
+
+            tableroController.onPersonajesRecibidos(personajes);
 
             nuevaScene.getStylesheets().add(getClass().getResource("/Tablero/TableroStyles.css").toExternalForm());
             Stage stage = (Stage) rootPane.getScene().getWindow();

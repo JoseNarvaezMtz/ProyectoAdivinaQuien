@@ -328,7 +328,12 @@ public class MenuController implements Initializable {
 
     // BOTÓN PARA IR A LA PANTALLA DE LA SALA DE ESPERA
     public void cambiarSalaDeEspera(ActionEvent e) throws IOException {
-        Menu.nickName = TextFieldNickname.getText();
+        // Solo se intenta acceder para añadir el nickname si esta desde el menu
+        if (this.TextFieldNickname != null) {
+            if (!TextFieldNickname.getText().trim().isEmpty()) {
+                Menu.nickName = TextFieldNickname.getText().trim();
+            }
+        }
 
         Parent nuevoRoot = FXMLLoader.load(getClass().getResource("/SalaDeEspera/SalaDeEspera.fxml"));
         Scene nuevaScene = new Scene(nuevoRoot);

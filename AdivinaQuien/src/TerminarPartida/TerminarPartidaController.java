@@ -157,7 +157,18 @@ public class TerminarPartidaController extends MenuController implements Initial
         if(MenuController.desicionUsuario == true ){
             MenuController.musica.play();
         }
-        musica.stop();
+        //Aqui agregar Sonido del click
+        sonidoClick();
+
+        // Se quiere jugar de nuevo
+        if (Menu.cliente != null && !Menu.cliente.isClosed()){
+            Menu.cliente.enviarMensajesC("JUGAR_OTRA_VEZ");
+        }
+
+        if (musica != null) {
+            musica.stop();
+        }
+
         super.cambiarSalaDeEspera(e);
     }
 
