@@ -60,11 +60,13 @@ public class TerminarPartidaController extends MenuController implements Initial
         if (estado == true) {
             musica = new MediaPlayer(musicWin);
             musica.setCycleCount(MediaPlayer.INDEFINITE);
+            musica.setVolume(0.2);
             musica.play();
         }
         else {
             musica = new MediaPlayer(musicLost);
             musica.setCycleCount(MediaPlayer.INDEFINITE);
+            musica.setVolume(0.2);
             musica.play();
         }
 
@@ -93,8 +95,9 @@ public class TerminarPartidaController extends MenuController implements Initial
             buttonRegresarMenu.getStyleClass().add("buttonPartidaFinLose");
         }
 
-        tituloLabel.prefWidthProperty().bind(rootPane.widthProperty().divide(1.5));
-        tituloLabel.prefHeightProperty().bind(rootPane.heightProperty().divide(4));
+        tituloLabel.prefWidthProperty().bind(rootPane.widthProperty());
+        tituloLabel.prefHeightProperty().bind(rootPane.heightProperty());
+
         tituloLabel.setFont(new javafx.scene.text.Font(80));
         tituloLabel.setWrapText(true);
         tituloLabel.setMaxWidth(Double.MAX_VALUE);
@@ -141,7 +144,7 @@ public class TerminarPartidaController extends MenuController implements Initial
         EstadoPartidaTerminada();
     }
 
-    //Toma al padre para mandar a llamar al método del padre que manda al usuario a partidas registradas
+    //Toma al padre para mandar a llamar al metodo del padre que manda al usuario a partidas registradas
     @Override
     public void partidasRegistradas(ActionEvent e) throws IOException {
         if(MenuController.desicionUsuario == true ){
@@ -151,7 +154,7 @@ public class TerminarPartidaController extends MenuController implements Initial
         super.partidasRegistradas(e);
     }
 
-    //Toma al padre para mandar a llamar al método del padre que manda al usuario a Sala de espera
+    //Toma al padre para mandar a llamar al metodo del padre que manda al usuario a Sala de espera
     @Override
     public void cambiarSalaDeEspera(ActionEvent e) throws IOException {
         if(MenuController.desicionUsuario == true ){

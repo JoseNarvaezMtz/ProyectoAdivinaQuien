@@ -109,7 +109,7 @@ public class PortadaController implements Initializable{
                 {"Departamento: ", "\nElectrónica"},
                 {"Carrera: ", "\nIngeniería en Sistemas Computacionales"},
                 {"Materia: ", "\nProgramación III"},
-                {"Actividad: ", "\nCaracterísticas del Lenguaje Java"},
+                {"Actividad: ", "\nProyecto Final: Adivina ¿Quién?"},
                 {"Profesor: ", "\n Dra. Georgina Salazar Partida"},
                 {"Nombre del estudiante: ", "\nHarim Jesús Enrique Dueñas Dávila\nJulián Emmanuel Hernández\nJosé Luis Narváez Martínez\nEmiliano Alejandro Santos González\n"},
                 {"Semestre: ", "\n4º Grupo A"},

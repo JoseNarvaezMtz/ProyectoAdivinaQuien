@@ -41,7 +41,6 @@ public class SalaDeEsperaController implements Initializable {
     @FXML ImageView fondoImage;
     @FXML ImageView textureImg;
     @FXML ImageView imageCargando;
-    @FXML Group gifPane;
 
     @FXML Button buttonSalir;
 
@@ -94,8 +93,8 @@ public class SalaDeEsperaController implements Initializable {
         textureImg.fitHeightProperty().bind(rootPane.heightProperty().divide(1.5));
 
         // Adaptar el gif animado que muestra mientras se conecta al servidor con la resolución del dispositivo
-        imageCargando.fitWidthProperty().bind(rootPane.widthProperty().divide(5));
-        imageCargando.fitHeightProperty().bind(rootPane.heightProperty().divide(5));
+        imageCargando.fitWidthProperty().bind(rootPane.widthProperty().divide(3));
+        imageCargando.fitHeightProperty().bind(rootPane.heightProperty().divide(3));
 
         Random random = new Random();
         int rand = random.nextInt(4)+1;

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,6 +24,7 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import javax.swing.event.ChangeListener;
@@ -100,8 +102,8 @@ public class MenuController implements Initializable {
 
         // DESHABILITAMOS EL BOTON DE CONFIRMAR NICKNAME HASTA QUE TENGA MÁS DE 3 CARACTERES, Y MENOS DE 18
         TextFieldNickname.textProperty().addListener((observable, oldValue, newValue) -> {
-            btnNickConfirmar.setDisable(newValue.length() <= 4 || newValue.length() >= 17);
-            labelDigitos.setVisible(newValue.length() <= 4 || newValue.length() >= 17);
+            btnNickConfirmar.setDisable(newValue.length() <= 3 || newValue.length() >= 10);
+            labelDigitos.setVisible(newValue.length() <= 3 || newValue.length() >= 10);
         });
 
         // ADAPTACIÓN DE TAMAÑOS A LA RESOLUCIÓN DE PANTALLA
@@ -247,6 +249,10 @@ public class MenuController implements Initializable {
             stage.setMinHeight(720);
             stage.setMinWidth(1280);
             Menu.fullScreen = false;
+
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
+            stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
         }
         else{
             stage.setFullScreen(true);

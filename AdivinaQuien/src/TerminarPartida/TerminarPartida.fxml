@@ -13,9 +13,9 @@
       <ImageView fx:id="fondoImage" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true" />
       <GridPane fx:id="gridPane" prefHeight="400.0" prefWidth="611.0">
         <columnConstraints>
-            <ColumnConstraints hgrow="ALWAYS" maxWidth="395.0" minWidth="10.0" prefWidth="107.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="700.0" minWidth="10.0" prefWidth="500.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="395.0" minWidth="10.0" percentWidth="10.0" prefWidth="107.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="700.0" minWidth="10.0" percentWidth="80.0" prefWidth="500.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -36,7 +36,7 @@
                   <Button fx:id="buttonRegresarMenu" mnemonicParsing="false" onAction="#partidasRegistradas" prefWidth="204.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
                </children>
             </GridPane>
-            <Label fx:id="tituloLabel" prefHeight="17.0" prefWidth="253.0" text="TEXTO GANAR/PERDER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+            <Label fx:id="tituloLabel" prefHeight="191.0" prefWidth="467.0" text="TEXTO GANAR/PERDER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
          </children>
       </GridPane>
    </children>

@@ -129,7 +129,7 @@
                 <RowConstraints minHeight="10.0" percentHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label fx:id="labelDigitos" alignment="CENTER" text="Tu nombre tiene que ser mayor a 4 caracteres y menor a 17" textFill="WHITE" visible="false" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                  <Label fx:id="labelDigitos" alignment="CENTER" text="Tu nombre tiene que ser mayor a 3 caracteres y menor a 10" textFill="WHITE" visible="false" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
