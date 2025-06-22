@@ -1,6 +1,5 @@
 package Portada;
 
-import Creditos.CreditosController;
 import Menu.Menu;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,7 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
@@ -22,43 +20,40 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import Menu.MenuController;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import static Menu.MenuController.desicionUsuario;
+
+// Clase controladora de la pantalla de la portaad
 
 public class PortadaController implements Initializable{
 
+    // Paneles
     @FXML private Pane rootPane;
-
     @FXML private GridPane gridPane;
 
+    // ImageViews
     @FXML private ImageView imageLogoUaa;
     @FXML private ImageView imageLogoCentro;
     @FXML private ImageView imageChanguito1;
     @FXML private ImageView imageChanguito2;
 
+    // Botones
     @FXML private Button buttonSalir;
 
+    // TextFlows
     @FXML private TextFlow textFlow;
 
     private Stage stage;
-    private Scene scene;
-    private Parent root;
 
-    public static MediaPlayer musica;
+    public static MediaPlayer musica; // Reproductor de música
 
+    // Meto que se ejecuta al cargar la escena
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        if (musica == null) {
-            Media music = new Media(getClass().getResource("/Portada/Assets/CircusMusic.mp3").toString());
-            musica = new MediaPlayer(music);
-            musica.setCycleCount(MediaPlayer.INDEFINITE);
-        }
-
+        // Se adapta la pantalla a su versión ventana o pantalla completa según la variable global "fullScreen"
         javafx.application.Platform.runLater(() -> {
             if (rootPane.getScene() != null) {
                 Stage stage = (Stage) rootPane.getScene().getWindow();
@@ -66,44 +61,54 @@ public class PortadaController implements Initializable{
             }
         });
 
-        // Ajustar GridPane al tamaño del rootPane
+        if (musica == null) { // Si no se esta reproduciendo nada
+            // Se carga el archivo de audio
+            Media music = new Media(getClass().getResource("/Portada/Assets/CircusMusic.mp3").toString());
+            musica = new MediaPlayer(music);
+            musica.setCycleCount(MediaPlayer.INDEFINITE);
+        }
+
+        // Ajustar GridPane del contenido a la resolución del dispositivo
         gridPane.prefWidthProperty().bind(rootPane.widthProperty());
         gridPane.prefHeightProperty().bind(rootPane.heightProperty());
 
-        // Ajustar TextFlow (ocupará toda la fila central)
+        // Ajustar TextFlow (ocupará toda la fila central) a la resolución del dispositivo
         textFlow.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.615));
         textFlow.prefHeightProperty().bind(rootPane.heightProperty().multiply(0.4));
 
-        // Ajustar imagen UAA (izquierda arriba)
+        // Ajustar imagen UAA (izquierda arriba) a la resolución del dispositivo
         imageLogoUaa.fitWidthProperty().bind(rootPane.widthProperty().divide(6));
         imageLogoUaa.fitHeightProperty().bind(rootPane.heightProperty().divide(4));
 
-        // Ajustar imagen Centro (derecha arriba)
+        // Ajustar imagen Centro (derecha arriba) a la resolución del dispositivo
         imageLogoCentro.fitWidthProperty().bind(rootPane.widthProperty().divide(6));
         imageLogoCentro.fitHeightProperty().bind(rootPane.heightProperty().divide(4));
 
-        // Ajustamos a los changuitos
+        // Agustar los ImageViews de los changuitos a la resolución del dispositivo
         imageChanguito1.fitWidthProperty().bind(rootPane.widthProperty().divide(5));
         imageChanguito1.fitHeightProperty().bind(rootPane.heightProperty().divide(3));
 
         imageChanguito2.fitWidthProperty().bind(rootPane.widthProperty().divide(5));
         imageChanguito2.fitHeightProperty().bind(rootPane.heightProperty().divide(3));
 
-        // Ajustar botón salir (abajo)
+        // Ajustar botón para salir (abajo) a la resolución del dispositivo
+        buttonSalir.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
+        buttonSalir.prefHeightProperty().bind(rootPane.heightProperty().divide(14));
+
+        // Cargar el ícono del botón para regresar a los créditos
         Image iconoSalir = new Image(getClass().getResourceAsStream("/Portada/Assets/salir.png"));
         ImageView iconoView = new ImageView(iconoSalir);
         iconoView.setFitWidth(45);
         iconoView.setFitHeight(45);
         buttonSalir.setGraphic(iconoView);
 
-        buttonSalir.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
-        buttonSalir.prefHeightProperty().bind(rootPane.heightProperty().divide(14));
-
         // Configurar contenido del TextFlow
         configurarTextFlow();
     }
 
+    // Metodo que carga el contenido del TextFlow (La portada en sí)
     public void configurarTextFlow() {
+        // Datos generales del proyecto
         String[][] contenido = {
                 {"Centro: ", "\nCentro de Ciencias Básicas"},
                 {"Departamento: ", "\nElectrónica"},
@@ -119,19 +124,24 @@ public class PortadaController implements Initializable{
         };
 
         for (String[] par : contenido) {
+            // Creación y estilización de un texto para el título
             Text titulo = new Text(par[0]);
             titulo.setFont(Font.font("Arial Black", 24));
 
+            // Creación y estilización de un texto para el contenido de los datos generales
             Text valor = new Text(par[1] + "\n\n");
             valor.setFont(Font.font("Arial", 18));
 
+            // Adición del texto al TextFlow
             this.textFlow.getChildren().addAll(titulo, valor);
         }
     }
 
-    // BOTÓN PARA IR A LA PANTALLA DE CRÉDITOS
+    // Metodo para regresar a la pantalla de créditos
     public void cambiarCreditos(ActionEvent e) throws IOException {
-        musica.stop();
+        musica.stop(); // Se detiene la música
+
+        // Se carga el archivo FXML de la pantalla de créditos y se muestra
         Parent root = (Parent) FXMLLoader.load(getClass().getResource("/Creditos/Creditos.fxml"));
         Scene scene = rootPane.getScene();
         scene.getStylesheets().add(getClass().getResource("/Creditos/CreditosStyles.css").toExternalForm());
@@ -142,16 +152,19 @@ public class PortadaController implements Initializable{
         stage.show();
     }
 
+    // Metodo que maneja el evento que muestra el EasterEgg
     public void EasterEggMusic(){
-        MenuController.musica.pause();
+        MenuController.musica.pause(); // Se pausa la música del menú
+
+        // Se muestran los changuitos
         imageChanguito1.setOpacity(1);
         imageChanguito2.setOpacity(1);
+
         //Reproducimos la música
         musica.setVolume(0.2);
         musica.play();
-        //vemos si el usuario quiere escuchar música
-        //Si decide que no, pone la música en muted
-        if (!desicionUsuario) {
+
+        if (!desicionUsuario) { // Si el usuario silenció la música desde el menú, se mutea aquí
             musica.setMute(true);
         } else {
             musica.setMute(false);

@@ -1,20 +1,21 @@
 package Classes;
 
 import DataBaseClasses.JugadorDB;
-
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDate;
 
-public class Partida implements Comparable<Partida>, Serializable {
-    private LocalDate fecha;
-    private Duration tiempo;
-    private String jugador1;
-    private String jugador2;
-    private String winner;
-    private Personaje personajeWinner;
+// Clase para instanciar partidas
 
-    public Partida(){}
+public class Partida implements Comparable<Partida>, Serializable {
+    private LocalDate fecha;            // Fecha de la partida
+    private Duration tiempo;            // Duración de la partida
+    private String jugador1;            // Jugador 1 de la partida
+    private String jugador2;            // Jugador 2 de la partida
+    private String winner;              // Ganador de la partida
+    private Personaje personajeWinner;  // Personaje que tenía el ganador de la partida
+
+    public Partida(){}  // Constructor vacío de la clase
 
     public Partida(String fecha, long time, int idj1, int idj2, int idW, int idP) {
         this.fecha = LocalDate.parse(fecha);
@@ -24,8 +25,11 @@ public class Partida implements Comparable<Partida>, Serializable {
         this.winner = idW == idP ? this.jugador1 : this.jugador2;
     }
 
+    // Metodo para comparar entre partidas
     @Override
     public int compareTo(Partida o) { return (int)( this.tiempo.toSeconds() - o.getTiempo().toSeconds() ); }
+
+    // Getters y Setters
 
     public LocalDate getFecha() {
         return fecha;

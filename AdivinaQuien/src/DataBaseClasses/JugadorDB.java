@@ -6,7 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+// Clase que manejará la base de datos
+
 public class JugadorDB extends dataBase{
+
 
     public static boolean verificarJugador(String name) {
         String sql = "SELECT * FROM Jugadores WHERE nombre = ?";
@@ -29,7 +32,6 @@ public class JugadorDB extends dataBase{
             registrarJugador(name);
         }
         return name;
-
     }
 
     public static void registrarJugador(String name) {

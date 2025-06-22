@@ -2,7 +2,6 @@ package SalaDeEspera;
 
 import java.util.List;
 import java.util.Random;
-
 import Classes.Personaje;
 import Menu.Menu;
 import Sockets.Cliente;
@@ -13,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,35 +21,37 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import Menu.MenuController;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import static Menu.MenuController.desicionUsuario;
+
+// Clase controlador de la pantalla de la sala de espera
 
 public class SalaDeEsperaController implements Initializable {
 
-    @FXML Pane rootPane;
-    @FXML GridPane contentPane;
-    @FXML GridPane tablePane;
+    // Paneles
+    @FXML private Pane rootPane;
+    @FXML private GridPane contentPane;
 
-    @FXML ImageView fondoImage;
-    @FXML ImageView textureImg;
-    @FXML ImageView imageCargando;
+    // ImageViews
+    @FXML private ImageView fondoImage;
+    @FXML private ImageView textureImg;
+    @FXML private ImageView imageCargando;
 
-    @FXML Button buttonSalir;
+    // Botones
+    @FXML private Button buttonSalir;
 
-    @FXML Label labelEsperando;
+    // labels
+    @FXML private Label labelEsperando;
 
-    //Musica
-    private static MediaPlayer oceano;
+    private static MediaPlayer oceano; // Reproductor de música
 
+    // Metodo que se ejecuta al cargar la escena
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configurarUI(); // Primero configuramos la pantalla
@@ -59,15 +59,15 @@ public class SalaDeEsperaController implements Initializable {
         gestionarConexion(); // Hacemos la conexion del cliente o la gestionamos en caso de que ya exista
     }
 
-
+    // Metodo para configurar toda la interfáz de usuario
     private void configurarUI() {
-        // Metodo que se encarga de mantener la pantalla completa
+        // Establecemos si la aplicación esta en pantalla completa o en ventana
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
         });
 
-        // Es un metodo de JavaFX que permite ejecutar código en el hilo principal de la interfaz de usuario
+        // Le damos un margen igual a la altura de la resolución entre 19 al label de esperando
         Platform.runLater(() -> {
             double height = rootPane.getHeight();
 
@@ -99,13 +99,16 @@ public class SalaDeEsperaController implements Initializable {
         imageCargando.fitWidthProperty().bind(rootPane.widthProperty().divide(3));
         imageCargando.fitHeightProperty().bind(rootPane.heightProperty().divide(3));
 
+        // Creamos una variable auxiliar que sea un número aleatorio entre 1 y 4
         Random random = new Random();
         int rand = random.nextInt(4)+1;
+
+        // Se carga el gif correspondiente al random anterior y se le asigna a la pantalla
         Image img = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/esperando" + rand + ".gif"));
         imageCargando.setImage(img);
-        imageCargando.getStyleClass().add("imageGif");
+        imageCargando.getStyleClass().add("imageGif"); // Se le asigna una clase para su estilo
 
-        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE SALIR
+        // Creación y carga del ícono para el botón de salir
         Image imagenSalir = new Image(getClass().getResourceAsStream("/SalaDeEspera/Assets/salir.png"));
         ImageView imageView = new ImageView(imagenSalir);
         imageView.setFitWidth(45);
@@ -113,21 +116,19 @@ public class SalaDeEsperaController implements Initializable {
         buttonSalir.setGraphic(imageView);
     }
 
+    // Metodo que reproduce la música
     private void reproducirMusica() {
-        //Pausa la música del menú
-        MenuController.musica.pause();
+        MenuController.musica.pause(); // Pausa la música entrante del menú
 
-        //Sonido de Fondo
+        // Carga la música para la ambientación de fondo
         Media fondo = new Media(getClass().getResource("/SalaDeEspera/Assets/ocean.mp3").toString());
 
-        oceano = new MediaPlayer(fondo);
+        oceano = new MediaPlayer(fondo); // Crea un reproductor de música, asignándole la ambientación a reproducir
         oceano.setCycleCount(MediaPlayer.INDEFINITE);
         oceano.setVolume(0.4);
-        oceano.play();
+        oceano.play(); // Reproduce la música
 
-        //vemos si el usuario quiere escuchar música
-        //Si decide que no, pone la música en muted
-        if (!desicionUsuario) {
+        if (!desicionUsuario) { // Si el usuario silenció la música, entonces la muteamos
             oceano.setMute(true);
         } else {
             oceano.setMute(false);
@@ -165,13 +166,14 @@ public class SalaDeEsperaController implements Initializable {
     // Metodo para regresar al Menú principal
     public void salir(ActionEvent e) {
         try {
-            // Cerramos la conexion del cliente si existe
+            // Cerramos la conexion del cliente, si existe
             if (Menu.cliente != null) {
                 System.out.println("Desconectando al cliente");
                 Menu.cliente.desconexion();
                 Menu.cliente = null;
             }
 
+            // Cargamos el archivo FXML de la pantalla del menú y la mostramos
             Parent menuRoot = FXMLLoader.load(getClass().getResource("/Menu/Menu.fxml"));
             Scene scene = new Scene(menuRoot);
             scene.getStylesheets().add(getClass().getResource("/Menu/MenuStyles.css").toExternalForm());
@@ -186,25 +188,31 @@ public class SalaDeEsperaController implements Initializable {
         }
     }
 
-    // Carga el tablero cuando se encuentra el oponente
+    // Metodo que carga el tablero cuando se encuentra un oponente
     public void irTablero(String oponenteNick, List<Personaje> personajes) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Tablero/Tablero.fxml")); // Crea el FXMLLoader
+            // Cargar el archivo FXML de la pantalla de tablero y la muestra
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Tablero/Tablero.fxml"));
             Parent nuevoRoot = loader.load();
-            //Parent nuevoRoot = FXMLLoader.load(getClass().getResource("/Tablero/Tablero.fxml"));
             Scene nuevaScene = new Scene(nuevoRoot);
 
             TableroController tableroController = loader.getController();
+
+            // Verifica que haya algun cliente que quiere ir al tablero
             if (Menu.cliente != null) {
+                // Si existe, configura el Listener del cliente en el servidor
                 tableroController.setCliente(Menu.cliente);
             } else {
                 System.err.println("Error: Menu.cliente es null al ir al Tablero.");
             }
-            //Pasamos el nick del oponente
+
+            // Pasamos el nick del oponente al servidor
             tableroController.setOponente(oponenteNick);
 
+            // Pasamos la lista de personajes a la pantalla del tablero
             tableroController.onPersonajesRecibidos(personajes);
 
+            // Cargamos el archivo FXML de la pantalla del tablero y la mostramos
             nuevaScene.getStylesheets().add(getClass().getResource("/Tablero/TableroStyles.css").toExternalForm());
             Stage stage = (Stage) rootPane.getScene().getWindow();
             oceano.stop();

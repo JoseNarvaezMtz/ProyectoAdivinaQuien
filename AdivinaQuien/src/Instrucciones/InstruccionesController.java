@@ -18,7 +18,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -30,31 +29,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.AudioClip;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+// Clase controlador de la pantalla de isntrucciones
+
 public class InstruccionesController implements Initializable {
+
+    // Paneles
     @FXML private Pane rootPane;
     @FXML private GridPane contentPane;
     @FXML private GridPane contentPanePersonajes;
 
+    // ImageViews
     @FXML private ImageView fondoImage;
     @FXML private ImageView personajeImage;
 
-    @FXML private Button buttonSalir;
-    @FXML private Button buttonLista;
-    @FXML private Button buttonIzquierda;
-    @FXML private Button buttonDerecha;
-    @FXML private Button buttonRegresar;
-
-    @FXML private Label Titulo;
-    @FXML private TextArea textArea1;
-    @FXML private TextArea textArea2;
-    @FXML private TextArea textArea3;
-    @FXML private TextArea textArea4;
-    @FXML private TextArea textArea5;
-    @FXML private TextArea textArea6;
-    @FXML private TextArea textArea7;
+    // ImageViews de las instrucciones
     @FXML private ImageView img1;
     @FXML private ImageView img2;
     @FXML private ImageView img3;
@@ -63,23 +53,47 @@ public class InstruccionesController implements Initializable {
     @FXML private ImageView img6;
     @FXML private ImageView img7;
 
-    @FXML private Label labelNombrePer;
+    // TextAreas
     @FXML private TextArea textAreaDescripcion;
 
-    // Array de imagenes para los personajes
-    private List<Personaje> personajes = new ArrayList();
-    // Contador que indica el indice actual de la imagen seleccionada
-    private int indiceActual = 0;
+    // TextAreas de las instrucciones
+    @FXML private TextArea textArea1;
+    @FXML private TextArea textArea2;
+    @FXML private TextArea textArea3;
+    @FXML private TextArea textArea4;
+    @FXML private TextArea textArea5;
+    @FXML private TextArea textArea6;
+    @FXML private TextArea textArea7;
+
+    // Botones
+    @FXML private Button buttonSalir;
+    @FXML private Button buttonLista;
+    @FXML private Button buttonIzquierda;
+    @FXML private Button buttonDerecha;
+    @FXML private Button buttonRegresar;
+
+    // Labels
+    @FXML private Label Titulo;
+    @FXML private Label labelNombrePer;
 
     //Sonidos
     private static AudioClip sonidoSplash;
     private static AudioClip sonidoGota;
 
+    // Array de personajes para la lista de estos
+    private List<Personaje> personajes = new ArrayList();
+
+    // Contador que indica el indice actual de la imagen seleccionada
+    private int indiceActual = 0;
+
+    // Metodo que se ejecuta al cargar la escena
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        // Cargar los sonidos ambientales
         sonidoSplash = new AudioClip(getClass().getResource("/Instrucciones/Assets/splash.mp3").toString());
         sonidoGota = new AudioClip(getClass().getResource("/Instrucciones/Assets/gota.mp3").toString());
 
+        // Adaptar la pantalla a su versión completa o ventana
         Platform.runLater(() -> {
             Stage stage = (Stage)this.rootPane.getScene().getWindow();
             if (stage != null) {
@@ -103,7 +117,8 @@ public class InstruccionesController implements Initializable {
         this.Titulo.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.85));
         this.Titulo.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.1));
 
-        // Adapta un TextArea que muestra las instrucciones del juego y la adapta a la resolución del dispositivo
+        // Adapta los TextArea de las instrucciones a la resolución del dispositivo
+
         this.textArea1.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
         this.textArea1.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.95));
 
@@ -124,6 +139,8 @@ public class InstruccionesController implements Initializable {
 
         this.textArea7.prefWidthProperty().bind(this.rootPane.widthProperty().multiply(0.73));
         this.textArea7.prefHeightProperty().bind(this.rootPane.heightProperty().multiply(0.64));
+
+        // Adapta las imágenes de las instrucciones a la resolución del dispositivo
 
         this.img1.fitWidthProperty().bind(this.rootPane.widthProperty().multiply(0.8));
         this.img1.fitHeightProperty().bind(this.rootPane.widthProperty().multiply(0.45));
@@ -150,38 +167,40 @@ public class InstruccionesController implements Initializable {
         this.buttonSalir.prefWidthProperty().bind(this.rootPane.widthProperty().divide(12));
         this.buttonSalir.prefHeightProperty().bind(this.rootPane.heightProperty().divide(10));
 
-        this.buttonRegresar.prefWidthProperty().bind(this.rootPane.widthProperty().divide(12));
-        this.buttonRegresar.prefHeightProperty().bind(this.rootPane.heightProperty().divide(10));
-
         // Adapta el botón que muestra la lista de los personajes a la resolución del dispositivo
         this.buttonLista.prefWidthProperty().bind(this.rootPane.widthProperty().divide(4));
         this.buttonLista.prefHeightProperty().bind(this.rootPane.heightProperty().divide(8));
+
+        // Adapta el botón para regresar a las instrucciones a la resolución del dispositivo
+        this.buttonRegresar.prefWidthProperty().bind(this.rootPane.widthProperty().divide(12));
+        this.buttonRegresar.prefHeightProperty().bind(this.rootPane.heightProperty().divide(10));
 
         // Adapta la imagen de los personajes a la resolución del dispositivo
         this.personajeImage.fitWidthProperty().bind(this.rootPane.widthProperty().divide(4));
         this.personajeImage.fitHeightProperty().bind(this.rootPane.heightProperty().divide(2));
 
-        // Carga la imagen del botón de salir
+        // Carga el ícono del botón de salir
         Image imagenSalir = new Image(this.getClass().getResourceAsStream("/Instrucciones/Assets/regresar.png"));
         ImageView imageView = new ImageView(imagenSalir);
         imageView.setFitWidth((double)50.0F);
         imageView.setFitHeight((double)50.0F);
         this.buttonSalir.setGraphic(imageView);
 
+        // Carga el ícono del botón para regresar a las instrucciones
         Image imagenRegresar = new Image(this.getClass().getResourceAsStream("/Instrucciones/Assets/regresar.png"));
         ImageView imgV = new ImageView(imagenRegresar);
         imgV.setFitWidth((double)50.0F);
         imgV.setFitHeight((double)50.0F);
         this.buttonRegresar.setGraphic(imgV);
 
-        // Carga la imagen del botón para cambiar al personaje anterior de la lista
+        // Carga el ícono del botón para cambiar al personaje anterior de la lista
         Image imagenIzquierda = new Image(this.getClass().getResourceAsStream("/Instrucciones/Assets/flechaIzquierda.png"));
         ImageView imageView2 = new ImageView(imagenIzquierda);
         imageView2.setFitWidth((double)50.0F);
         imageView2.setFitHeight((double)50.0F);
         this.buttonIzquierda.setGraphic(imageView2);
 
-        // Carga la imagen del botón para cambiar al personaje siguiente de la lista
+        // Carga el ícono del botón para cambiar al personaje siguiente de la lista
         Image imagenDerecha = new Image(this.getClass().getResourceAsStream("/Instrucciones/Assets/flechaDerecha.png"));
         ImageView imageView3 = new ImageView(imagenDerecha);
         imageView3.setFitWidth((double)50.0F);
@@ -189,9 +208,10 @@ public class InstruccionesController implements Initializable {
         this.buttonDerecha.setGraphic(imageView3);
     }
 
-    // Botón para regresar al menú principal
+    // Metodo para regresar al menú principal
     @FXML
     public void salir(ActionEvent e) {
+        // Cargar el archivo FXML del menú y mostrarlo
         try {
             Parent menuRoot = (Parent)FXMLLoader.load(this.getClass().getResource("/Menu/Menu.fxml"));
             Scene scene = new Scene(menuRoot);
@@ -203,17 +223,17 @@ public class InstruccionesController implements Initializable {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
     }
 
     // Botón para mostrar la lista de los personajes, donde pone en invisible el panel principal
     // y muestra el panel con las imagenes de los personajes
     @FXML
     public void menuPersonajesInstrucciones(ActionEvent e) {
-        this.contentPane.setVisible(false);
-        this.contentPanePersonajes.setVisible(true);
-        this.cargarPersonajes();
-        this.actualizarPersonaje();
+        this.contentPane.setVisible(false); // Esconder el panel de las instrucciones
+        this.contentPanePersonajes.setVisible(true); // Mostrar el panel de los personajes
+
+        this.cargarPersonajes(); // Cargar las imagenes de los personajes
+        this.actualizarPersonaje(); // Mostar el personaje en el índice actual
     }
 
     // Botón para cambiar al personaje anterior de la lista
@@ -225,7 +245,7 @@ public class InstruccionesController implements Initializable {
             this.indiceActual = this.personajes.size()-1;
         }
 
-        this.actualizarPersonaje();
+        this.actualizarPersonaje(); // Metodo para mostrar la imagen del personaje actual
     }
 
     // Botón para cambiar al personaje siguiente de la lista
@@ -237,40 +257,29 @@ public class InstruccionesController implements Initializable {
             this.indiceActual = 0;
         }
 
-        this.actualizarPersonaje();
+        this.actualizarPersonaje(); // Metodo para mostrar la imagen del personaje actual
     }
 
-    // Ajusta las fuentes de los paneles para que con una operación se muestren conforme a la
-    // resolución del dispositivo.
-    private void ajustarFuentes() {
-        double ancho = this.rootPane.getWidth();
-        double alto = this.rootPane.getHeight();
-        double escala = Math.min(ancho / (double)1280.0F, alto / (double)720.0F);
-        this.textArea1.setFont(new Font("Arial", (double)24.0F * escala));
-        this.buttonLista.setFont(new Font("Arial", (double)17.0F * escala));
-        this.Titulo.setFont(new Font("Chiller", (double)48.0F * escala));
-        this.Titulo.setAlignment(Pos.CENTER);
-    }
-
-    // Carga las imagenes para que se puedan mostrar en el panel con las imagenes de los personajes
+    // Pide la lista de personajes a la base de datos, y la almacena en el atributo "personajes"
     private void cargarPersonajes() {
         this.personajes = PersonajeDB.getPersonajes();
     }
 
-    // Cambia la imagen actual que tiene el panel
+    // Cambia la imagen actual que tiene el panel de su descripción
     private void actualizarPersonaje() {
         this.personajeImage.setImage(personajes.get(indiceActual).getImagenFX());
         this.labelNombrePer.setText(this.personajes.get(this.indiceActual).getNombre());
         this.textAreaDescripcion.setText(this.personajes.get(this.indiceActual).getDescripcionString());
     }
 
-    //Regresa al menú que muestra las instrucciones
+    // Regresa al menú que muestra las instrucciones
     public void regresarInstrucciones(ActionEvent e) {
         this.contentPanePersonajes.setVisible(false);
         this.contentPane.setVisible(true);
     }
 
-    //Sonidos
+    // Metodos para reproducir los sonidos ambientales
+
     public void sonidoSplash(){
         sonidoSplash.setVolume(0.4);
         sonidoSplash.play();
