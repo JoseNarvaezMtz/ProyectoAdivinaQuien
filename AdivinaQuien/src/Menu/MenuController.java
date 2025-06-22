@@ -39,16 +39,16 @@ public class MenuController implements Initializable {
     @FXML private GridPane nickNameContainer;
 
     // Botones
+    @FXML private Button buttonModo;
     @FXML private Button buttonJugar;
+    @FXML private Button buttonMusic;
+    @FXML private Button buttonSalir;
     @FXML private Button buttonCreditos;
     @FXML private Button buttonPartidas;
-    @FXML private Button buttonInstrucciones;
-    @FXML private Button buttonMusic;
-    @FXML private Button buttonCambiarMusica;
-    @FXML private Button buttonModo;
-    @FXML private Button buttonSalir;
     @FXML private Button btnNickCancelar;
     @FXML private Button btnNickConfirmar;
+    @FXML private Button buttonInstrucciones;
+    @FXML private Button buttonCambiarMusica;
 
     // ImageViews
     @FXML private ImageView fondoImage;
