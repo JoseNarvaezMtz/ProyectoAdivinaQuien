@@ -96,3 +96,16 @@
     -fx-font-weight: bold;
     -fx-text-fill: #ffffff;
 }
+
+.listView {
+    -fx-font-family: "Cherry Bomb One";
+    -fx-font-size: 24px;
+}
+
+.labelSelecPregunta {
+    -fx-font-size: 30px;
+}
+
+.labelPreguntaLista {
+    -fx-font-size: 30px;
+}

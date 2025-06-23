@@ -6,7 +6,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+/*
+    Esta clase sirve para manejar las preguntas de la base de datos
+    No tiene muchas cosas en especial
+ */
+
 public class PreguntasDB extends dataBase{
+
+    /*
+        Metodo obtenerPregunta
+
+        Obtiene una pregunta mediante su id, al final no la utilizamos jajajaja
+     */
+
     public static String obtenerPregunta(int id) {
         String sql = "SELECT * FROM Preguntas WHERE id = ?";
 
@@ -24,6 +36,12 @@ public class PreguntasDB extends dataBase{
         }
         return null;
     }
+
+    /*
+        Metodo obtenerPreguntas
+
+        Obtiene toda la lista de preguntas de la base de datos
+     */
 
     public static ArrayList<String> obtenerPreguntas () {
         String sql = "SELECT * FROM Preguntas";

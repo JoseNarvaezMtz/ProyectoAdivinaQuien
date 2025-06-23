@@ -32,7 +32,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="buttonVolverAJugar" mnemonicParsing="false" onAction="#cambiarSalaDeEspera" prefHeight="25.0" prefWidth="203.0" GridPane.halignment="CENTER" />
+                  <Button fx:id="buttonVolverAJugar" mnemonicParsing="false" onAction="#volverAlMenuPrincipal" prefHeight="25.0" prefWidth="203.0" GridPane.halignment="CENTER" />
                   <Button fx:id="buttonRegresarMenu" mnemonicParsing="false" onAction="#partidasRegistradas" prefWidth="204.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
                </children>
             </GridPane>

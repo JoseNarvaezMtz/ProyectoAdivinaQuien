@@ -86,11 +86,7 @@
                                  </font></Label>
                            </children>
                         </Pane>
-                        <ImageView fx:id="userImg" fitHeight="98.0" fitWidth="105.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                           <effect>
-                              <Glow level="0.4" />
-                           </effect>
-                        </ImageView>
+                        <ImageView fx:id="userImg" fitHeight="98.0" fitWidth="105.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                         <ImageView fx:id="userRival" fitHeight="98.0" fitWidth="105.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                            <image>
                               <Image url="@Assets/silhouette.png" />
@@ -207,9 +203,9 @@
       <Pane fx:id="shadowPanePersonajes" opacity="0.78" prefHeight="476.0" prefWidth="600.0" style="-fx-background-color: #000000;" visible="false" />
       <GridPane fx:id="contenedorListaPer" prefHeight="476.0" prefWidth="600.0" visible="false">
         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="35.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="35.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -235,7 +231,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="ELIGE TU PERSONAJE:" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                        <Label styleClass="labelEligePersonajeLista" text="ELIGE TU PERSONAJE:" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                         <Button fx:id="buttonSalir" mnemonicParsing="false" onAction="#cerrarListaPersonajes" text="Salir" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                      </children>
                   </GridPane>
@@ -266,9 +262,12 @@
                 <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="ELIGE LA PREGUNTA QUE DESEAS HACER" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label styleClass="labelSelecPregunta" text="ELIGE LA PREGUNTA QUE DESEAS HACER" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                   <Button fx:id="btnSalirPreguntas" mnemonicParsing="false" onAction="#salirPreguntas" text="Cancelar" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
                </children>
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+               </padding>
             </GridPane>
          </children>
       </GridPane>

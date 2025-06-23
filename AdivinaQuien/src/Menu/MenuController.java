@@ -1,12 +1,9 @@
 package Menu;
 
-import Sockets.Cliente;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -16,73 +13,76 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
-import javax.swing.event.ChangeListener;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+// Clase controlador de la pantalla del menú principal
+
 public class MenuController implements Initializable {
 
-    // PANELES
+    // Paneles
     @FXML private Pane rootPane;
+    @FXML private Pane darkness;
+    @FXML private Pane titlePane;
     @FXML private GridPane contentPane;
-    @FXML Pane darkness;
-    @FXML GridPane GridPaneNickname;
-    @FXML GridPane nickNameContainer;
-    @FXML Pane titlePane;
-    @FXML Label labelTitulo1;
-    @FXML Label labelTitulo2;
+    @FXML private GridPane GridPaneNickname;
+    @FXML private GridPane nickNameContainer;
 
-    // BOTONES
+    // Botones
+    @FXML private Button buttonModo;
     @FXML private Button buttonJugar;
+    @FXML private Button buttonMusic;
+    @FXML private Button buttonSalir;
     @FXML private Button buttonCreditos;
     @FXML private Button buttonPartidas;
-    @FXML private Button buttonInstrucciones;
-    @FXML private Button buttonMusic;
-    @FXML private Button buttonCambiarMusica;
-    @FXML private Button buttonModo;
-    @FXML private Button buttonSalir;
     @FXML private Button btnNickCancelar;
     @FXML private Button btnNickConfirmar;
+    @FXML private Button buttonInstrucciones;
+    @FXML private Button buttonCambiarMusica;
 
-    // IMAGEVIEWS
+    // ImageViews
     @FXML private ImageView fondoImage;
 
-    // LABELS
-    @FXML Label labelDigitos;
+    // Labels
+    @FXML private Label labelDigitos;
+    @FXML private Label labelTitulo1;
+    @FXML private Label labelTitulo2;
 
-    // tEXTFIELDS
-    @FXML TextField TextFieldNickname;
+    // TextFields
+    @FXML private TextField TextFieldNickname;
 
+    // Stages
     private Stage stage;
-    private Scene scene;
-    private Parent root;
 
-    private Cliente cliente;
-
-    //Musica
+    // Musica
     public static MediaPlayer musica;
     private static AudioClip sonidoMadera;
     private static AudioClip sonidoGaviota;
     public static AudioClip sonidoTeclado;
 
+    // Variable para saber si el usuario tiene la música silenciada, o no
     public static Boolean desicionUsuario = true;
-    public final static String musicas[] = {"Music1", "Music2", "Music3", "Music4", "Music5", "Music6", "Music7"};
-    private int indiceActual = 0; //Indice para las músicas aleatorias
 
-    // METODO QUE SE EJECUTA AL INICIALIZAR LA PANTALLA
+    // Arreglo del nombre de las canciones para poder recorrerlo y cambiarlas según decida el usuario
+    public final static String musicas[] = {"Music1", "Music2", "Music3", "Music4", "Music5", "Music6", "Music7"};
+
+    // Variable que almacena el índice actual para reproducir las canciones
+    private int indiceActual = 0;
+
+    // Atributo Boolean que sirve para mostrar el menú de ingresar el Nickname si viene de otra partida
+    public static Boolean volverAJugar = false;
+
+    // Metodo que se ejecuta al cargar la pantalla
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -94,19 +94,17 @@ public class MenuController implements Initializable {
         // Inicializando música
         inicializarMusica();
 
-        // ADAPTA
+        // Adapta la pantalla a su versión completa o en ventana
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
         });
 
-        // DESHABILITAMOS EL BOTON DE CONFIRMAR NICKNAME HASTA QUE TENGA MÁS DE 3 CARACTERES, Y MENOS DE 18
+        // Deshabilitamos el botón de confirmar Nickname mientras éste sea menor a 3 caractéres y mayor a 10
         TextFieldNickname.textProperty().addListener((observable, oldValue, newValue) -> {
             btnNickConfirmar.setDisable(newValue.length() <= 3 || newValue.length() >= 10);
             labelDigitos.setVisible(newValue.length() <= 3 || newValue.length() >= 10);
         });
-
-        // ADAPTACIÓN DE TAMAÑOS A LA RESOLUCIÓN DE PANTALLA
 
         // Adaptar el fondo a la resolución del dispositivo
         fondoImage.fitWidthProperty().bind(rootPane.widthProperty());
@@ -128,53 +126,55 @@ public class MenuController implements Initializable {
         GridPaneNickname.prefWidthProperty().bind(rootPane.widthProperty().divide(4));
         GridPaneNickname.prefHeightProperty().bind(rootPane.heightProperty().divide(5));
 
-        // Aadaptar los botones principales a la resolución del dispositivo
+        // Adaptar los botones principales a la resolución del dispositivo
         buttonJugar.prefWidthProperty().bind(rootPane.widthProperty().divide(7));
         buttonJugar.prefHeightProperty().bind(rootPane.heightProperty().divide(10));
 
-        // ADAPTAR EL TAMAÑO DEL BOTÓN PARA IR A LOS CRÉDITOS A LA RESOLUCIÓN DEL DISPOSITIVO
+        // Adaptar el tamaño del botón para ir a los creditos a la resolución del dispositivo
         buttonCreditos.prefWidthProperty().bind(rootPane.widthProperty().divide(7));
         buttonCreditos.prefHeightProperty().bind(rootPane.heightProperty().divide(10));
 
-        // ADAPTAR EL TAMAÑO DEL BOTÓN PARA IR A LAS INSTRUCCIONES A LA RESOLUCIÓN DEL DISPOSITIVO
+        // Adaptar el tamaño del botón para ir a las instrucciones a la resolución del dispositivo
         buttonInstrucciones.prefWidthProperty().bind(rootPane.widthProperty().divide(6));
         buttonInstrucciones.prefHeightProperty().bind(rootPane.heightProperty().divide(10));
 
-        // ADAPTAR EL TAMAÑO DEL BOTÓN PARA IR A LAS PARTIDAS REGISTRADAS A LA RESOLUCIÓN DEL DISPOSITIVO
+        // Adaptar el tamaño del botón para ir al registro de las partidas a la resolución del dispositivo
         buttonPartidas.prefWidthProperty().bind(rootPane.widthProperty().divide(7));
         buttonPartidas.prefHeightProperty().bind(rootPane.heightProperty().divide(10));
 
-        // ADAPTAR EL BOTÓN PARA ACTIVAR/RESACTIVAR MÚSICA A LA RESOLUCIÓN DEL DISPOSITIVO
+        // Adaptar el tamaño del botón para silenciar música a la resolución del dispositivo
         buttonMusic.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
         buttonMusic.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
 
-        // ADAPTAR BOTÓN PARA CAMBIAR DE FONDO A LA RESOLUCIÓN DEL DISPOSITIVO
+        // Adaptar el tamaño del botón para cambiar la música a la resolución del dispositivo
         buttonCambiarMusica.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
         buttonCambiarMusica.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
 
-        // ADAPTAR BOTÓN PARA CAMBIAR ENTRE PANTALLA COMPLETA Y VENTANA A LA RESOLUCIÓN DEL DISPOSITIVO
+        // Adaptar el tamaño del botón para cambiar entre pantalla completa y ventana a la resolución del dispositivo
         buttonModo.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
         buttonModo.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
 
-        // ADAPTAR EL BOTÓN DE SALIR A LA RESOLUCIÓN DEL DISPOSITIVO
+        // Adaptar el tamaño del botón para salir a la resolución del dispositivo
         buttonSalir.prefWidthProperty().bind(rootPane.widthProperty().divide(12));
         buttonSalir.prefHeightProperty().bind(rootPane.heightProperty().divide(11));
 
-        // ADAPTAR BOTÓN PARA CANCELAR EL INICIO DE SESIÓN A LA REOSLUCIÓN DEL DISPOSITIVO
+        // Adaptar el tamaño del botón para cancelar el registro del Nickname del usuario a la resolución del dispositivo
         btnNickCancelar.prefWidthProperty().bind(rootPane.widthProperty().divide(17));
         btnNickCancelar.prefHeightProperty().bind(rootPane.heightProperty().divide(16));
 
-        // ADAPTAR EL BOTÓN PARA CONFIRMAR NICKNAME A LA RESOLUCIÓN DEL DISPOSITIVO
+        // Adaptar el tamaño del botón para confirmar el registro del Nickname del usuario a la resolución del dispositivo
         btnNickConfirmar.prefWidthProperty().bind(rootPane.widthProperty().divide(17));
         btnNickConfirmar.prefHeightProperty().bind(rootPane.heightProperty().divide(16));
 
-        // ADAPTAR EL PANE DEL TITULO A LA RESOLUCIÓN DEL DISPOSITIVO
+        // Adaptar el panel que contiene el título del juego a la resolución del dispositivo
         titlePane.prefWidthProperty().bind(rootPane.widthProperty().divide(3));
         titlePane.prefHeightProperty().bind(rootPane.heightProperty().divide(1.1));
 
-        // Adaptamos los labels del titulo a la resolución del dispositivo
+        // Adatpar el panel que contiene la segunda parte del título del juego a la resolución del dispositivo
         labelTitulo1.prefWidthProperty().bind(titlePane.widthProperty());
         labelTitulo1.prefHeightProperty().bind(titlePane.heightProperty());
+
+        // Implementación del tamaño del a fuente del título del juego a los dos labels que lo componen
 
         Font fontTitulo = new Font(80);
         labelTitulo1.setFont(fontTitulo);
@@ -183,23 +183,22 @@ public class MenuController implements Initializable {
         labelTitulo2.prefWidthProperty().bind(titlePane.widthProperty());
         labelTitulo2.prefHeightProperty().bind(titlePane.heightProperty());
 
-        // CARGA DE ÍCONOS
-
-        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE SALIR
+        // Cargar el ícono del botón para salir
         Image imagenSalir = new Image(getClass().getResourceAsStream("/Menu/Assets/salir.png"));
         ImageView imageView = new ImageView(imagenSalir);
         imageView.setFitWidth(45);
         imageView.setFitHeight(45);
         buttonSalir.setGraphic(imageView);
 
-        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE ACTIVAR/DESACTIVAR MÚSICA
-        if(desicionUsuario){
+        // Cargar el ícono del botón para silenciar o reproducir la música, este varía según la decisión
+
+        if(desicionUsuario){ // En caso de tener la música reproduciéndose
             Image imagenMusica = new Image(getClass().getResourceAsStream("/Menu/Assets/musica.png"));
             ImageView imageView2 = new ImageView(imagenMusica);
             imageView2.setFitWidth(45);
             imageView2.setFitHeight(45);
             buttonMusic.setGraphic(imageView2);
-        } else{
+        } else{ // En caso de tener la música silenciada
             Image imagenMusica = new Image(getClass().getResourceAsStream("/Menu/Assets/musicaMuteada.png"));
             ImageView imageView2 = new ImageView(imagenMusica);
             imageView2.setFitWidth(45);
@@ -207,82 +206,99 @@ public class MenuController implements Initializable {
             buttonMusic.setGraphic(imageView2);
         }
 
-        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE CAMBIAR EL FONDO
+        // Cargar el ícono del botón cambiar la música reproduciéndose
         Image imagenFondo = new Image(getClass().getResourceAsStream("/Menu/Assets/cambiarMusica.png"));
         ImageView imageView3 = new ImageView(imagenFondo);
         imageView3.setFitWidth(45);
         imageView3.setFitHeight(45);
         buttonCambiarMusica.setGraphic(imageView3);
 
-        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE SALIR
+        // Cargar el ícono del botón para cambiar entre ventana y pantalla completa
         Image imagenModo = new Image(getClass().getResourceAsStream("/Menu/Assets/maximizar.png"));
         ImageView imageView4 = new ImageView(imagenModo);
         imageView4.setFitWidth(40);
         imageView4.setFitHeight(40);
         buttonModo.setGraphic(imageView4);
 
-        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE CANCELAR EL INGRESO DEL NICKNAME
+        // Cargar el ícono del botón para cancelar el registro del Nickname del usuario
         Image imagenCancelar = new Image(getClass().getResourceAsStream("/Menu/Assets/cancelar.png"));
         ImageView imageView5 = new ImageView(imagenCancelar);
         imageView5.setFitWidth(20);
         imageView5.setFitHeight(20);
         btnNickCancelar.setGraphic(imageView5);
 
-        // CREACIÓN Y CARGA DEL ÍCONO PARA EL BOTÓN DE CANCELAR EL INGRESO DEL NICKNAME
+        // Cargar el ícono del botón para confirmar el Nickname del usuario
         Image imagenOk = new Image(getClass().getResourceAsStream("/Menu/Assets/ok.png"));
         ImageView imageView6 = new ImageView(imagenOk);
         imageView6.setFitWidth(30);
         imageView6.setFitHeight(30);
         btnNickConfirmar.setGraphic(imageView6);
+
+        if(volverAJugar){
+            this.darkness.setVisible(true);
+            this.nickNameContainer.setVisible(true);
+            this.TextFieldNickname.setText(Menu.nickName);
+            this.volverAJugar = false;
+        }
     }
 
-    // METODO PARA SALIR DE LA APLICACIÓN
+    // Metodo para salir de la aplicación
     public void bottonSalir(ActionEvent e){
         System.exit(0);
     }
 
-    // METODO QUE CAMBIA ENTRE PANTALLA COMPLETA Y PANTALLA EN VENTANA
+    // Metodo para cambiar entre pantalla completa y ventana
     public void bottonCambiarModo(ActionEvent e){
-        stage = (Stage)((Node) e.getSource()).getScene().getWindow();
-        if(Menu.fullScreen){
+        stage = (Stage)((Node) e.getSource()).getScene().getWindow(); // Stage actual
+
+        if(Menu.fullScreen){ // Si la aplicación DEBE estar en modo ventana
             stage.setFullScreen(false);
             stage.setMinHeight(720);
             stage.setMinWidth(1280);
-            Menu.fullScreen = false;
+            Menu.fullScreen = false; // Cambiar el estado de la variable estática "fullscreen" de la clase principal Menu
 
+            // Crear un rectángulo del tamaño de la pantalla
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+            // Posicionar la ventana a la mitad del rectángulo anteriormente creado
             stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
             stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
         }
         else{
-            stage.setFullScreen(true);
-            Menu.fullScreen = true;
+            stage.setFullScreen(true); // Establecer la ventana en modo pantalla completa
+            Menu.fullScreen = true; // Cambiar el estado de la variable estática "fullscreen" de la clase principal Menu
         }
     }
 
-    // BOTÓN PARA SILENCIAR/ACTIVAR MÚSICA
+    // Metodo para reproducir / silenciar música
     public void bottonMusica(ActionEvent e){
-        musica.setMute(!musica.isMute());
-        if(desicionUsuario == true){
-            desicionUsuario = false;
+        musica.setMute(!musica.isMute()); // Cambia entre silencio y reproducción de la música
+
+        if(desicionUsuario == true){ // Si el usuario silencia la música
+            desicionUsuario = false; // Se cambia el estado de la variable estática "desicionUsuario" a falso
+
+            // Se carga el nuevo ícono del botón para silenciar / reproducir música
             Image img = new Image(getClass().getResourceAsStream("/Menu/Assets/musicaMuteada.png"));
             ImageView imgV = new ImageView(img);
             imgV.setFitWidth(45);
             imgV.setFitHeight(45);
-            buttonMusic.setGraphic(imgV);
-        }
-        else{
-            desicionUsuario = true;
+            buttonMusic.setGraphic(imgV); // Se asigna el nuevo ícono
+        } else{ // Si el usuario reproduce la música
+            desicionUsuario = true; // Se cambia el estado de la variable estática "desicionUsuario" a falso
+
+            // Se carga el nuevo ícono del botón para silenciar / reproducir música
             Image img = new Image(getClass().getResourceAsStream("/Menu/Assets/musica.png"));
             ImageView imgV = new ImageView(img);
             imgV.setFitWidth(45);
             imgV.setFitHeight(45);
-            buttonMusic.setGraphic(imgV);
+            buttonMusic.setGraphic(imgV); // Se asigna el nuevo ícono
         }
     }
 
-    // BOTÓN PARA IR A LA PANTALLA DE CRÉDITOS
+    // Botón para ir a la pantalla de créditos
     public void cambiarCreditos(ActionEvent e) throws IOException {
+        // Cargar el archivo FXML de la pantalla de créditos y la muestra
+
         Parent root = (Parent) FXMLLoader.load(getClass().getResource("/Creditos/Creditos.fxml"));
         Scene scene = rootPane.getScene();
         scene.getStylesheets().add(getClass().getResource("/Creditos/CreditosStyles.css").toExternalForm());
@@ -293,8 +309,10 @@ public class MenuController implements Initializable {
         stage.show();
     }
 
-    // BOTÓN PARA IR A LA PANTALLA DE INSTRUCCIONES
+    // botón para ir a la pantalla de instrucciones
     public void cambiarInstrucciones(ActionEvent e) throws IOException {
+        // Cargar el archivo FXML de la pantalla de instrucciones y la muestra
+
         Parent nuevoRoot = FXMLLoader.load(getClass().getResource("/Instrucciones/Instrucciones.fxml"));
         Scene nuevaScene = new Scene(nuevoRoot);
         nuevaScene.getStylesheets().add(getClass().getResource("/Instrucciones/InstruccionesStyles.css").toExternalForm());
@@ -304,23 +322,23 @@ public class MenuController implements Initializable {
         stage.show();
     }
 
-    // BOTÓN QUE ACTIVA EL SUBMENÚ PARA INGRESAR EL NICKNAME DEL USUARIO
+    // Botón que muestra el panel para ingresar el Nickname del usuario
     public void iniciarSesion(ActionEvent e){
-        darkness.setVisible(true);
-        nickNameContainer.setVisible(true);
-        TextFieldNickname.clear();
+        darkness.setVisible(true); // Mostrar el panel que simula la sombra detrás del menú
+        nickNameContainer.setVisible(true); // Muestra el panel del ingreso del Nickname
+        TextFieldNickname.clear(); // Limpia el TextField del Nickname del usuario
     }
 
-
-    // BOTÓN PARA DESACTIVAR EL SUBMENU PARA INGRESAR EL NICKNAME DEL USUARIO
+    // Metodo que desactiva el panel para ingresar el Nickname del usuario
     public void cancelarInicioSesion(){
-        darkness.setVisible(false);
-        nickNameContainer.setVisible(false);
-        contentPane.setDisable(false);
+        darkness.setVisible(false); // Esconde el panel que simula la sombra
+        nickNameContainer.setVisible(false); // Esconde el panel del ingreso del Nickname
     }
 
-    // BOTÓN PARA IR A LA PANTALLA DE PARTIDAS REGISTRADAS
+    // Metodo para ir a la pantalla de partidas registradas
     public void partidasRegistradas(ActionEvent e) throws IOException {
+        // Cargar el archivo FXML de la pantalla de partidas registradas y la muestra
+
         Parent root = FXMLLoader.load(getClass().getResource("/Partidas/Partidas.fxml"));
         Scene scene = new Scene(root);
 
@@ -332,10 +350,16 @@ public class MenuController implements Initializable {
         stage.show();
     }
 
-    // BOTÓN PARA IR A LA PANTALLA DE LA SALA DE ESPERA
+    // Metodo para ir a la pantalla de la sala de espera
     public void cambiarSalaDeEspera(ActionEvent e) throws IOException {
-        Menu.nickName = TextFieldNickname.getText();
+        // Solo se intenta acceder para añadir el nickname si esta desde el menu
+        if (this.TextFieldNickname != null) {
+            if (!TextFieldNickname.getText().trim().isEmpty()) {
+                Menu.nickName = TextFieldNickname.getText().trim();
+            }
+        }
 
+        // Cargar el archivo FXML de la pantalla de la sala de espera y la muestra
         Parent nuevoRoot = FXMLLoader.load(getClass().getResource("/SalaDeEspera/SalaDeEspera.fxml"));
         Scene nuevaScene = new Scene(nuevoRoot);
         nuevaScene.getStylesheets().add(getClass().getResource("/SalaDeEspera/SalaDeEsperaStyles.css").toExternalForm());
@@ -347,33 +371,35 @@ public class MenuController implements Initializable {
         stage.show();
     }
 
-    // Metodos de sonido de al seleccionar una opción
+    // Metodos que reproduce el sonido ambiental al seleccionar una opción
     public void sonidoSeleccion(){
         sonidoMadera.setVolume(0.05);
         sonidoMadera.play();
     }
 
+    // Metodo que reproduce un sonido ambiental al cambiar a la pantalla de la sala de espera
     public void sonidoGaviota(){
         sonidoGaviota.setVolume(0.2);
         sonidoGaviota.play();
     }
 
+    // Metodo que reproduce un sonido de un teclado cada que se presiona una tecla en el Nickname
     public void sonidoTeclado(){
         sonidoTeclado.setVolume(0.1);
         sonidoTeclado.play();
     }
 
     //botton Pata Cambiar Canción
-
     public void ButtonSiguienteCancion() {
-        if (musica != null) {
+        if (musica != null) { // Si la música se está reproduciendo, la detiene
             musica.stop();
         }
+
         // avanza a la siguiente posición
         // toma el residuo para que sea "Circular"
         indiceActual = (indiceActual + 1) % musicas.length;
 
-        // Ponemos la nueva canción
+        // Reproducimos la nueva canción
         String nueva = musicas[indiceActual];
         Media media = new Media(getClass().getResource("/Menu/Assets/" + nueva + ".mp3").toString());
         musica = new MediaPlayer(media);
@@ -385,6 +411,7 @@ public class MenuController implements Initializable {
         musica.play();
     }
 
+    // Metodo que inicia la reproducción de la música
     public void inicializarMusica(){
         // Si no se está reproduciendo nada, reproduce la música, es para evitar conflictos cada que se instancie la scene
         //La elegimos de la lista de manera aleatoria
@@ -409,6 +436,5 @@ public class MenuController implements Initializable {
         } else {
             musica.setMute(false);
         }
-
     }
 }

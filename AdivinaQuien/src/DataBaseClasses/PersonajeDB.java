@@ -9,13 +9,30 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+/*
+    Metodo el cual gestiona a todos los personajes en la base de datos
+    En el juego funciona solamente para su envio a los jugadores
+    Yo en lo personal lo use para tambien subir a los personajes, aunque esta no es una funcionalidad
+    es mas bien algo externo
+ */
+
 public class PersonajeDB extends dataBase {
+
+    /*
+        Metodo generarTablero
+
+        Este metodo genera el tablero de manera aleatoria y lo retorna como un arrayList
+        Primero genera un array de enteros que son ids aleatorios
+        A partir de este array realiza una busqueda de cada uno de los personajes y los guarda en una lista
+        Una vez realizado esto retorna la lista
+     */
+
     public static ArrayList<Personaje> generarTablero() {
         ArrayList<Integer> personajes = new ArrayList<>();
         int cont=0;
 
         while (cont < 24) {
-            int id = (int)(Math.random() * 35);
+            int id = (int)(Math.random() * 34);
             if (!personajes.contains(id)) {
                 personajes.add(id);
                 cont++;
@@ -47,13 +64,19 @@ public class PersonajeDB extends dataBase {
                     lista.add(personaje);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return lista;
     }
+
+    /*
+        Metodo getPersonajes
+
+        Este metodo retorna todos los personajes en orden de id
+        Este metodo es solamente para la parte de las instrucciones
+     */
 
     public static ArrayList<Personaje> getPersonajes() {
         ArrayList<Personaje> lista = new ArrayList<>();
@@ -79,6 +102,14 @@ public class PersonajeDB extends dataBase {
         return lista;
     }
 
+    /*
+        Metodo getPersonaje
+
+        Este metodo funciona para obtener algun personaje en especifico con su id
+        Tiene atributos booleanos para decidir que informacion obtener y cual no
+        esto con el objetivo de no enviar cosas tan pesadas como las imagenes o la descripcion
+     */
+
     public static Personaje getPersonaje(int id, boolean nombre, boolean imagen, boolean descripcion) {
         String sql = "SELECT * FROM Personajes WHERE id = ?";
         Personaje personaje = new Personaje();
@@ -88,6 +119,8 @@ public class PersonajeDB extends dataBase {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()) {
+
+                personaje.setId(id);
 
                 if (nombre)
                     personaje.setNombre(rs.getString("nombre"));
@@ -106,6 +139,13 @@ public class PersonajeDB extends dataBase {
 
         return personaje;
     }
+
+    /*
+        Metodo insertarPersonaje
+
+        Sirve para insertar los personajes, este metodo lo use solamente para subir las imagenes
+        mas facilmente
+     */
 
     public static void insertarPersonajes() {
         String[] nombres = {

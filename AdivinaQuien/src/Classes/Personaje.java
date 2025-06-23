@@ -4,21 +4,24 @@ import javafx.scene.image.Image;
 import javafx.scene.text.Text;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class Personaje implements Serializable { // Implementamos la clase para serializar
+// Clase para instanciar personajes del juego
+
+public class Personaje implements Serializable { // Implementamos la clase para serializar para mandarlo por sockets
     /* Incluimos su version esto es importante por que de esta manera
      manejamos de manera correcta a los distintos objetos serializables*/
     private static final long serialVersionUID = 1L;
 
-    private int id;
-    private String nombre;
-    private byte[] imagen;
-    private int idTablero;
-    private boolean tachado;
-    private String descripcion;
+    private int id;                 // Id del personaje
+    private String nombre;          // Nombre del personaje
+    private byte[] imagen;          // Imágen del personaje
+    private int idTablero;          // Id en el tablero del personaje
+    private boolean tachado;        // Booleano para saber si el personaje está tachado en el tablero
+    private String descripcion;     // Descripción del personaje
+
+    // Getters y Setters
 
     public void setId(int id) {
         this.id = id;
@@ -76,6 +79,7 @@ public class Personaje implements Serializable { // Implementamos la clase para 
         return new Text(descripcion);
     }
 
+    // Metodo ToString
     @Override
     public String toString() {
         return "Personaje{" +

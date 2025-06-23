@@ -1,346 +1,323 @@
 package Sockets;
 
-// Librerias principales a utilizar
+import Classes.PaqueteInicioPartida; // <-- ¡IMPORTANTE!
+import Classes.Partida;
 import Classes.Personaje;
+import DataBaseClasses.JugadorDB;
+import DataBaseClasses.PartidaDB;
 import DataBaseClasses.PersonajeDB;
 
 import java.io.*;
 import java.net.*;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.*;
-
-/* Maneje la mayoria de las varibles que se van a mandar a otros package
-   o clases como estaticas esto para no tener que instanciar tantos objetos*/
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Servidor {
-    // ---------------------- ATRIBUTOS ----------------------
-    // Asignamos un puerto al cual accedera nuestro servidor
+
     private static final int PUERTO = 5000;
+    private static final Queue<Socket> colaDeEspera = new ConcurrentLinkedQueue<>();
+    private static final Map<Socket, Socket> oponentesEnPartida = new ConcurrentHashMap<>();
+    private static final Map<Socket, ObjectOutputStream> clienteOutStream = new ConcurrentHashMap<>();
+    private static final Map<Socket, String> clientesNickName = new ConcurrentHashMap<>();
+    private static final Map<Socket, Socket> jugadorTurno = new ConcurrentHashMap<>();
+    private static final Map<Socket, Socket> jugadorEspResp = new ConcurrentHashMap<>();
+    private static final Map<Socket, Integer> personajesSecretos = new ConcurrentHashMap<>();
+    private static final Map<Socket, Boolean> estaEnPartida = new ConcurrentHashMap<>();
 
-    // Para los ObjectOutputStream usaremos maps
-    private static Map<Socket, ObjectOutputStream> clienteOutStream = new HashMap<>();
+    public static Partida partida;
 
-    // Para los nicknames y las salidas a cada cliente (PrintWriter) usaremos map
-    private static Map<Socket, PrintWriter> clientesOut = new HashMap<>(); // Para las salidas hacia los clientes
-    private static Map<Socket, String> clientesNickName = new HashMap<>(); // Para los nicknames
-    private static List<Socket> clientes = new ArrayList<>(); //Lista para los jugadores y el orden de la conexion
-    private static Socket jugadorTurno = null; // Este socket determinara el jugador que tiene el turno
-    private static Socket jugadorEspResp = null; // Este socket manejara al jugador que realizo la pregunta
-
-    // Atributos para el cronometro
-    private static int jugadoresListos = 0;
-    private static Map<Socket, Integer> personajesSecretos = new HashMap<>();
-
-    // Lista para los personajes
-    private static List<Personaje> personajes = new ArrayList<>();
 
     public static void main(String[] args) {
-        // Creamos el Server donde se escucharan y saldran los clientes
-        // El bloque try - catch es para verificar que se cierre si algo falla
         try (ServerSocket server = new ServerSocket(PUERTO)) {
-            System.out.println("Servidor Iniciado en el puerto: " + PUERTO + "\n");
-
-            while (clientes.size() < 2) {
-                Socket cliente = server.accept();
-                clientes.add(cliente);
-                System.out.println("Jugador conectado: " + cliente.getInetAddress());
-
-                // Inicializamos ObjectOutputStream antes de PrintWriter para que no ocurrarn errores
-                ObjectOutputStream clientOutput = new ObjectOutputStream(cliente.getOutputStream());
-                clienteOutStream.put(cliente, clientOutput);
-
-                // PrintWriter para el cliente
-                PrintWriter out = new PrintWriter(new OutputStreamWriter(clientOutput), true);
-                clientesOut.put(cliente, out); // Se añade al map
-
-                // Hilo para manejar al cliente
-                new Thread(() -> manejarCliente(cliente)).start();
-            }
-
-            // Enviamos el mensaje de que los 2 jugadores estan conectados a cada jugador
-            if (clientes.size() == 2) {
-                // Aqui obtenemos de manera alteatoria los personajes de la base de datos
-                personajes = PersonajeDB.generarTablero();
-                if (personajes.isEmpty()){
-                    System.err.println("Warning: La lista de personajes generada esta vacia");
-                }
-
-                // Identificamos a los jugadores
-                Socket jugador1 = clientes.get(0);
-                Socket jugador2 = clientes.get(1);
-                String nickJugador1 = clientesNickName.get(jugador1);
-                String nickJugador2 = clientesNickName.get(jugador2);
-
-                // Enviamos los mensajes a cada jugador, esto va a ser para cada jugador
-                // Jugador 1
-                clientesOut.get(jugador1).println("PARTIDA_INICIADA:" + nickJugador2);
-                System.out.println("Servidor: Enviando inicio a " + nickJugador1 + " (oponente: " + nickJugador2 + ")");
-
-                // Jugador 2
-                clientesOut.get(jugador2).println("PARTIDA_INICIADA:" + nickJugador1);
-                System.out.println("Servidor: Enviando inicio a " + nickJugador2 + " (oponente: " + nickJugador1 + ")");
-
-                for (Socket client : clientes) {
-                    //clientesOut.get(client).println("LOS JUGADORES SE HAN CONECTADO");
-                    //System.out.println("Servidor: Mensaje 'LOS JUGADORES SE HAN CONECTADO' enviado a " + clientesNickName.get(client));
+            System.out.println("Servidor Iniciado en el puerto: " + PUERTO);
+            new Thread(() -> {
+                while (true) {
                     try {
-                        ObjectOutputStream os = clienteOutStream.get(client); // Obtener el ObjectOutputStream del cliente
-                        if (os != null) {
-                            os.writeObject(personajes); // ¡Enviar la lista de objetos por el socket!
-                            os.flush(); // Asegurar que los datos se envíen inmediatamente
-                            System.out.println("Servidor: Lista de " + personajes.size() + " personajes enviada a " + clientesNickName.get(client));
-                        } else {
-                            System.err.println("Error: ObjectOutputStream para " + clientesNickName.get(client) + " es nulo.");
+                        if (colaDeEspera.size() >= 2) {
+                            Socket j1 = colaDeEspera.poll();
+                            Socket j2 = colaDeEspera.poll();
+                            if (j1 != null && j2 != null && j1.isConnected() && j2.isConnected() && !estaEnPartida.getOrDefault(j1, false) && !estaEnPartida.getOrDefault(j2, false)) {
+                                estaEnPartida.put(j1, true);
+                                estaEnPartida.put(j2, true);
+                                oponentesEnPartida.put(j1, j2);
+                                oponentesEnPartida.put(j2, j1);
+                                iniciarNuevaPartida(j1, j2);
+                            } else {
+                                if (j1 != null && j1.isConnected() && !estaEnPartida.getOrDefault(j1, false)) colaDeEspera.add(j1);
+                                if (j2 != null && j2.isConnected() && !estaEnPartida.getOrDefault(j2, false)) colaDeEspera.add(j2);
+                            }
                         }
-                    } catch (IOException e) {
-                        System.err.println("Servidor: Error al enviar personajes a " + clientesNickName.get(client) + ": " + e.getMessage());
+                        Thread.sleep(1000);
+                    } catch (InterruptedException | IOException e) {
                         e.printStackTrace();
                     }
-
                 }
-                //Asignamos el turno inicial
-                asignarTurnoInicial();
+            }).start();
+            while (true) {
+                Socket cliente = server.accept();
+                System.out.println("Nuevo cliente conectado: " + cliente.getInetAddress());
+                new Thread(() -> manejarCliente(cliente)).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private static synchronized void iniciarNuevaPartida(Socket jugador1, Socket jugador2) throws IOException {
+        System.out.println("\nServidor: Iniciando nueva partida para " + clientesNickName.get(jugador1) + " y " + clientesNickName.get(jugador2));
+        partida = new Partida();
+
+        jugadorTurno.remove(jugador1);
+        jugadorTurno.remove(jugador2);
+        jugadorEspResp.remove(jugador1);
+        jugadorEspResp.remove(jugador2);
+        personajesSecretos.remove(jugador1);
+        personajesSecretos.remove(jugador2);
+
+        List<Personaje> personajes = PersonajeDB.generarTablero();
+        if (personajes.isEmpty()) {
+            System.err.println("Warning: La lista de personajes generada esta vacia");
+            // Considera enviar un mensaje de error a los clientes y no iniciar la partida
+            return;
+        }
+
+        String nickJugador1 = clientesNickName.get(jugador1);
+        String nickJugador2 = clientesNickName.get(jugador2);
+
+        partida.setJugador1(JugadorDB.conectarse(nickJugador1));
+        partida.setJugador2(JugadorDB.conectarse(nickJugador2));
+
+        ObjectOutputStream oos1 = clienteOutStream.get(jugador1);
+        ObjectOutputStream oos2 = clienteOutStream.get(jugador2);
+
+        oos1.reset();
+        oos2.reset();
+
+        PaqueteInicioPartida paqueteParaJ1 = new PaqueteInicioPartida(nickJugador2, new ArrayList<>(personajes));
+        PaqueteInicioPartida paqueteParaJ2 = new PaqueteInicioPartida(nickJugador1, new ArrayList<>(personajes));
+
+        oos1.writeObject(paqueteParaJ1);
+        oos2.writeObject(paqueteParaJ2);
+        System.out.println("Paquetes de inicio de partida enviados a los jugadores.");
+    }
+
     private static void manejarCliente(Socket cliente) {
-        BufferedReader in = null;
         try {
-            in = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
-            String mensaje;
-            String nickJugador = null;
-
-            System.out.println("\n------------------ NICKNAMES ------------------"); // Salto de linea
-            // Leemos el nickname del jugador
-            // Condicion la cual recibira el nickname, por que el primer mensaje que enviara el cliente sera ese
-            if ((mensaje = in.readLine()) != null){
-                nickJugador = mensaje;
-                clientesNickName.put(cliente, nickJugador);
-                System.out.println("Nickname recibido de " + cliente.getInetAddress() + ": " + nickJugador);
+            ObjectOutputStream oos = new ObjectOutputStream(cliente.getOutputStream());
+            oos.flush();
+            clienteOutStream.put(cliente, oos);
+            ObjectInputStream ois = new ObjectInputStream(cliente.getInputStream());
+            String nickJugador = (String) ois.readObject();
+            if (nickJugador == null || nickJugador.trim().isEmpty()) {
+                return;
             }
-
-
-            System.out.println("\n------------------ EVENTOS ------------------"); // Salto de linea
-            // Cliclo que mientras haya algo en mensaje se repetira
-            while ((mensaje = in.readLine()) != null) {
-                System.out.println("Mensaje recibido de " + clientesNickName.get(cliente) + ": " + mensaje);
-
-                // ---------------- MANEJO DE TURNOS Y MENSAJES ----------------
-
-                // FORMATO QUE USARA EL SERVIDOR PARA IDENTIFICAR SI ES PREGUNTA, RESPUESTA O EL NICKNAME DEL JUGADOR
-                // "TIPO_MENSAJE:MENSAJE"
-                // Tipos de mensajes: "NICKNAME", "PREGUNTA" y "RESPUESTA"
-
-                if (mensaje.startsWith("PREGUNTA:")){
-                    if (cliente.equals(jugadorTurno)) { // Solo el jugador que tiene el turno puede contestar
-                        // Obtenemos la pregunta
-                        String pregunta = mensaje.substring("PREGUNTA:".length()).trim();
-                        System.out.println("Pregunta de " + clientesNickName.get(cliente) + ": " + pregunta);
-
-                        // Se la reenviamos al otro jugador
-                        for (Socket client:  clientes) {
-                            if (!client.equals(cliente)){
-                                // PREGUNTA:NickName:pregunta
-                                clientesOut.get(client).println("PREGUNTA:" + clientesNickName.get(cliente) + ":" + pregunta);
-                                jugadorEspResp = cliente; // Almacenamos en una variable el jugador que envio la pregunta
-                                System.out.println("\nEnviando pregunta a " + clientesNickName.get(client));
-                                break;
-                            }
-                        }
-                    } else {
-                        clientesOut.get(cliente).println("ERROR: No es tu turno para preguntar");
-                        System.out.println("ERROR: " + clientesNickName.get(cliente) + " intento preguntar fuera de su turno");
+            clientesNickName.put(cliente, nickJugador);
+            System.out.println("Nickname recibido: " + nickJugador);
+            oos.writeObject("Servidor: Bienvenido, " + nickJugador + " Buscando partida...");
+            estaEnPartida.put(cliente, false);
+            while (cliente.isConnected()) {
+                if (!estaEnPartida.getOrDefault(cliente, false) && !colaDeEspera.contains(cliente)) {
+                    colaDeEspera.add(cliente);
+                    System.out.println(nickJugador + " ha entrado en la cola de espera.");
+                }
+                while (!estaEnPartida.getOrDefault(cliente, false)) {
+                    if (!cliente.isConnected()) return;
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
                     }
-                } else if (mensaje.startsWith("RESPUESTA:")) {
-                    // Esta condicion se asegura que solo el jugador que NO tiene el turno y NO hizo la pregunta pueda responder
-                    if (!cliente.equals(jugadorTurno) && jugadorEspResp != null) {
-                        // Obtenemos la respuesta
-                        String repuesta = mensaje.substring("RESPUESTA:".length()).trim();
-                        System.out.println("Respuesta de " + clientesNickName.get(cliente) + ": " + repuesta);
-
-                        // Se la reenviamos respuesta al jugador que hizo la pregunta
-                        clientesOut.get(jugadorEspResp).println("RESPUESTA:" + clientesNickName.get(cliente) + ":" + repuesta);
-                        System.out.println("Enviando respuesta a " + clientesNickName.get(jugadorEspResp));
-                        jugadorEspResp = null; // Limpiamos despues de enviar la respuesta
-
-                        // Cambio de turno despues de 5 segundos
-                        try{
-                            System.out.println("Servidor: Espera de 5 segundos antes de pasar turno");
-                            Thread.sleep(5000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            System.out.println("Servidor: Error al pasar turno: " + e.getMessage());
-                        }
-
-                        // Cambiamos de turno
-                        cambiarTurno();
-
-                        /* Una vez que respondio y se reenvio la respuesta, el turno vuelve al que pregunto.
-                        Cabe aclarar que el turno se manejara en el Tablero.
-                        */
-                    }  else {
-                        clientesOut.get(cliente).println("ERROR: No puedes responder en este momento");
-                        System.out.println("ERROR: " + clientesNickName.get(cliente) + " intento responder");
+                }
+                Socket oponente = oponentesEnPartida.get(cliente);
+                if (oponente == null || !oponente.isConnected()) {
+                    System.out.println(clientesNickName.get(cliente) + ": Oponente no encontrado o desconectado. Volviendo a la cola.");
+                    estaEnPartida.put(cliente, false);
+                    oponentesEnPartida.remove(cliente);
+                    continue;
+                }
+                System.out.println(nickJugador + " fue emparejado con " + clientesNickName.get(oponente));
+                Object mensajeObj;
+                while (cliente.isConnected() && oponente.isConnected() && estaEnPartida.getOrDefault(cliente, false)) {
+                    try {
+                        mensajeObj = ois.readObject();
+                    } catch (IOException e) {
+                        System.out.println("Cliente " + clientesNickName.get(cliente) + " cerró el stream de entrada. Desconectando.");
+                        break;
                     }
-                } else if (mensaje.startsWith("ADIVINAR:")) {
-                    Socket jugadorAdivinador = cliente;
-                    String nickGanador = clientesNickName.get(jugadorAdivinador);
-
-                    // Buscamos al oponente
-                    Socket oponente = null;
-                    for (Socket client : clientes) {
-                        if (!client.equals(jugadorAdivinador)){
-                            oponente = client;
-                            break;
+                    if (!(mensajeObj instanceof String)) continue;
+                    String mensaje = (String) mensajeObj;
+                    System.out.println("Mensaje de " + nickJugador + ": " + mensaje);
+                    if (mensaje.equals("JUGAR_OTRA_VEZ")) {
+                        oponentesEnPartida.remove(oponente);
+                        estaEnPartida.put(cliente, false);
+                        estaEnPartida.put(oponente, false);
+                        jugadorTurno.remove(cliente);
+                        jugadorTurno.remove(oponente);
+                        jugadorEspResp.remove(cliente);
+                        jugadorEspResp.remove(oponente);
+                        personajesSecretos.remove(cliente);
+                        personajesSecretos.remove(oponente);
+                        System.out.println(clientesNickName.get(cliente) + " quiere jugar otra vez. Volviendo a la cola.");
+                        if (!colaDeEspera.contains(cliente)) {
+                            colaDeEspera.add(cliente);
                         }
+                        break;
                     }
-
-                    if (oponente != null){
-                        // Obtenemos el Id del personaje secreto del oponente
-                        int idPersonajeSecretoOP = personajesSecretos.get(oponente);
-
-                        // Obtenemos el Id que el jugador intento adivinar
-                        int idAdivinado = Integer.parseInt(mensaje.substring("ADIVINAR:".length()).trim());
-
-                        System.out.println("\nServidor: " + nickGanador + " intenta adivinar.");
-                        System.out.println("Servidor: El adivino: " + idAdivinado);
-                        System.out.println("Servidor: El personaje secreto es: " + idPersonajeSecretoOP);
-
-                        String mensajeAdivnar;
-                        if (idAdivinado == idPersonajeSecretoOP){
-                            // Si adivino correctamente
-                            System.out.println("\nServidor: Adivino el personaje ya chingo");
-                            mensajeAdivnar = "RESULTADO:GANASTE:" + nickGanador;
+                    if (mensaje.startsWith("PREGUNTA:")) {
+                        if (cliente.equals(jugadorTurno.get(cliente))) {
+                            String pregunta = mensaje.substring("PREGUNTA:".length()).trim();
+                            clienteOutStream.get(oponente).writeObject("PREGUNTA:" + clientesNickName.get(cliente) + ":" + pregunta);
+                            jugadorEspResp.put(cliente, oponente);
                         } else {
-                            // Si no adivino el ganador es el oponente
-                            String nickOponente = clientesNickName.get(oponente);
-                            System.out.println("Servidor: No adivino el personaje ya pelo gano: " + nickOponente);
-                            mensajeAdivnar = "RESULTADO:GANASTE:" + nickOponente;
+                            oos.writeObject("ERROR: No es tu turno para preguntar");
+                        }
+                    } else if (mensaje.startsWith("RESPUESTA:")) {
+                        if (!cliente.equals(jugadorTurno.get(cliente)) && jugadorEspResp.containsKey(oponente) && jugadorEspResp.get(oponente).equals(cliente)) {
+                            String respuesta = mensaje.substring("RESPUESTA:".length()).trim();
+                            Socket jugadorPregunton = oponente;
+                            clienteOutStream.get(jugadorPregunton).writeObject("RESPUESTA:" + clientesNickName.get(cliente) + ":" + respuesta);
+                            jugadorEspResp.remove(oponente);
+                            Thread.sleep(5000);
+                            cambiarTurno(jugadorPregunton, cliente);
+                        } else {
+                            oos.writeObject("ERROR: No puedes responder en este momento");
+                        }
+                    } else if (mensaje.startsWith("ADIVINAR:")) {
+                        String mensajeAdivinar = mensaje.substring("ADIVINAR:".length()).trim();
+                        String[] partes = mensajeAdivinar.split(":");
+                        int idAdivinado = Integer.parseInt(partes[0]);
+                        long segundosRecibidos = Long.parseLong(partes[1]);
+                        int idPersonajeSecretoOP = personajesSecretos.getOrDefault(oponente, -1);
+                        String ganadorNick;
+                        int idPersonajeGanadorSecreto;
+                        if (idAdivinado == idPersonajeSecretoOP) {
+                            ganadorNick = nickJugador;
+                            idPersonajeGanadorSecreto = idPersonajeSecretoOP;
+                            oos.writeObject("RESULTADO:GANASTE:" + ganadorNick);
+                            clienteOutStream.get(oponente).writeObject("RESULTADO:PERDISTE:" + ganadorNick);
+                        } else {
+                            ganadorNick = clientesNickName.get(oponente);
+                            idPersonajeGanadorSecreto = personajesSecretos.getOrDefault(oponente, -1);
+                            oos.writeObject("RESULTADO:PERDISTE:" + ganadorNick);
+                            clienteOutStream.get(oponente).writeObject("RESULTADO:GANASTE:" + ganadorNick);
                         }
 
-                        // Enviamos el resultado a los dos jugadores para terminar la partida
-                        for (Socket client : clientes) {
-                            clientesOut.get(client).println(mensajeAdivnar);
+                        partida.setWinner(ganadorNick);
+                        partida.setPersonajeWinner(PersonajeDB.getPersonaje(idPersonajeGanadorSecreto, false, false, false));
+                        partida.setTiempo(Duration.ofSeconds(segundosRecibidos));
+                        partida.setFecha(LocalDate.now());
+                        System.out.println("\nEl id del personaje ganador es: " + idPersonajeGanadorSecreto + "\n");
+                        System.out.println(partida.toString() + "\n");
+                        System.out.println("Partida a enviar: " + partida);
+                        PartidaDB.insertarPartida(partida);
+
+                        try {
+                            clienteOutStream.get(cliente).writeObject(partida);
+                            clienteOutStream.get(oponente).writeObject(partida);
+                            System.out.println("Objeto Partida oficial enviado a los clientes.");
+                        } catch (IOException e) {
+                            System.err.println("Error al enviar el objeto Partida a los clientes.");
+                            e.printStackTrace();
                         }
-                    }
-                } else if (mensaje.startsWith("PERSONAJE_ELEGIDO:")) {
-                    System.out.println("Servidor: Mensaje de \"PERSONAJE_ELEGIDO\" recibido del jugador: " + clientesNickName.get(cliente));
+                        try {
+                            clienteOutStream.get(cliente).writeObject("PERSONAJE_GANADOR_FINAL:" + idPersonajeGanadorSecreto);
+                            clienteOutStream.get(oponente).writeObject("PERSONAJE_GANADOR_FINAL:" + idPersonajeGanadorSecreto);
+                        } catch (Exception e) {
+                            System.err.println("Error al enviar el ID del personaje ganador final: " + e.getMessage());
+                        }
+                        System.out.println("Partida terminada. " + nickJugador + " y " + clientesNickName.get(oponente) + " son libres.");
+                        estaEnPartida.put(cliente, false);
+                        estaEnPartida.put(oponente, false);
 
-                    synchronized (Servidor.class){
-                        int idPersonajeElegido = Integer.parseInt(mensaje.substring("PERSONAJE_ELEGIDO:".length()).trim());
-                        personajesSecretos.put(cliente, idPersonajeElegido);
-                        jugadoresListos++;
-
-                        if (jugadoresListos == 2){
-                            System.out.println("Servidor: Jugadores listos iniciando el juego.");
-                            for (Socket client:  clientes) {
-                                clientesOut.get(client).println("INICIAR_CRONOMETRO");
+                        break;
+                    } else if (mensaje.startsWith("PERSONAJE_ELEGIDO:")) {
+                        synchronized (personajesSecretos) {
+                            int idPersonajeElegido = Integer.parseInt(mensaje.substring("PERSONAJE_ELEGIDO:".length()).trim());
+                            personajesSecretos.put(cliente, idPersonajeElegido);
+                            if (personajesSecretos.containsKey(cliente) && personajesSecretos.containsKey(oponente)) {
+                                System.out.println("Servidor: Ambos jugadores listos. Asignando turno inicial.");
+                                asignarTurnoInicial(cliente, oponente);
+                                oos.writeObject("INICIAR_CRONOMETRO");
+                                clienteOutStream.get(oponente).writeObject("INICIAR_CRONOMETRO");
                             }
                         }
+                    } else if (mensaje.equals("TURNO_TERMINADO")) {
+                        if (cliente.equals(jugadorTurno.get(cliente))) {
+                            cambiarTurno(cliente, oponente);
+                        } else {
+                            oos.writeObject("ERROR: No puedes terminar el turno si no es tuyo");
+                        }
                     }
-
-                } else if (mensaje.equals("TURNO TERMINADO")) {
-                    // Mensaje del jugador que tiene el turno para indicar que termino su turno
-                    if (cliente.equals(jugadorTurno)) {
-                        cambiarTurno();
-                        System.out.println("Turno terminado por " + clientesNickName.get(cliente));
-                    }else {
-                        clientesOut.get(cliente).println("ERROR:No puedes terminar el turno si no es tuyo XD");
-                        System.out.println("ERROR: " + clientesNickName.get(cliente) + " intentó terminar cuando no debia");
-                    }
-                // Si llega otro mensaje de tipo no definido, se ignora
-                } else {
-                    System.out.println("Mensaje desconocido de " + clientesNickName.get(cliente) + ": " + mensaje);
                 }
-            } // Fin while
-
-            // ---------------- MANEJO DE DESCONEXION ----------------
-            // En caso de que el cliente se desconecte
-            System.out.println("Jugador desconectado: " + clientesNickName.get(cliente) + " (" + cliente.getInetAddress() + ")");
-        } catch (IOException e) {
-            // En caso de que se desconecte el cliente inesperadamente
-            System.out.println("Error con el cliente " + clientesNickName.get(cliente) + ": " + e.getMessage());
+            }
+        } catch (Exception e) {
+            System.out.println("Conexión perdida o error con cliente: " + e.getMessage());
+            e.printStackTrace();
         } finally {
-            // Cuando el cliente se desconecta, se quita de la lista y se le notifica al otro que se desconecto
-            // Quitamos de las listas
-            String clienteDesconectado = clientesNickName.remove(cliente);
-            clientes.remove(cliente);
-            clientesOut.remove(cliente);
-            clienteOutStream.remove(cliente);
-
-            //Cerramos el cliente
-            try {
-                cliente.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            // Notificamos que el jugador oponente se desconecto
-            for (Socket client : clientes) {
-                try {
-                    PrintWriter out = clientesOut.get(client);
-                    if (out != null) {
-                        out.println("OPONENTE DESCONECTADO:" + clienteDesconectado);
-                        System.out.println("Se ha notificado a " + clientesNickName.get(client) + " que " + clienteDesconectado + " se desconecto\n");
+            String nick = clientesNickName.getOrDefault(cliente, "un cliente desconocido");
+            System.out.println("Limpiando datos del jugador desconectado: " + nick);
+            colaDeEspera.remove(cliente);
+            Socket oponente = oponentesEnPartida.remove(cliente);
+            if (oponente != null) {
+                oponentesEnPartida.remove(oponente);
+                estaEnPartida.put(cliente, false);
+                estaEnPartida.put(oponente, false);
+                jugadorTurno.remove(cliente);
+                jugadorTurno.remove(oponente);
+                jugadorEspResp.remove(cliente);
+                jugadorEspResp.remove(oponente);
+                personajesSecretos.remove(cliente);
+                personajesSecretos.remove(oponente);
+                if (clienteOutStream.containsKey(oponente)) {
+                    try {
+                        clienteOutStream.get(oponente).writeObject("OPONENTE_DESCONECTADO:" + nick);
+                        if (oponente.isConnected() && !colaDeEspera.contains(oponente)) {
+                            colaDeEspera.add(oponente);
+                            System.out.println(clientesNickName.get(oponente) + " reencolado por desconexión de oponente.");
+                        }
+                    } catch (IOException ioException) {
+                        System.err.println("No se pudo notificar al oponente de la desconexión.");
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+            } else {
+                estaEnPartida.put(cliente, false);
             }
-
-            // Limpiamos el jugador turno, si se desconecta
-            if (cliente.equals(jugadorTurno)) {
-                jugadorTurno = null;
-            }
-
-            // Limpiamos el jugador que espera la respuesta, si se desconecta
-            if (cliente.equals(jugadorEspResp)) {
-                jugadorEspResp = null;
-            }
-        } // Fin try-catch-finally
-    } // Fin manejarCliente
-
-    // Metodo para asignar turno inicial
-    private static void asignarTurnoInicial(){
-        // Si ya hay 2 jugadores conectados asignamos el turno
-        if (clientes.size() == 2){
-            Random rand = new Random();
-            int index = rand.nextInt(2); // 0 o 1
-            jugadorTurno = clientes.get(index); // Asignamos el turno al jugador que salio
-            String nickTurno = clientesNickName.get(jugadorTurno); // Obtenemos el nickname del jugador
-            System.out.println("Turno asignado a: " + nickTurno + "\n");
-
-            // Notificamos a los jugadores de quien tiene el turno
-            for (Socket client : clientes) {
-                String mensajeTurno = "TU_TURNO:" + nickTurno;
-                clientesOut.get(client).println(mensajeTurno);
+            clienteOutStream.remove(cliente);
+            clientesNickName.remove(cliente);
+            try {
+                if (cliente != null && !cliente.isClosed()) cliente.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         }
     }
 
-    //Metodo para cambiar de turno
-    public static void cambiarTurno(){
-        // Si ya hay 2 jugadores conectados asignamos el turno
-        if (clientes.size() == 2){
-            // Buscamos al otro jugador
-            for (Socket client : clientes) {
-                // Si el jugador es el que no tiene el turno
-                if (!client.equals(jugadorTurno)) {
-                    jugadorTurno = client; // Asignamos el turno a ese jugador
-                    break;
-                }
-            }
-            String nickTurno = clientesNickName.get(jugadorTurno);
-            System.out.println("El tuno cambio a: " + nickTurno + "\n");
+    private static void asignarTurnoInicial(Socket j1, Socket j2) {
+        try {
+            Socket primerTurno = new Random().nextBoolean() ? j1 : j2;
+            String nickTurno = clientesNickName.get(primerTurno);
+            jugadorTurno.put(j1, primerTurno);
+            jugadorTurno.put(j2, primerTurno);
+            System.out.println("Turno asignado a: " + nickTurno);
+            clienteOutStream.get(j1).writeObject("TU_TURNO:" + nickTurno);
+            clienteOutStream.get(j2).writeObject("TU_TURNO:" + nickTurno);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-            // Notificamos de quien tiene el turno
-            for (Socket client : clientes) {
-                String mensajeTurno = "TU_TURNO:" + nickTurno;
-                clientesOut.get(client).println(mensajeTurno);
-            }
+    public static void cambiarTurno(Socket jugadorActual, Socket oponente) {
+        try {
+            jugadorTurno.put(jugadorActual, oponente);
+            jugadorTurno.put(oponente, oponente);
+            String nickTurno = clientesNickName.get(oponente);
+            System.out.println("El turno cambió a: " + nickTurno);
+            clienteOutStream.get(jugadorActual).writeObject("TU_TURNO:" + nickTurno);
+            clienteOutStream.get(oponente).writeObject("TU_TURNO:" + nickTurno);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

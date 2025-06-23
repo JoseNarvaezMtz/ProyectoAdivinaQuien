@@ -7,9 +7,21 @@ import javafx.collections.ObservableList;
 import java.sql.*;
 import java.util.ArrayList;
 
+/*
+    Clase la cual realiza y administra todas las entradas, consultas y salidas de la tabla de partidas
+    Se encarga tanto de ingresar la partida como de la de historial de partidas
+ */
+
 public class PartidaDB extends dataBase{
 
-    public void insertarPartida(Partida partida) {
+    /*
+        Metodo insertarPartida
+
+        Metodo el cual agrega una partida a la base de datos
+        El metodo utiliza la clase de partida, adaptando los datos para la base de datos
+     */
+
+    public static void insertarPartida(Partida partida) {
         String fecha = partida.getFecha().toString();
         int tiempo = partida.getTiempo().toSecondsPart();
         int idj1 = JugadorDB.obtenerID(partida.getJugador1());
@@ -37,6 +49,13 @@ public class PartidaDB extends dataBase{
             System.err.println("Error en la conexion: " + e.getMessage());
         }
     }
+
+    /*
+        Metodo getHistorialPartidas
+
+        Agarra todos los registros de base de datos de las partidas para el historial
+        Retorna para su visualizacion directamente
+     */
 
     public static ObservableList<ObservableList<String>> getHistorialPartidas() {
         ObservableList<ObservableList<String>> lista = FXCollections.observableArrayList();
@@ -73,6 +92,13 @@ public class PartidaDB extends dataBase{
 
         return lista;
     }
+
+    /*
+        Metodo getPorNombre
+
+        Realiza la lista de partidas mediante un string que es parte de un nombre
+        Funciona fundamentalmente con la funcion de getIds de JugadorDB
+     */
 
     public static ObservableList<ObservableList<String>> getPorNombre(String name) {
         if (name.equals(""))
@@ -120,6 +146,13 @@ public class PartidaDB extends dataBase{
         }
         return lista;
     }
+
+    /*
+        Metodo getHistorialOrdenado
+
+        Realiza lo mismo que el metodo de getHistorialPartidas
+        La unica diferencia es el by ASC de tiempo para ordenar (Para no usar un sort)
+     */
 
     public static ObservableList<ObservableList<String>> getHistorialOrdenado() {
 

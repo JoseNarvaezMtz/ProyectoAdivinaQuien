@@ -2,12 +2,16 @@ package TerminarPartida;
 
 import Menu.Menu;
 import Menu.MenuController;
+import Sockets.Cliente;
 import Tablero.TableroController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,7 +23,6 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -37,14 +40,14 @@ public class TerminarPartidaController extends MenuController implements Initial
     @FXML Button buttonRegresarMenu;
     @FXML Button buttonVolverAJugar;
 
-    public static Boolean estado = false;
-
     //Musica
     public MediaPlayer musica;
     Media musicWin = new Media(getClass().getResource("/TerminarPartida/Assets/sunny.mp3").toString());
     Media musicLost = new Media(getClass().getResource("/TerminarPartida/Assets/rain.mp3").toString());
     AudioClip sonidoClick = new AudioClip(getClass().getResource("/TerminarPartida/Assets/confirmTab.mp3").toString());
 
+    // Referencia para el cliente y asi poder cerrarlo
+    private Cliente cliente;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -57,23 +60,12 @@ public class TerminarPartidaController extends MenuController implements Initial
             MenuController.musica.stop();
         }
 
-        if (estado == true) {
-            musica = new MediaPlayer(musicWin);
-            musica.setCycleCount(MediaPlayer.INDEFINITE);
-            musica.setVolume(0.2);
-            musica.play();
-        }
-        else {
-            musica = new MediaPlayer(musicLost);
-            musica.setCycleCount(MediaPlayer.INDEFINITE);
-            musica.setVolume(0.2);
-            musica.play();
-        }
 
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setFullScreen(Menu.fullScreen);
         });
+
 
         // Ajuste general de tamaños de los contenedores
         fondoImage.fitWidthProperty().bind(rootPane.widthProperty());
@@ -82,22 +74,8 @@ public class TerminarPartidaController extends MenuController implements Initial
         gridPane2.prefWidthProperty().bind(rootPane.widthProperty().divide(1.5));
         gridPane2.prefHeightProperty().bind(rootPane.heightProperty().divide(2));
 
-
-        //Dependiendo de si ganó o perdió modifica los botones
-        if (estado == true) {
-            buttonVolverAJugar.getStyleClass().add("buttonPartidaFinWin");
-            buttonRegresarMenu.getStyleClass().add("buttonPartidaFinWin");
-            tituloLabel.getStyleClass().add("tituloPartidaFinWin");
-        }
-        else{
-            tituloLabel.getStyleClass().add("tituloPartidaFinLose");
-            buttonVolverAJugar.getStyleClass().add("buttonPartidaFinLose");
-            buttonRegresarMenu.getStyleClass().add("buttonPartidaFinLose");
-        }
-
         tituloLabel.prefWidthProperty().bind(rootPane.widthProperty());
-        tituloLabel.prefHeightProperty().bind(rootPane.heightProperty());
-
+        tituloLabel.prefHeightProperty().bind(rootPane.heightProperty().divide(2));
         tituloLabel.setFont(new javafx.scene.text.Font(80));
         tituloLabel.setWrapText(true);
         tituloLabel.setMaxWidth(Double.MAX_VALUE);
@@ -108,7 +86,6 @@ public class TerminarPartidaController extends MenuController implements Initial
 
         buttonRegresarMenu.prefWidthProperty().bind(rootPane.widthProperty().divide(3));
         buttonRegresarMenu.prefHeightProperty().bind(rootPane.heightProperty().divide(7));
-
 
         // Ajuste de gridPane
         ColumnConstraints col1 = new ColumnConstraints();
@@ -141,42 +118,129 @@ public class TerminarPartidaController extends MenuController implements Initial
         buttonRegresarMenu.setGraphic(imageView2);
         buttonRegresarMenu.setMaxWidth(Double.MAX_VALUE);
 
-        EstadoPartidaTerminada();
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     //Toma al padre para mandar a llamar al metodo del padre que manda al usuario a partidas registradas
     @Override
     public void partidasRegistradas(ActionEvent e) throws IOException {
+        // Hacemos sonido al hacer click
+        sonidoClick();
+
+        // Si el usuario tiene la musica habilitada
         if(MenuController.desicionUsuario == true ){
             MenuController.musica.play();
         }
-        musica.stop();
-        super.partidasRegistradas(e);
-    }
 
-    //Toma al padre para mandar a llamar al metodo del padre que manda al usuario a Sala de espera
-    @Override
-    public void cambiarSalaDeEspera(ActionEvent e) throws IOException {
-        if(MenuController.desicionUsuario == true ){
-            MenuController.musica.play();
+        // Detenemos la musica
+        musica.stop();
+
+        // Cerramos el cliente antes de ir al menu
+        if (cliente != null) {
+            System.out.println("TerminarPartida: Cerrando cliente antes de ir al menu.");
+            Menu.cliente.desconexion();
+
+            // Limpiamos el cliente
+            Menu.cliente = null;
+            this.cliente = null;
         }
-        musica.stop();
-        super.cambiarSalaDeEspera(e);
+        super.partidasRegistradas(e); // Llamamos al metodo del padre para ir a partidas registradas
     }
 
-    public void EstadoPartidaTerminada() {
-        if (estado == true) {
+    // Metodo para volver al menú principal y cerrar el cliente
+    @FXML // Asegúrate de que el FXML del botón "Volver a Jugar" apunte a este método
+    public void volverAlMenuPrincipal(ActionEvent e) {
+        try {
+            sonidoClick(); // Reproduce tu sonido de click
+
+            // Cierra la conexión del cliente si existe
+            if (cliente != null) {
+                System.out.println("TerminarPartida: Desconectando cliente para regresar al menú principal.");
+                cliente.enviarMensaje("JUGAR_OTRA_VEZ", ""); // Informa al servidor que este cliente quiere cerrar o reencolar (aunque luego lo cerraremos)
+                cliente.desconexion(); // Cierra el socket
+                Menu.cliente = null; // Elimina la referencia global
+                this.cliente = null; // Elimina la referencia local
+            } else {
+                System.out.println("TerminarPartida: Cliente ya nulo o cerrado al intentar volver al menú.");
+            }
+
+            //Detiene la música de la pantalla de fin de partida
+            if (musica != null) {
+                musica.stop();
+            }
+
+            // Establece la bandera volver a jugar en MenuController a true
+            // Para que al llegar sepa mostrar el panel del nickname
+            MenuController.volverAJugar = true;
+
+            // Carga la escena del menú principal (donde se asigna el nickname)
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Menu/Menu.fxml"));
+            Parent menuRoot = loader.load();
+
+            Scene nuevaScene = new Scene(menuRoot);
+            // Aplica los estilos CSS del menú
+            nuevaScene.getStylesheets().add(getClass().getResource("/Menu/MenuStyles.css").toExternalForm());
+
+            // Obtiene el Stage actual y cambia la escena
+            Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+            stage.setScene(nuevaScene);
+            stage.show();
+
+        } catch (IOException ex) {
+            System.err.println("¡ERROR AL VOLVER AL MENÚ PRINCIPAL DESDE TERMINAR PARTIDA!");
+            ex.printStackTrace();
+        }
+    }
+
+    public void redireccionPantalla(boolean estado){
+        //Dependiendo de si ganó o perdió modifica los botones
+        if (estado) {
+
+            // Botones y nodo de la pantalla
+            buttonVolverAJugar.getStyleClass().add("buttonPartidaFinWin");
+            buttonRegresarMenu.getStyleClass().add("buttonPartidaFinWin");
+            tituloLabel.getStyleClass().add("tituloPartidaFinWin");
+
+            // Musica
+            musica = new MediaPlayer(musicWin);
+            musica.setCycleCount(MediaPlayer.INDEFINITE);
+            musica.setVolume(0.2);
+            musica.play();
+
+            // Configuracion para el inicio de la pantalla
             fondoImage.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/TerminarPartida/Assets/winner.png")));
             tituloLabel.setText("Felicidades, Ganaste!");
 
-        } else {
+        }
+        else{
+
+            // Botones y nodo de la pantalla
+            tituloLabel.getStyleClass().add("tituloPartidaFinLose");
+            buttonVolverAJugar.getStyleClass().add("buttonPartidaFinLose");
+            buttonRegresarMenu.getStyleClass().add("buttonPartidaFinLose");
+
+            // Musica
+            musica = new MediaPlayer(musicLost);
+            musica.setCycleCount(MediaPlayer.INDEFINITE);
+            musica.setVolume(0.2);
+            musica.play();
+
+            // Configuracion para el inicio de la pantalla
             fondoImage.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/TerminarPartida/Assets/loser.png")));
             tituloLabel.setText("Perdiste, Lo siento!");
         }
-    }
 
+
+    }
     public void sonidoClick(){
         sonidoClick.setVolume(0.2);
         sonidoClick.play();
+    }
+
+    public void onPersonajeGanador(){
+
     }
 }

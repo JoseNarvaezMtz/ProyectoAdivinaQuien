@@ -1,231 +1,162 @@
 package Sockets;
 
-// Librerias principales a utilizar
+import Classes.PaqueteInicioPartida; // <-- ¡IMPORTANTE!
+import Classes.Partida;
+import Classes.Personaje;
+import DataBaseClasses.PartidaDB;
+import Menu.Menu;
 import javafx.application.Platform;
-import Menu.Menu; // Importamos la clase menu para poder acceder al nick name
-import Classes.Personaje; // Importamos la clase Personaje
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.List;
 
 public class Cliente {
+
     private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
-    private ObjectInputStream objectIn; // Para recibir objetos
+    private ObjectOutputStream objectOut;
+    private ObjectInputStream objectIn;
 
-    // Listener para mensajes generales
     private MensajeListener mensajeListener;
-
-    // Listener para eventos (iniciar partida)
     private ClienteListener clienteListener;
 
-    // Listener para los personajes poder enviarlos al tablero
-    private PersonajesListener personajesListener;
-
-    // Guaradar el ultimo mensaje importante y la lista de personajes que llegó antes de que el listener estuviera listo
+    // Almacén temporal para mensajes que llegan antes de que la UI esté lista.
     private String mensajePendiente = null;
-    private List <Personaje> personajesPendientes = null;
+    private String host;
 
-    // Constructor: recibe el host, puerto y un listener para eventos
     public Cliente(String host, int puerto, ClienteListener clienteListener) throws IOException {
         this.clienteListener = clienteListener;
         socket = new Socket(host, puerto);
+        this.host = host;
 
-        // Inicializamos el ObjectInputStream
-        InputStream ios = socket.getInputStream();
-        objectIn = new  ObjectInputStream(ios);
+        // Es crucial crear el Output stream DESPUÉS del servidor para evitar deadlocks.
+        // Pero para que el cliente no se quede bloqueado, creamos el output primero y hacemos flush.
+        this.objectOut = new ObjectOutputStream(socket.getOutputStream());
+        this.objectOut.flush();
+        this.objectIn = new ObjectInputStream(socket.getInputStream());
 
-        // Inicializamos el BufferReader con el ObjectInputStream
-        in = new BufferedReader(new InputStreamReader(objectIn));
-
-        // Inicializamos el PrintWriter para mandar mensjaes al servidor
-        out = new PrintWriter(socket.getOutputStream(), true);
-
-        // ----------------- Enviamos el nickname al servidor despues de conenctar -----------------
-        // Esto por que es lo primero que espera el servidor
-        // Si el nickname no es nulo y si en nickname no esta vacion se lo enviaremos al servidor
-        if (Menu.nickName != null && !Menu.nickName.isEmpty()) {
-            /* Se usa un metodo aparte para optimizar el codigo dicho de otra manera lo hacemos
-            por que como es lo primero que espera el servidor no le tenemos que indicar con un
-            evento que ese es el nickname
-            */
-            enviarMensajeNick(Menu.nickName.trim());
-        } else {
-            System.err.println("Warning xd: El nickname no esta establecido en la clase Menu.");
-            enviarMensajeNick("Unknown Player"); // Enviamos un nickname por defecto
-        }
+        String nickAEnviar = (Menu.nickName != null && !Menu.nickName.isEmpty())
+                ? Menu.nickName.trim()
+                : "Unknown Player";
+        enviarObjeto(nickAEnviar);
 
         // Hilo que escucha los mensajes del servidor
-        new Thread(() -> {
-            String mensaje;
-            try {
-                mensaje = in.readLine(); // Leemos el mensaje
-                System.out.println("Cliente: Mensaje Inicial es: " + mensaje);
+        new Thread(this::escucharAlServidor).start();
+    }
 
-                // Si el mensaje es "LOS JUGADORES SE HAN CONECTADO"
-                if (mensaje != null && mensaje.startsWith("PARTIDA_INICIADA:")) {
-                    // Extraemos el nickname del oponente del mensaje
-                    String oponenteNick = mensaje.substring("PARTIDA_INICIADA:".length()).trim();
-                    System.out.println("Cliente: Partida iniciada. Oponente: " + oponenteNick);
+    private void escucharAlServidor() {
+        try {
+            objectIn.readObject(); // Ignoramos el mensaje de bienvenida.
 
-                    if (clienteListener != null) {
-                        // Llamamos al listener y le pasamos el nickname
-                        Platform.runLater(() -> clienteListener.onIniciarPartida(oponenteNick));
+            while (socket != null && !socket.isClosed()) {
+                Object objetoRecibido = objectIn.readObject();
+
+                // ----------- MANEJO DE OBJETOS SIMPLIFICADO -----------
+
+                if (objetoRecibido instanceof PaqueteInicioPartida) {
+                    PaqueteInicioPartida paquete = (PaqueteInicioPartida) objetoRecibido;
+                    System.out.println("Paquete de inicio de partida recibido. Oponente: " + paquete.getOponenteNick());
+                    if (this.clienteListener != null) {
+                        Platform.runLater(() -> this.clienteListener.onIniciarPartida(paquete.getOponenteNick(), paquete.getPersonajes()));
                     }
+                } else if (objetoRecibido instanceof String) {
+                    String mensaje = (String) objetoRecibido;
+                    System.out.println("Mensaje de texto recibido: " + mensaje);
 
-                    // Aqui leemos la lista antes de leer los mensajes para que se lo primero que obtiene el cliente
-                    System.out.println("Cliente: Esperando lista de personajes del servidor...");
-                    Object ObjRecibido = objectIn.readObject(); // Esperamos a que un objeto sea recibido
-
-                    // Condicion que verifica si el objeto recibido es la lista de personajes
-                    if (ObjRecibido instanceof List) {
-                        List<Personaje> personajesRecibidos = (List<Personaje>) ObjRecibido;
-                        System.out.println("Cliente: Lista de personajes recibida con " + personajesRecibidos.size() + " personajes.");
-
-                        // Aqui es donde le decimos al tablero que la lista ya la recibio
-                        if (personajesListener != null){
-                            Platform.runLater(() -> personajesListener.onPersonajesRecibidos(personajesRecibidos));
+                    // La lógica para RESULTADO es ahora más simple y directa
+                    if (mensaje.startsWith("RESULTADO:")) {
+                        // El formato es "RESULTADO:GANASTE:nick" o "RESULTADO:PERDISTE:nick"
+                        // El TableroController decidirá qué hacer basado en si el mensaje contiene "GANASTE".
+                        if (mensajeListener != null) {
+                            Platform.runLater(() -> this.mensajeListener.onManejarMensajeServidor(mensaje));
                         } else {
-                            // Si el listener dentro del tablero aun no esta configurado
-                            // Guardamos la lista para entregarla despues
-                            personajesPendientes = personajesRecibidos;
-                            System.out.println("Cliente: Personajes recibidos pero el listener no se ha configurado");
+                            this.mensajePendiente = mensaje;
                         }
                     } else {
-                        System.out.println("Cliente: El objeto recibido no es una lista");
+                        // Para cualquier otro mensaje (TU_TURNO, PREGUNTA, etc.)
+                        if (this.mensajeListener != null) {
+                            Platform.runLater(() -> this.mensajeListener.onManejarMensajeServidor(mensaje));
+                        } else {
+                            this.mensajePendiente = mensaje;
+                        }
                     }
-                } else {
-                    // Si el primer mensaje no es ese
-                    System.out.println("Cliente: Mensaje Inicial Distinto es: " + mensaje);
-                    // Mensaje de error
-                    if (mensajeListener != null) {
-                        String finalMensaje = mensaje;
-                        Platform.runLater(() -> mensajeListener.onManejarMensajeServidor(finalMensaje));
-                    } else {
-                        mensajePendiente = mensaje;
+                } else if (objetoRecibido instanceof Partida) {
+                    Partida partida = (Partida) objetoRecibido;
+                    System.out.println("Objeto Partida recibido para guardado local.");
+                    System.out.println("Partida recibida: " + partida);
+                    try {
+                        if (!this.host.equals(("localhost")))
+                            PartidaDB.insertarPartida(partida);
+                        System.out.println("Partida insertada correctamente en la BD local.");
+                    } catch (Exception e) {
+                        System.out.println("Error al insertar la partida en la BD local.");
+                        e.printStackTrace();
                     }
                 }
-
-                // Una vez que ya se recibio la lista, leemos los demas mensajes
-                while((mensaje = in.readLine()) != null) {
-                    System.out.println("Mensaje recibido: " + mensaje);
-
-                    // Estos son los mensajes que interesan al TableroController
-                    if (mensaje.startsWith("OPONENTE DESCONECTADO:") ||
-                            mensaje.startsWith("TU_TURNO:") ||
-                            mensaje.startsWith("PREGUNTA:") ||
-                            mensaje.startsWith("RESPUESTA:") ||
-                            mensaje.startsWith("INICIAR_CRONOMETRO") ||
-                            mensaje.startsWith("RESULTADO") ||
-                            mensaje.equals("TURNO TERMINADO") ||
-                            mensaje.startsWith("ERROR:")) {
-
-                        // Si hay un listener activo (el TableroController ya se configuró)
-                        if (mensajeListener != null) {
-                            String finalMensaje = mensaje;
-                            Platform.runLater(() -> mensajeListener.onManejarMensajeServidor(finalMensaje));
-                        } else {
-                            // Si el listener aún NO está configurado, guarda el mensaje
-                            mensajePendiente = mensaje;
-                        }
-                    } else {
-                        // Para cualquier otro mensaje no clasificado, si hay listener, se lo pasamos
-                        if (mensajeListener != null) {
-                            String finalMensaje = mensaje;
-                            Platform.runLater(() -> mensajeListener.onManejarMensajeServidor(finalMensaje));
-                        }
-                    }
-                }
-            } catch (EOFException e){
-                System.out.println("Cliente: El servidor cerro la conexion");
-            } catch (SocketException e){
-                System.out.println("Cliente: Conexion con el servidor cerrada o reiniciada: " + e.getMessage());
-            } catch (IOException e) {
-                System.out.println("Error en el cliente (conexion cerrada): " + e.getMessage());
-
-                // Si es por cierre de cliente no mostramos el printStackTrace por que no es necesario ya que mostramos el error
-                if (socket != null && !socket.isClosed()) e.printStackTrace();
-            } catch (ClassNotFoundException e){
-                System.out.println("Error de deserializacion: Clase Personaje no encontrada: " + e.getMessage());
-                e.printStackTrace();
-            } finally {
-                // Nos aseguramos de cerrar todo
-                desconexion();
-
             }
-        }).start();
+        } catch (Exception e) {
+            System.out.println("Se ha perdido la conexión con el servidor: " + e.getMessage());
+        } finally {
+            desconexion();
+        }
     }
 
-    //---------------------- Metodos para enviar mensajes al servidor (CON CONTROL DE TIPO) ----------------------
+    public void enviarObjeto(Object objeto) {
+        try {
+            if (objectOut != null) {
+                objectOut.writeObject(objeto);
+                objectOut.flush();
+            }
+        } catch (IOException e) {
+            System.err.println("Error al enviar objeto: " + e.getMessage());
+        }
+    }
 
-    //Este metodo es el que usara el Tablero para enviar preguntas/respuestas/turnos
     public void enviarMensaje(String tipoMensaje, String mensaje) {
-        if (out != null) {
-            out.println(tipoMensaje + ":"  + mensaje);
-        }
+        enviarObjeto(tipoMensaje + ":" + mensaje);
     }
 
-    // Metodo para enviar el nickname al servidor
-    public void enviarMensajeNick(String nickName) {
-        if (out != null) {
-            out.println(nickName);
-        }
-    }
-
-    //----------------------------- Metodos Set para establecer los listener -----------------------------
-    // Metodo para estableceer el listener de mensajes normales y pendientes
     public void setMensajeListener(MensajeListener listener) {
         this.mensajeListener = listener;
-        if (mensajePendiente != null) { // Si hay un mensaje que llegó antes de que el listener se configurara
-            String mensajeADelante = mensajePendiente; // Copia el mensaje antes de limpiarlo
-            mensajePendiente = null; // Limpia la variable después de entregarlo
+        if (mensajePendiente != null) {
+            String mensajeADelante = mensajePendiente;
+            this.mensajePendiente = null;
             Platform.runLater(() -> this.mensajeListener.onManejarMensajeServidor(mensajeADelante));
         }
     }
 
-    // Establece un listener para eventos especiales (como iniciar la partida)
+    // Ya no necesitas setPersonajesListener por separado
+    // El clienteListener se encargará de pasar los personajes y el oponente a la vez.
     public void setClienteListener(ClienteListener listener) {
         this.clienteListener = listener;
     }
 
-    public void setPersonajeListener(PersonajesListener listener){
-        this.personajesListener = listener;
-        if (personajesPendientes != null){ // Si hay personajes que llegaron antes de que se configurara el Listener
-            List<Personaje> personajesADelante = personajesPendientes; // Copiamos la lista
-            personajesPendientes = null; // Limpiamos la variable
-            Platform.runLater(() -> this.personajesListener.onPersonajesRecibidos(personajesADelante));
-        }
-    }
 
-    //----------------------------- Interfaces para recibir mensajes -----------------------------
+    public interface MensajeListener { void onManejarMensajeServidor(String mensaje); }
+    public interface ClienteListener { void onIniciarPartida(String oponenteNick, List<Personaje> personajesRecibidos); }
+    // La interfaz PersonajesListener ya no es necesaria
 
-    // Interfaz para recibir mensajes comunes
-    public interface MensajeListener {
-        void onManejarMensajeServidor(String mensaje);
-    }
-
-    // Interfaz para recibir los mensajes de eventos (Iniciar la partida)
-    public interface ClienteListener{
-        void onIniciarPartida(String oponenteNick);
-    }
-
-    public interface PersonajesListener{
-        void onPersonajesRecibidos(List<Personaje> personajes);
-    }
-
-    // ------------------------ DESCONEXION ------------------------
-
-    // Metodo para la desconexion del cliente
     public void desconexion() {
         try {
+            if (objectOut != null) objectOut.close();
             if (objectIn != null) objectIn.close();
-            if (in != null) in.close();
-            if (out != null) out.close();
             if (socket != null && !socket.isClosed()) socket.close();
-        }catch (IOException e){
-            System.out.println("Error al cerrar el y los recursos del cliente: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error al cerrar los recursos del cliente: " + e.getMessage());
+        } finally {
+            objectOut = null;
+            objectIn = null;
+            socket = null;
+            mensajeListener = null;
+            clienteListener = null;
+            System.out.println("Cliente desconectado y recursos liberados.");
         }
     }
+
+    public boolean isClosed() {
+        return socket == null || socket.isClosed();
+    }
+
 }
